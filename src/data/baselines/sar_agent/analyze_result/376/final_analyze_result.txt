@@ -1,0 +1,14 @@
+Correctness: No
+Is_ambiguous: No
+Explanation:
+The question asks for the layout type(s) of any cards whose keyword list contains "Flying".  
+1. The annotated query uses `WHERE keywords = 'Flying'`, so it only considers rows whose `keywords` column is exactly the single string "Flying". Cards that have multiple keywords (e.g., "Flying, Haste") are omitted, which excludes many valid cards.
+2. It returns every matching row’s `layout` value, leading to thousands of duplicates. The question implies we want the layout(s) that exist, not a long duplicate list; therefore `DISTINCT` (or a GROUP BY) is required.
+3. Both issues mean the original query does not fully or efficiently answer the question.
+
+The question itself is clear and can be answered unambiguously with one correct query, so it is not ambiguous.
+
+Revised:
+SELECT DISTINCT `layout`
+FROM `cards`
+WHERE `keywords` LIKE '%Flying%';

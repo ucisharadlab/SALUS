@@ -1,0 +1,12 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation: The query joins posts to postHistory on Id and returns the `Comment` field, so it is aimed at the correct table, but it does not restrict the result to true revision comments (many rows in postHistory have Comment = NULL or empty string).  In the real data the query therefore returns blank strings and duplicates that are not “comments left by users”, so it does not accurately answer the request.  In addition, the English request itself can be read two ways: (1) return the edit-summary comments in postHistory; (2) return the rows in the Comments table written by the same users who edited the post.  Because both readings are plausible, the question is ambiguous.  
+Revised: 
+```
+SELECT DISTINCT ph.Comment
+FROM posts AS p
+JOIN postHistory AS ph ON ph.PostId = p.Id
+WHERE p.Title = 'Why square the difference instead of taking the absolute value in standard deviation?'
+  AND ph.Comment IS NOT NULL
+  AND TRIM(ph.Comment) <> '';
+```

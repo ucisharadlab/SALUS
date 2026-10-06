@@ -1,0 +1,11 @@
+Correctness: No – the query groups by and returns `district.A3` (region) instead of the district name (`A2`), so it answers a different question.
+Is_ambiguous: Yes – “highest active loan” can mean highest single loan, highest total amount, or highest count; the query assumes total amount.
+Explanation: The question asks for a district, which is stored in column `A2`. The annotated query joins account-district-loan correctly and filters active loans (status C or D), but it groups by `A3` and selects `A3`, ranking regions. Validation queries show the top region (south Moravia) differs from the top district (Hl.m. Praha), proving the answer is wrong. The question itself lacks precision about whether to sum, count, or take the maximum loan, so multiple interpretations exist.
+Revised: SELECT `T2`.`A2`
+FROM `account` AS T1
+JOIN `district` AS T2 ON T1.`district_id` = T2.`district_id`
+JOIN `loan` AS T3 ON T1.`account_id` = T3.`account_id`
+WHERE T3.`status` IN ('C','D')
+GROUP BY T2.`A2`
+ORDER BY SUM(T3.`amount`) DESC
+LIMIT 1;

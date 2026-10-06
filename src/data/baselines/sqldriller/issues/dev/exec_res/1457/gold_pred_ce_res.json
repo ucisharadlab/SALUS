@@ -1,0 +1,92 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "gold": "SELECT DISTINCT T3.first_name, T3.last_name, T3.phone FROM expense AS T1 INNER JOIN budget AS T2 ON T1.link_to_budget = T2.budget_id INNER JOIN member AS T3 ON T3.member_id = T1.link_to_member WHERE T1.cost > ( SELECT AVG(T1.cost) FROM expense AS T1 INNER JOIN budget AS T2 ON T1.link_to_budget = T2.budget_id INNER JOIN member AS T3 ON T3.member_id = T1.link_to_member )",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "pred": "SELECT T1.first_name, T1.last_name, T1.phone FROM member T1 JOIN expense T2 ON T1.member_id = T2.link_to_member WHERE T2.cost > (SELECT AVG(cost) FROM expense)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "pred": "SELECT first_name, last_name, phone FROM member WHERE member_id IN (SELECT link_to_member FROM expense WHERE cost > (SELECT AVG(cost) FROM expense))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "pred": "WITH AverageCost AS (SELECT AVG(cost) AS avg_cost FROM expense) SELECT m.first_name, m.last_name, m.phone FROM member m JOIN expense e ON m.member_id = e.link_to_member, AverageCost WHERE e.cost > AverageCost.avg_cost",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "pred": "SELECT m.first_name, m.last_name, m.phone FROM member m WHERE EXISTS (SELECT 1 FROM expense e WHERE e.link_to_member = m.member_id AND e.cost > (SELECT AVG(cost) FROM expense))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "pred": "SELECT m.first_name, m.last_name, m.phone FROM member m INNER JOIN expense e ON m.member_id = e.link_to_member WHERE e.cost > (SELECT AVG(cost) FROM expense)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "pred": "SELECT first_name, last_name, phone FROM member WHERE member_id IN (SELECT link_to_member FROM expense GROUP BY link_to_member HAVING cost > AVG(cost))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH ExpenseAverage AS (SELECT AVG(cost) AS avg_cost FROM expense) SELECT m.first_name, m.last_name, m.phone FROM member m JOIN expense e ON m.member_id = e.link_to_member WHERE e.cost > (SELECT avg_cost FROM ExpenseAverage)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "pred": "SELECT m.first_name, m.last_name, m.phone FROM member m, expense e WHERE m.member_id = e.link_to_member AND e.cost > (SELECT AVG(cost) FROM expense e2)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "pred": "SELECT m.first_name, m.last_name, m.phone FROM member m JOIN (SELECT link_to_member FROM expense WHERE cost > (SELECT AVG(cost) FROM expense)) e ON m.member_id = e.link_to_member",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  },
+  {
+    "pred": "WITH AvgExpense AS (SELECT AVG(cost) AS average_cost FROM expense) SELECT m.first_name, m.last_name, m.phone FROM member m JOIN expense e ON m.member_id = e.link_to_member CROSS JOIN AvgExpense WHERE e.cost > AvgExpense.average_cost",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1457/ce0.sqlite": [
+      "('2147483648', '2147483648', '2147483648')",
+      "('2147483648', '2147483648', '2147483648')"
+    ]
+  }
+]

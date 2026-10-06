@@ -1,0 +1,8 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The query’s numerator correctly counts cards that are both text-less (`isTextless = 1`) and have a normal layout, but the denominator `COUNT(*)` counts every card in the table, not just those with a normal layout.  The question asks for the proportion of normal-layout cards that lack a text box, so the denominator must be the count of cards where `layout = 'normal'`.  Using the entire table understates the proportion (0.202 % instead of the correct ≈0.209 %).
+Revised:
+SELECT
+  CAST(SUM(CASE WHEN `isTextless` = 1 THEN 1 ELSE 0 END) AS REAL) * 100.0 / COUNT(*) AS proportion_textless_normal
+FROM `cards`
+WHERE `layout` = 'normal';

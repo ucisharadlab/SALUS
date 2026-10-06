@@ -1,0 +1,20 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation: The question asks for the promotion type(s) of the card named “Duress”.  In the data there are four promotional printings of that card whose `promoTypes` values are  “tourney,fnm”, “arenaleague”, and “mediainsert” (the last one appears twice).  
+
+The annotated query
+```
+SELECT promoTypes
+FROM cards
+WHERE name = 'Duress' AND promoTypes IS NOT NULL;
+```
+returns the correct column but supplies the row set with a duplicate “mediainsert” entry.  The lack of `DISTINCT` (or other aggregation) yields redundant rows, so the result is not a clean list of promotion types and is therefore judged incorrect with respect to efficiency and completeness requirements.  
+
+Furthermore, the English question is phrased in the singular (“What type of promotion …?”) while the card actually has three different promotion types, leaving it unclear whether one, some, or all should be reported.  Hence the question itself is ambiguous.  
+
+Revised:
+```
+SELECT DISTINCT `promoTypes`
+FROM `cards`
+WHERE `name` = 'Duress' AND `promoTypes` IS NOT NULL;
+```

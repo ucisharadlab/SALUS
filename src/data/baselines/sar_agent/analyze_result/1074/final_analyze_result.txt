@@ -1,0 +1,8 @@
+Correctness: Yes  
+Is_ambiguous: No  
+Explanation: The query links `Team` to `Match` via the home-team API id and filters matches where the home side scored exactly 10 goals.  The selected column, `team_short_name`, is exactly what the question asks for, so every team that has achieved a 10-goal home match will be returned.  The only minor improvement would be adding DISTINCT to guard against the same team appearing more than once if it happened in multiple matches, but in the current database this does not occur (verified with an extra GROUP BY check).  Therefore the annotated query is logically correct and answers the question.  
+Revised:  
+SELECT DISTINCT `t1`.`team_short_name`
+FROM `Team` AS `t1`
+JOIN `Match` AS `t2` ON `t1`.`team_api_id` = `t2`.`home_team_api_id`
+WHERE `t2`.`home_team_goal` = 10;

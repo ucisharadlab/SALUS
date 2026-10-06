@@ -1,0 +1,13 @@
+Correctness: No – the annotated query counts translation rows instead of cards, so the computed percentage (~13 %) is the share of French rows among all language rows for powerless cards, not the share of powerless cards that have a French version (~48 %).
+Is_ambiguous: No – “cards … in French” clearly means cards that have at least one French entry in foreign_data.
+Explanation: 1) Powerless cards = 31 053 distinct UUIDs. 2) Powerless cards with a French entry = 14 892 → 47.96 %. 3) Annotated query joins every language row, inflating the denominator (114 772 rows) and yields 12.98 %. Hence logic is wrong though schema usage is valid.
+Revised: WITH powerless AS (
+    SELECT DISTINCT `uuid`
+    FROM `cards`
+    WHERE `power` IS NULL OR `power` = '*'
+)
+SELECT 100.0 * COUNT(DISTINCT f.`uuid`) / (SELECT COUNT(*) FROM powerless) AS percentage_french
+FROM powerless p
+LEFT JOIN `foreign_data` f
+  ON f.`uuid` = p.`uuid` AND f.`language` = 'French'
+WHERE f.`uuid` IS NOT NULL;

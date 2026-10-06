@@ -1,0 +1,16 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The question asks for the set of tags that appear on posts authored by the user “Mark Meckes” whose CommentCount is 0.  
+•  The correct relationship between a post and its author is posts.OwnerUserId = users.Id.  
+•  The annotated query instead joins through postHistory (users.Id = postHistory.UserId and postHistory.PostId = posts.Id).  This gives every post for which Mark Meckes ever has a post-history record (edits, comments, etc.), not necessarily the posts he owns.  Although in this data set the result happens to coincide with his own posts, the join produces one row for every postHistory version, so the same tag is returned many times.  
+•  The query does not eliminate duplicates (no DISTINCT) and it also returns rows where Tags is NULL, which are not “tags”.  
+Hence the query does not faithfully return the requested “all tags” set and will produce superfluous and duplicate output.  
+Revised:  
+```
+SELECT DISTINCT p.`Tags`
+FROM `posts` p
+JOIN `users` u ON u.`Id` = p.`OwnerUserId`
+WHERE u.`DisplayName` = 'Mark Meckes'
+  AND p.`CommentCount` = 0
+  AND p.`Tags` IS NOT NULL;
+```

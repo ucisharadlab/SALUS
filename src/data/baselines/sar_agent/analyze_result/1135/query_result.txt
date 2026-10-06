@@ -1,0 +1,15 @@
+Query: SELECT COUNT(*) FROM `Player_Attributes`
+Explaination of the query: Check row count
+Result: [(183978,)]
+Query: WITH latest_attr AS (
+   SELECT `player_api_id`, `potential`, `preferred_foot`,
+          ROW_NUMBER() OVER (PARTITION BY `player_api_id` ORDER BY `date` DESC) as rn
+   FROM `Player_Attributes`
+)
+SELECT `player_api_id`, `potential`
+FROM latest_attr
+WHERE rn = 1 AND `preferred_foot` = 'right'
+ORDER BY `potential` ASC
+LIMIT 5
+Explaination of the query: Retrieve 5 right-foot players with lowest potential using latest attributes
+Result: [(66995, 49), (42554, 52), (67396, 52), (186090, 52), (429899, 52)]

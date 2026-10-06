@@ -1,0 +1,4 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The query should count users, not badge rows. It selects DISTINCT badge Ids so a user with both badges contributes two rows; also it includes users who have only one badge. It requires exact Location='New York', missing many variants that likely intended. To ensure users have both Teacher and Supporter badges we must group by UserId and HAVING COUNT(DISTINCT Name)=2. Counting users not badges.  
+Revised: SELECT COUNT(*) FROM (   SELECT b.UserId   FROM `badges` b   JOIN `users` u ON u.Id = b.UserId   WHERE u.Location LIKE '%New York%'     AND b.Name IN ('Teacher','Supporter')   GROUP BY b.UserId   HAVING COUNT(DISTINCT b.Name)=2 ) t;

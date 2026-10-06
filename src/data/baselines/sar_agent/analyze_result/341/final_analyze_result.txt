@@ -1,0 +1,8 @@
+Correctness: No – the annotated SQL fails to capture the full “without powerful foils” condition and therefore omits valid cards.
+Is_ambiguous: No – the question clearly asks for borderless cards lacking a powerful foil (i.e., NOT both ids present).
+Explanation: The definition of a powerful foil requires BOTH `cardKingdomId` and `cardKingdomFoilId` to be non-NULL.  To find cards “without” one, the filter must keep rows where either field is NULL.  The annotated query only checks `cardKingdomId IS NULL` (duplicated) and never references `cardKingdomFoilId`; hence it drops cards where `cardKingdomId` exists but the foil id is NULL (5 such cards).  It also returns only the numeric id, whereas the question asks for the cards themselves.  Verification queries show 72 rows satisfy the correct condition, but the annotated query returns 67.
+Revised:
+SELECT `id`, `name`
+FROM `cards`
+WHERE `borderColor` = 'borderless'
+  AND (`cardKingdomId` IS NULL OR `cardKingdomFoilId` IS NULL);

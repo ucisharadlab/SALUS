@@ -1,0 +1,21 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The question asks for the reference names (driverRef) of ALL drivers who were eliminated in the first qualifying period (Q1) for race number 20 (raceId = 20).  In the data, drivers who advance past Q1 have a non-NULL value in column `q2`; therefore the eliminated Q1 drivers are those rows where `q2 IS NULL`.  For raceId 20 there are six such drivers: coulthard, fisichella, vettel, sutil, davidson, and sato.  
+The annotated query:  
+```
+SELECT T2.driverRef
+FROM qualifying AS T1
+JOIN drivers AS T2 ON T2.driverId = T1.driverId
+WHERE T1.raceId = 20
+ORDER BY T1.q1 DESC
+LIMIT 5;
+```  
+returns only five names and selects them by ordering the textual `q1` times and taking the last five, which does not correspond to the actual elimination rule and drops one eliminated driver (coulthard).  It is therefore incorrect.  
+Revised:  
+```
+SELECT d.driverRef
+FROM qualifying q
+JOIN drivers d ON d.driverId = q.driverId
+WHERE q.raceId = 20
+  AND q.q2 IS NULL;
+```

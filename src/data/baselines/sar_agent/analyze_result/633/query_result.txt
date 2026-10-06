@@ -1,0 +1,30 @@
+Query: SELECT COUNT(*) FROM users WHERE `DisplayName` = 'slashnick';
+Explaination of the query: Check if such user exists and duplicates.
+Result: [(1,)]
+Query: SELECT `Id`,`DisplayName` FROM `users` WHERE `DisplayName`='slashnick' LIMIT 5;
+Explaination of the query: get user id
+Result: [(16, 'slashnick')]
+Query: SELECT `Id` FROM `posts` WHERE `OwnerUserId` = 16 ORDER BY `AnswerCount` DESC LIMIT 5;
+Explaination of the query: Check top posts by user id 16
+Result: [(351,)]
+Query: SELECT T2.`PostId`, T3.`AnswerCount` FROM `users` AS T1 INNER JOIN `postHistory` AS T2 ON T1.`Id` = T2.`UserId` INNER JOIN `posts` AS T3 ON T2.`PostId` = T3.`Id` WHERE T1.`DisplayName` = 'slashnick' ORDER BY T3.`AnswerCount` DESC LIMIT 5;
+Explaination of the query: run annotator query to get top 5
+Result: [(351, None)]
+Query: SELECT `Id`,`AnswerCount` FROM `posts` WHERE `OwnerUserId` = 16 ORDER BY `AnswerCount` DESC, `Id` LIMIT 5;
+Explaination of the query: get answer counts for slashnick posts
+Result: [(351, None)]
+Query: SELECT `Id`,`AnswerCount` FROM `posts` WHERE `OwnerUserId` = 16 ORDER BY `AnswerCount` DESC, `Id` LIMIT 20;
+Explaination of the query: get all posts by slashnick
+Result: [(351, None)]
+Query: SELECT DISTINCT `PostId` FROM `postHistory` WHERE `UserId`=16 AND `PostId` NOT IN (SELECT `Id` FROM `posts` WHERE `OwnerUserId`=16) LIMIT 5;
+Explaination of the query: Check if there are posts edited by slashnick but not owned
+Result: []
+Query: SELECT DISTINCT T2.`PostId` FROM `postHistory` T2 LEFT JOIN `posts` P ON P.`Id`=T2.`PostId` WHERE T2.`UserId`=16 AND (P.`OwnerUserId` IS NULL OR P.`OwnerUserId`!=16) LIMIT 5;
+Explaination of the query: Posts edited by slashnick but not owned by him
+Result: []
+Query: SELECT `posts`.`Id`, `posts`.`AnswerCount` FROM `posts` JOIN `users` ON `posts`.`OwnerUserId` = `users`.`Id` WHERE `users`.`DisplayName` = 'slashnick' ORDER BY `AnswerCount` DESC LIMIT 5;
+Explaination of the query: Find top posts owned by slashnick by AnswerCount
+Result: [(351, None)]
+Query: SELECT p.`Id`, p.`AnswerCount` FROM `posts` AS p JOIN `users` AS u ON u.`Id` = p.`OwnerUserId` WHERE u.`DisplayName` = 'slashnick' ORDER BY p.`AnswerCount` DESC LIMIT 5;
+Explaination of the query: check posts owned by slashnick
+Result: [(351, None)]

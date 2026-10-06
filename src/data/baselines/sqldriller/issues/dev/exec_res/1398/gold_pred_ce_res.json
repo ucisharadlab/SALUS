@@ -1,0 +1,82 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Baseball game',)",
+      "('Lacrosse game',)"
+    ]
+  },
+  {
+    "gold": "SELECT T2.event_name FROM budget AS T1 INNER JOIN event AS T2 ON T1.link_to_event = T2.event_id WHERE T1.category = 'Advertisement' ORDER BY T1.spent DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Baseball game',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 JOIN (SELECT link_to_event FROM budget WHERE category = 'Advertisement' AND spent IS NOT NULL ORDER BY spent DESC LIMIT 1) T1 ON T2.event_id = T1.link_to_event;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Baseball game',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_name FROM event WHERE event_id = (SELECT link_to_event FROM budget WHERE category = 'Advertisement' AND spent = (SELECT MAX(spent) FROM budget WHERE category = 'Advertisement'));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Baseball game',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 INNER JOIN budget T1 ON T2.event_id = T1.link_to_event WHERE T1.category = 'Advertisement' AND T1.spent = (SELECT MAX(spent) FROM budget WHERE category = 'Advertisement');",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Baseball game',)",
+      "('Lacrosse game',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_name FROM event WHERE event_id IN (SELECT link_to_event FROM budget WHERE category = 'Advertisement' GROUP BY link_to_event HAVING spent = MAX(spent));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Lacrosse game',)",
+      "('Baseball game',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2, (SELECT link_to_event, MAX(spent) AS max_spent FROM budget WHERE category = 'Advertisement' GROUP BY link_to_event) T1 WHERE T2.event_id = T1.link_to_event AND T1.max_spent = (SELECT MAX(spent) FROM budget WHERE category = 'Advertisement');",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Lacrosse game',)",
+      "('Baseball game',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_name FROM event WHERE event_id = (SELECT link_to_event FROM budget WHERE category = 'Advertisement' ORDER BY spent DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Baseball game',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 JOIN budget T1 ON T2.event_id = T1.link_to_event WHERE T1.category = 'Advertisement' ORDER BY T1.spent DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Baseball game',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_name FROM event WHERE event_id = (SELECT link_to_event FROM budget WHERE category = 'Advertisement' AND spent = (SELECT MAX(spent) FROM budget WHERE category = 'Advertisement' AND spent IS NOT NULL));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Baseball game',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 INNER JOIN (SELECT link_to_event, MAX(spent) AS max_spent FROM budget WHERE category = 'Advertisement' GROUP BY link_to_event HAVING max_spent = (SELECT MAX(spent) FROM budget WHERE category = 'Advertisement')) T1 ON T2.event_id = T1.link_to_event;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce0.sqlite": [
+      "('Lacrosse game',)",
+      "('Baseball game',)"
+    ]
+  }
+]

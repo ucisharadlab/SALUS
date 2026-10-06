@@ -1,0 +1,32 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/944/ce0.sqlite": []
+  },
+  {
+    "gold": "WITH time_in_seconds AS ( SELECT T1.positionOrder, CASE WHEN T1.positionOrder = 1 THEN (CAST(SUBSTR(T1.time, 1, 1) AS REAL) * 3600) + (CAST(SUBSTR(T1.time, 3, 2) AS REAL) * 60) + CAST(SUBSTR(T1.time, 6) AS REAL) ELSE CAST(SUBSTR(T1.time, 2) AS REAL) END AS time_seconds FROM results AS T1 INNER JOIN races AS T2 ON T1.raceId = T2.raceId WHERE T2.name = 'Australian Grand Prix' AND T1.time IS NOT NULL AND T2.year = 2008 ), champion_time AS ( SELECT time_seconds FROM time_in_seconds WHERE positionOrder = 1), last_driver_incremental AS ( SELECT time_seconds FROM time_in_seconds WHERE positionOrder = (SELECT MAX(positionOrder) FROM time_in_seconds) ) SELECT (CAST((SELECT time_seconds FROM last_driver_incremental) AS REAL) * 100) / (SELECT time_seconds + (SELECT time_seconds FROM last_driver_incremental) FROM champion_time)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/944/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT ((julianday('00:' || R1.time) - julianday('00:' || R2.time)) / julianday('00:' || R2.time)) * 100 AS percentage_faster FROM races T1 JOIN results R1 ON T1.raceId = R1.raceId JOIN results R2 ON T1.raceId = R2.raceId WHERE T1.year = 2008 AND T1.name = 'Australian Grand Prix' AND R1.positionOrder = 1 AND R2.positionOrder = (SELECT MAX(positionOrder) FROM results WHERE raceId = R1.raceId) AND R1.time IS NOT NULL AND R2.time IS NOT NULL;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/944/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT ((strftime('%s', '00:' || R1.time) - strftime('%s', '00:' || R2.time)) / strftime('%s', '00:' || R2.time)) * 100 AS percentage_faster FROM races T1 INNER JOIN results R1 ON T1.raceId = R1.raceId INNER JOIN results R2 ON T1.raceId = R2.raceId WHERE T1.year = 2008 AND T1.name = 'Australian Grand Prix' AND R1.positionOrder = 1 AND R2.positionOrder = (SELECT MAX(positionOrder) FROM results WHERE raceId = R1.raceId) AND R1.time IS NOT NULL AND R2.time IS NOT NULL;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/944/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT ((julianday('00:' || R1.time) - julianday('00:' || R2.time)) / julianday('00:' || R2.time)) * 100 AS percentage_faster FROM races T1, results R1, results R2 WHERE T1.raceId = R1.raceId AND T1.raceId = R2.raceId AND T1.year = 2008 AND T1.name = 'Australian Grand Prix' AND R1.positionOrder = 1 AND R2.positionOrder = (SELECT MAX(positionOrder) FROM results WHERE raceId = R1.raceId) AND R1.time IS NOT NULL AND R2.time IS NOT NULL;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/944/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT ((julianday('00:' || R1.time) - julianday('00:' || R2.time)) / julianday('00:' || R2.time)) * 100 AS percentage_faster FROM races T1 JOIN results R1 ON T1.raceId = R1.raceid JOIN results R2 ON T1.raceId = R2.raceId WHERE T1.year = 2008 AND T1.name = 'Australian Grand Prix' AND R1.positionOrder = 1 AND R2.positionOrder = (SELECT MAX(positionOrder) FROM results WHERE raceId = R1.raceId) AND R1.time IS NOT NULL AND R2.time IS NOT NULL;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/944/ce0.sqlite": []
+  }
+]

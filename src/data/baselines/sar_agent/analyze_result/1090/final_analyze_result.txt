@@ -1,0 +1,15 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation: The query correctly identifies the oldest player (earliest birthday) but returns the long-passing value from every attribute record that player has (4 rows: 75,75,72,72).  The question asks for “the” long-passing score, implying a single value, so the query should pick one record – usually the most recent (or possibly the highest) value.  Because it does not restrict by date, aggregate, or LIMIT, the result set is larger than expected and depends on duplicate rows, so it is logically incomplete.  Furthermore, the question itself is ambiguous because the same player has several long-passing scores recorded on different dates; without stating whether to take the latest, earliest, maximum, etc., more than one correct answer is possible.  
+Revised:  
+```
+SELECT `long_passing`
+FROM `Player_Attributes`
+WHERE `player_api_id` = (
+        SELECT `player_api_id`
+        FROM `Player`
+        ORDER BY `birthday` ASC
+        LIMIT 1)
+ORDER BY `date` DESC
+LIMIT 1;
+```  This returns the most recent long-passing score (75) for the oldest player.  

@@ -1,0 +1,84 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(-61.9, 61.9, 0)"
+    ]
+  },
+  {
+    "gold": "SELECT CAST(SUM(IIF(T1.Segment = 'SME', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) - CAST(SUM(IIF(T1.Segment = 'LAM', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) , CAST(SUM(IIF(T1.Segment = 'LAM', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) - CAST(SUM(IIF(T1.Segment = 'KAM', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) , CAST(SUM(IIF(T1.Segment = 'KAM', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) - CAST(SUM(IIF(T1.Segment = 'SME', T2.Consumption, 0)) AS REAL) / COUNT(T1.CustomerID) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND T2.Consumption = ( SELECT MIN(Consumption) FROM yearmonth ) AND T2.Date BETWEEN 201301 AND 201312",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(-61.9, 61.9, 0.0)"
+    ]
+  },
+  {
+    "pred": "WITH FilteredData AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), MinConsumption AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM FilteredData GROUP BY Segment), AvgConsumption AS (SELECT F.Segment, AVG(F.TotalConsumption) AS AvgConsumption FROM FilteredData F JOIN MinConsumption M ON F.Segment = M.Segment AND F.TotalConsumption = M.MinConsumption GROUP BY F.Segment) SELECT (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  },
+  {
+    "pred": "WITH YearlyConsumption AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 INNER JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), LowestConsumers AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM YearlyConsumption GROUP BY Segment), AverageConsumption AS (SELECT Y.Segment, AVG(Y.TotalConsumption) AS AvgConsumption FROM YearlyConsumption Y JOIN LowestConsumers L ON Y.Segment = L.Segment AND Y.TotalConsumption = L.MinConsumption GROUP BY Y.Segment) SELECT (SELECT AvgConsumption FROM AverageConsumption WHERE Segment = 'SME') - (SELECT AvgConsumption FROM AverageConsumption WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM AverageConsumption WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM AverageConsumption WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM AverageConsumption WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM AverageConsumption WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  },
+  {
+    "pred": "WITH ConsumptionData AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), MinConsumers AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM ConsumptionData GROUP BY Segment), SegmentAvg AS (SELECT C.Segment, AVG(C.TotalConsumption) AS AvgConsumption FROM ConsumptionData C JOIN MinConsumers M ON C.Segment = M.Segment AND C.TotalConsumption = M.MinConsumption GROUP BY C.Segment) SELECT (SELECT AvgConsumption FROM SegmentAvg WHERE Segment = 'SME') - (SELECT AvgConsumption FROM SegmentAvg WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM SegmentAvg WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM SegmentAvg WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM SegmentAvg WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM SegmentAvg WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  },
+  {
+    "pred": "WITH AnnualData AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), MinValues AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM AnnualData GROUP BY Segment), AvgValues AS (SELECT A.Segment, AVG(A.TotalConsumption) AS AvgConsumption FROM AnnualData A JOIN MinValues M ON A.Segment = M.Segment AND A.TotalConsumption = M.MinConsumption GROUP BY A.Segment) SELECT (SELECT AvgConsumption FROM AvgValues WHERE Segment = 'SME') - (SELECT AvgConsumption FROM AvgValues WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM AvgValues WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM AvgValues WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM AvgValues WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM AvgValues WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  },
+  {
+    "pred": "WITH ConsumptionSummary AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), MinConsumptionPerSegment AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM ConsumptionSummary GROUP BY Segment), AverageConsumptionPerSegment AS (SELECT C.Segment, AVG(C.TotalConsumption) AS AvgConsumption FROM ConsumptionSummary C JOIN MinConsumptionPerSegment M ON C.Segment = M.Segment AND C.TotalConsumption = M.MinConsumption GROUP BY C.Segment) SELECT (SELECT AvgConsumption FROM AverageConsumptionPerSegment WHERE Segment = 'SME') - (SELECT AvgConsumption FROM AverageConsumptionPerSegment WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM AverageConsumptionPerSegment WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM AverageConsumptionPerSegment WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM AverageConsumptionPerSegment WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM AverageConsumptionPerSegment WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  },
+  {
+    "pred": "WITH YearlyTotals AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), Minimums AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM YearlyTotals GROUP BY Segment), Averages AS (SELECT Y.Segment, AVG(Y.TotalConsumption) AS AvgConsumption FROM YearlyTotals Y JOIN Minimums M ON Y.Segment = M.Segment AND Y.TotalConsumption = M.MinConsumption GROUP BY Y.Segment) SELECT (SELECT AvgConsumption FROM Averages WHERE Segment = 'SME') - (SELECT AvgConsumption FROM Averages WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM Averages WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM Averages WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM Averages WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM Averages WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  },
+  {
+    "pred": "WITH ConsumptionAgg AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), MinConsumption AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM ConsumptionAgg GROUP BY Segment), AvgConsumption AS (SELECT C.Segment, AVG(C.TotalConsumption) AS AvgConsumption FROM ConsumptionAgg C JOIN MinConsumption M ON C.Segment = M.Segment AND C.TotalConsumption = M.MinConsumption GROUP BY C.Segment) SELECT (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  },
+  {
+    "pred": "WITH AnnualConsumption AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), MinConsumption AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM AnnualConsumption GROUP BY Segment), AvgConsumption AS (SELECT A.Segment, AVG(A.TotalConsumption) AS AvgConsumption FROM AnnualConsumption A JOIN MinConsumption M ON A.Segment = M.Segment AND A.TotalConsumption = M.MinConsumption GROUP BY A.Segment) SELECT (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  },
+  {
+    "pred": "WITH TotalConsumption AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), MinConsumption AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM TotalConsumption GROUP BY Segment), AvgConsumption AS (SELECT T.Segment, AVG(T.TotalConsumption) AS AvgConsumption FROM TotalConsumption T JOIN MinConsumption M ON T.Segment = M.Segment AND T.TotalConsumption = M.MinConsumption GROUP BY T.Segment) SELECT (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  },
+  {
+    "pred": "WITH Consumption AS (SELECT T1.CustomerID, T1.Segment, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND SUBSTR(T2.Date, 1, 4) = '2013' GROUP BY T1.CustomerID), MinConsumption AS (SELECT Segment, MIN(TotalConsumption) AS MinConsumption FROM Consumption GROUP BY Segment), AvgConsumption AS (SELECT C.Segment, AVG(C.TotalConsumption) AS AvgConsumption FROM Consumption C JOIN MinConsumption M ON C.Segment = M.Segment AND C.TotalConsumption = M.MinConsumption GROUP BY C.Segment) SELECT (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') AS SME_LAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'LAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') AS LAM_KAM_Diff, (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'KAM') - (SELECT AvgConsumption FROM AvgConsumption WHERE Segment = 'SME') AS KAM_SME_Diff;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1481/ce0.sqlite": [
+      "(None, None, None)"
+    ]
+  }
+]

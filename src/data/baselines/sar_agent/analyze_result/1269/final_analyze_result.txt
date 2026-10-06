@@ -1,0 +1,16 @@
+Correctness: No – the annotated query tests the date in Laboratory.`Date`, never checks Examination.`Examination Date`, and leaves the date literal un-quoted; therefore it does not satisfy the requirement “examination done after 1997-01-01”.  
+Is_ambiguous: No – the question unambiguously asks for patient IDs whose examination date is after 1997-01-01 and whose anti-scl70 is normal/negative.  
+Explanation:  
+1. The date of an examination is stored in Examination.`Examination Date`, not in Laboratory.`Date`; the annotated query does not reference the Examination table at all, so it cannot guarantee that the examination happened after 1997-01-01.  
+2. By filtering on Laboratory.`Date` instead, it may return patients who have a late laboratory test but an early examination, or miss patients whose examination is late but laboratory test is earlier.  
+3. The literal 1997-01-01 is not quoted, which SQLite evaluates arithmetically (→ 1995), making the comparison wrong even for Laboratory dates.  
+4. A patient can have multiple qualifying laboratory rows, so duplicates may be produced; DISTINCT is not used.  
+For these reasons the query is logically incorrect.  
+Revised:  
+```
+SELECT DISTINCT e.`ID`
+FROM `Examination` AS e
+JOIN `Laboratory`  AS l ON e.`ID` = l.`ID`
+WHERE e.`Examination Date` > '1997-01-01'
+  AND l.`SC170` IN ('negative', '0');
+```

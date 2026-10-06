@@ -1,0 +1,60 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/559/ce0.sqlite": [
+      "('2011-01-11',)",
+      "('2011-01-25',)"
+    ]
+  },
+  {
+    "gold": "SELECT CreationDate FROM votes GROUP BY CreationDate ORDER BY COUNT(Id) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/559/ce0.sqlite": [
+      "('2011-01-25',)"
+    ]
+  },
+  {
+    "pred": "SELECT CreationDate FROM votes WHERE CreationDate IS NOT NULL GROUP BY CreationDate ORDER BY COUNT(Id) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/559/ce0.sqlite": [
+      "('2011-01-25',)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.CreationDate FROM (SELECT CreationDate, COUNT(Id) AS VoteCount FROM votes WHERE CreationDate IS NOT NULL GROUP BY CreationDate) T1 ORDER BY T1.VoteCount DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/559/ce0.sqlite": [
+      "('2011-01-11',)"
+    ]
+  },
+  {
+    "pred": "SELECT CreationDate FROM votes WHERE CreationDate IS NOT NULL GROUP BY CreationDate HAVING COUNT(Id) = (SELECT MAX(VoteCount) FROM (SELECT COUNT(Id) AS VoteCount FROM votes WHERE CreationDate IS NOT NULL GROUP BY CreationDate) T2);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/559/ce0.sqlite": [
+      "('2011-01-11',)",
+      "('2011-01-25',)"
+    ]
+  },
+  {
+    "pred": "WITH VoteCounts AS (SELECT CreationDate, COUNT(Id) AS VoteCount FROM votes WHERE CreationDate IS NOT NULL GROUP BY CreationDate) SELECT CreationDate FROM VoteCounts WHERE VoteCount = (SELECT MAX(VoteCount) FROM VoteCounts);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/559/ce0.sqlite": [
+      "('2011-01-11',)",
+      "('2011-01-25',)"
+    ]
+  },
+  {
+    "pred": "SELECT CreationDate FROM (SELECT CreationDate, COUNT(Id) AS VoteCount FROM votes WHERE CreationDate IS NOT NULL GROUP BY CreationDate ORDER BY VoteCount DESC) T1 LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/559/ce0.sqlite": [
+      "('2011-01-25',)"
+    ]
+  },
+  {
+    "pred": "WITH RankedDates AS (SELECT CreationDate, RANK() OVER (ORDER BY COUNT(Id) DESC) AS Rank FROM votes WHERE CreationDate IS NOT NULL GROUP BY CreationDate) SELECT CreationDate FROM RankedDates WHERE Rank = 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/559/ce0.sqlite": [
+      "('2011-01-25',)",
+      "('2011-01-11',)"
+    ]
+  }
+]

@@ -1,0 +1,16 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The query filters to loans approved in 1997 whose account has frequency = 'POPLATEK TYDNE', but it returns only a single account because of ORDER BY amount LIMIT 1. If several accounts share the same minimum approved amount the other qualifying accounts would be omitted. Therefore the query can produce an incomplete answer. All other filters and joins are appropriate, and the question wording is clear and specific.
+Revised:
+SELECT DISTINCT T2.account_id
+FROM loan   AS T1
+JOIN account AS T2 ON T1.account_id = T2.account_id
+WHERE STRFTIME('%Y', T1.date) = '1997'
+  AND T2.frequency = 'POPLATEK TYDNE'
+  AND T1.amount = (
+        SELECT MIN(l.amount)
+        FROM loan   AS l
+        JOIN account AS a ON l.account_id = a.account_id
+        WHERE STRFTIME('%Y', l.date) = '1997'
+          AND a.frequency = 'POPLATEK TYDNE'
+  );

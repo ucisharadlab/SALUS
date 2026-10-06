@@ -1,0 +1,61 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/349/ce9.sqlite": [
+      "('2147483648', None, 1)"
+    ]
+  },
+  {
+    "gold": "SELECT T1.name, T1.artist, T1.isPromo FROM cards AS T1 INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid WHERE T1.isPromo = 1 AND T1.artist = (SELECT artist FROM cards WHERE isPromo = 1 GROUP BY artist HAVING COUNT(DISTINCT uuid) = (SELECT MAX(count_uuid) FROM ( SELECT COUNT(DISTINCT uuid) AS count_uuid FROM cards WHERE isPromo = 1 GROUP BY artist ))) LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/349/ce9.sqlite": []
+  },
+  {
+    "pred": "SELECT T1.name, T1.artist, T1.isPromo FROM cards T1 JOIN (SELECT uuid, COUNT(uuid) AS ruling_count FROM rulings GROUP BY uuid) T2 ON T1.uuid = T2.uuid WHERE T2.ruling_count = (SELECT MAX(ruling_count) FROM (SELECT COUNT(uuid) AS ruling_count FROM rulings GROUP BY uuid))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/349/ce9.sqlite": [
+      "('2147483648', None, 1)"
+    ]
+  },
+  {
+    "pred": "SELECT name, artist, isPromo FROM cards WHERE uuid = (SELECT uuid FROM rulings GROUP BY uuid ORDER BY COUNT(uuid) DESC LIMIT 1)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/349/ce9.sqlite": [
+      "('2147483648', None, 1)"
+    ]
+  },
+  {
+    "pred": "SELECT name, artist, isPromo FROM cards INNER JOIN (SELECT uuid, COUNT(uuid) AS total FROM rulings GROUP BY uuid) AS subquery ON cards.uuid = subquery.uuid WHERE subquery.total = (SELECT MAX(total) FROM (SELECT COUNT(uuid) AS total FROM rulings GROUP BY uuid) AS subquery2)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/349/ce9.sqlite": [
+      "('2147483648', None, 1)"
+    ]
+  },
+  {
+    "pred": "SELECT name, artist, isPromo FROM cards WHERE uuid = (SELECT uuid FROM (SELECT uuid, COUNT(uuid) AS cnt FROM rulings GROUP BY uuid ORDER BY cnt DESC LIMIT 1) AS max_rulings)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/349/ce9.sqlite": [
+      "('2147483648', None, 1)"
+    ]
+  },
+  {
+    "pred": "SELECT name, artist, isPromo FROM cards WHERE uuid = (SELECT uuid FROM rulings GROUP BY uuid ORDER BY COUNT(*) DESC LIMIT 1)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/349/ce9.sqlite": [
+      "('2147483648', None, 1)"
+    ]
+  },
+  {
+    "pred": "SELECT name, artist, isPromo FROM cards WHERE uuid = (SELECT uuid FROM rulings GROUP BY uuid HAVING COUNT(uuid) = (SELECT COUNT(uuid) FROM rulings GROUP BY uuid ORDER BY COUNT(uuid) DESC LIMIT 1))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/349/ce9.sqlite": [
+      "('2147483648', None, 1)"
+    ]
+  },
+  {
+    "pred": "SELECT name, artist, isPromo FROM cards WHERE uuid = (SELECT uuid FROM (SELECT uuid, COUNT(uuid) AS ruling_count FROM rulings GROUP BY uuid ORDER BY ruling_count DESC LIMIT 1) AS max_rulings)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/349/ce9.sqlite": [
+      "('2147483648', None, 1)"
+    ]
+  }
+]

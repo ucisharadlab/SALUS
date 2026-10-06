@@ -1,0 +1,72 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": []
+  },
+  {
+    "gold": "SELECT COUNT(DISTINCT T1.Id) FROM badges AS T1 INNER JOIN users AS T2 ON T1.UserId = T2.Id WHERE T1.Name IN ('Supporter', 'Teacher') AND T2.Location = 'New York'",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(DISTINCT T1.Id) FROM users T1 JOIN badges T2 ON T1.Id = T2.UserId WHERE T1.Location = 'New York' AND T2.Name IN ('Teacher', 'Supporter') GROUP BY T1.Id HAVING COUNT(DISTINCT T2.Name) = 2;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT COUNT(*) FROM (SELECT T1.Id FROM users T1 INNER JOIN badges T2 ON T1.Id = T2.UserId WHERE T1.Location = 'New York' GROUP BY T1.Id HAVING SUM(CASE WHEN T2.Name = 'Teacher' THEN 1 ELSE 0 END) > 0 AND SUM(CASE WHEN T2.Name = 'Supporter' THEN 1 ELSE 0 END) > 0);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(UserId) FROM (SELECT UserId FROM badges WHERE Name = 'Teacher' INTERSECT SELECT UserId FROM badges WHERE Name = 'Supporter') AS SubQuery JOIN users ON users.Id = SubQuery.UserId WHERE Location = 'New York';",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "WITH NewYorkUsers AS (SELECT Id FROM users WHERE Location = 'New York'), TeacherSupporter AS (SELECT UserId FROM badges WHERE Name = 'Teacher' UNION ALL SELECT UserId FROM badges WHERE Name = 'Supporter') SELECT COUNT(DISTINCT UserId) FROM TeacherSupporter WHERE UserId IN (SELECT Id FROM NewYorkUsers) GROUP BY UserId HAVING COUNT(*) = 2;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT COUNT(*) FROM (SELECT T1.Id FROM users T1 JOIN badges T2 ON T1.Id = T2.UserId WHERE T1.Location = 'New York' AND T2.Name IN ('Teacher', 'Supporter') GROUP BY T1.Id HAVING COUNT(DISTINCT T2.Name) = 2) AS Result;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(DISTINCT T1.Id) FROM users T1, badges T2 WHERE T1.Id = T2.UserId AND T1.Location = 'New York' AND T2.Name IN ('Teacher', 'Supporter') GROUP BY T1.Id HAVING COUNT(DISTINCT T2.Name) = 2;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT COUNT(DISTINCT UserId) FROM badges WHERE UserId IN (SELECT Id FROM users WHERE Location = 'New York') AND Name IN ('Teacher', 'Supporter') GROUP BY UserId HAVING COUNT(DISTINCT Name) = 2;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT COUNT(*) FROM (SELECT T1.Id FROM users T1 JOIN badges T2 ON T1.Id = T2.UserId WHERE T1.Location = 'New York' GROUP BY T1.Id HAVING COUNT(DISTINCT CASE WHEN T2.Name IN ('Teacher', 'Supporter') THEN T2.Name ELSE NULL END) = 2) AS Final;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "WITH QualifiedUsers AS (SELECT T1.Id FROM users T1 JOIN badges T2 ON T1.Id = T2.UserId WHERE T1.Location = 'New York' AND T2.Name IN ('Teacher', 'Supporter') GROUP BY T1.Id HAVING COUNT(DISTINCT T2.Name) = 2) SELECT COUNT(*) FROM QualifiedUsers;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(DISTINCT T1.Id) FROM users T1 INNER JOIN badges T2 ON T1.Id = T2.UserId WHERE T1.Location = 'New York' AND T2.Name IN ('Teacher', 'Supporter') GROUP BY T1.Id HAVING COUNT(DISTINCT T2.Name) = 2;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/593/ce0.sqlite": []
+  }
+]

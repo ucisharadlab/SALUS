@@ -1,0 +1,26 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The query only returns the raw `duration` values from the `pitStops` table for the specified race. 1) It omits any driver information, so the reader cannot see which duration belongs to which driver. 2) If a driver had more than one stop the query produces multiple rows for that driver, contradicting the wording “the time each driver spent …” which suggests one value per driver. 3) Because it neither aggregates the time per driver nor even labels the rows, it fails to satisfy the intent of the question.
+The question itself is slightly ambiguous: it could mean (a) list every pit-stop duration for every driver, or (b) give the total time each driver spent in the pits (sum of all their stops). Either interpretation requires driver identification; the current query fulfils neither fully.
+Revised:
+-- version that shows every individual stop
+SELECT d.`forename` || ' ' || d.`surname` AS driver,
+       ps.`stop`,
+       ps.`duration`
+FROM `pitStops` ps
+JOIN `races` r  ON r.`raceId` = ps.`raceId`
+JOIN `drivers` d ON d.`driverId` = ps.`driverId`
+WHERE r.`year` = 2011
+  AND r.`name` = 'Australian Grand Prix'
+ORDER BY driver, ps.`stop`;
+
+-- version that gives total pit-stop time per driver (if that was the intent)
+SELECT d.`forename` || ' ' || d.`surname` AS driver,
+       SUM(ps.`milliseconds`) / 1000.0 AS total_pit_time_seconds
+FROM `pitStops` ps
+JOIN `races` r  ON r.`raceId` = ps.`raceId`
+JOIN `drivers` d ON d.`driverId` = ps.`driverId`
+WHERE r.`year` = 2011
+  AND r.`name` = 'Australian Grand Prix'
+GROUP BY ps.`driverId`
+ORDER BY total_pit_time_seconds;

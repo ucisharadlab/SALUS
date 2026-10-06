@@ -1,0 +1,23 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation:  
+The question calls for the administrator e-mail address(es) of a school that
+• is located in San Bernardino County,
+• belongs to the district “San Bernardino City Unified”,
+• is of school-ownership codes Unified (DOC = 54) and public Intermediate/Middle (SOC = 62),
+• opened between 1 Jan 2009 and 31 Dec 2010.
+
+The annotated query instead filters on county = ‘San Bernardino’ AND *city* = ‘San Bernardino’ (the question never restricts city) and never checks that the district equals “San Bernardino City Unified”.  Consequently it would exclude any qualifying schools that lie in neighbouring cities served by the same district and would include any other district’s school that happens to be in the city of San Bernardino.  The join to `frpm` is unnecessary and could duplicate rows if multiple FRPM records exist.  Therefore, even though the current dataset happens to return the expected single row, the query is not logically correct.
+
+The wording “City of San Bernardino City Unified” is syntactically unclear: it can be read as a city name or as the district name, so the question itself is ambiguous.
+
+Revised:  
+```
+SELECT DISTINCT `AdmEmail1`, `AdmEmail2`
+FROM `schools`
+WHERE `County`  = 'San Bernardino'
+  AND `District` = 'San Bernardino City Unified'
+  AND `DOC`  = '54'   -- Unified School District
+  AND `SOC`  = '62'   -- Intermediate/Middle School (Public)
+  AND date(`OpenDate`) BETWEEN '2009-01-01' AND '2010-12-31';
+```

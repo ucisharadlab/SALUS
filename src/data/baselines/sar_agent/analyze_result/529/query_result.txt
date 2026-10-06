@@ -1,0 +1,35 @@
+Query: SELECT COUNT(*) FROM set_translations LIMIT 5
+Explaination of the query: Check if table accessible
+Result: [(1210,)]
+Query: SELECT COUNT(DISTINCT `setCode`) FROM `set_translations` WHERE `language`='Korean' LIMIT 5
+Explaination of the query: Count sets with Korean translation
+Result: [(121,)]
+Query: SELECT `setCode` FROM `set_translations` WHERE `language`='Korean' LIMIT 5
+Explaination of the query: sample set codes with Korean translation
+Result: [('10E',), ('4ED',), ('5DN',), ('5ED',), ('6ED',)]
+Query: SELECT `name` FROM `sets` WHERE `code` IN (SELECT `setCode` FROM `set_translations` WHERE `language`='Korean' AND `language` NOT LIKE '%Japanese%') LIMIT 5
+Explaination of the query: Execute annotated query sample
+Result: [('Tenth Edition',), ('Fourth Edition',), ('Fifth Dawn',), ('Fifth Edition',), ('Classic Sixth Edition',)]
+Query: WITH korean_sets AS (
+    SELECT DISTINCT `setCode` FROM `set_translations` WHERE `language`='Korean'
+)
+SELECT COUNT(*) FROM korean_sets ks WHERE EXISTS (
+    SELECT 1 FROM `set_translations` st WHERE st.`setCode` = ks.`setCode` AND st.`language`='Japanese'
+) LIMIT 5
+Explaination of the query: How many sets with Korean translation also have Japanese translation
+Result: [(121,)]
+Query: WITH korean_sets AS (
+    SELECT DISTINCT `setCode` FROM `set_translations` WHERE `language`='Korean'
+), no_japanese AS (
+    SELECT ks.`setCode` FROM korean_sets ks
+    WHERE NOT EXISTS (SELECT 1 FROM `set_translations` st WHERE st.`setCode`=ks.`setCode` AND st.`language`='Japanese')
+)
+SELECT COUNT(*) FROM no_japanese LIMIT 5
+Explaination of the query: count sets with Korean translation but without Japanese
+Result: [(0,)]
+Query: SELECT `name` FROM `sets` s
+WHERE EXISTS (SELECT 1 FROM `set_translations` st1 WHERE st1.`setCode` = s.`code` AND st1.`language`='Korean')
+  AND NOT EXISTS (SELECT 1 FROM `set_translations` st2 WHERE st2.`setCode` = s.`code` AND st2.`language`='Japanese')
+LIMIT 5
+Explaination of the query: correct query sample
+Result: []

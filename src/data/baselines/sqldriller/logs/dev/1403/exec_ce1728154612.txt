@@ -1,0 +1,41 @@
+----------CURRENT_PROMPT----------
+Table event(event_id, event_name, event_date, type, notes, location, status), 2 records:
+- {'event_id': 'recsgSUqFCJqekzL5', 'event_name': 'Fall Elections', 'event_date': '2019-11-24T09:00:00', 'type': 'Budget', 'notes': 'Monthly officers meeting', 'location': 'Campus Common', 'status': 'Closed'}, 
+- {'event_id': 'rec2mJrCofveboaz6', 'event_name': 'Officers meeting - March', 'event_date': '2019-09-12T06:00:00', 'type': 'Guest Speaker', 'notes': 'Monthly officers meeting', 'location': '258 S. Maple St.', 'status': 'Open'}
+Table budget(budget_id, category, spent, remaining, amount, event_status, link_to_event), 3 records:
+- {'budget_id': 'recpyBgyiqxFEFCI3', 'category': 'Parking', 'spent': 20.2, 'remaining': 7.19, 'amount': 25, 'event_status': 'Planning', 'link_to_event': 'rec2mJrCofveboaz6'}, 
+- {'budget_id': 'recXGXXRruuAY1JNN', 'category': 'Food', 'spent': 13.45, 'remaining': -24.25, 'amount': 20, 'event_status': 'Open', 'link_to_event': 'rec2mJrCofveboaz6'}, 
+- {'budget_id': 'recN9yY7okNrFps0Y', 'category': 'Food', 'spent': 173.06, 'remaining': -24.25, 'amount': 20, 'event_status': 'Open', 'link_to_event': 'recsgSUqFCJqekzL5'}
+
+Note that:
+- event.event_id is a primary key uniquely identifying each record of event.
+- budget.budget_id is a primary key uniquely identifying each record of budget.
+- budget.link_to_event is a foreign key referencing event.event_id.
+Only the primary key can be used to uniquely identify each record of table (i.e., each instance of entity), Other columns are non-unique attributes and cannot be used to uniquely identify each record. (e.g., counting number of singer should count by singer ids but not different singer names despite namesake)
+
+Indicate the name of the closed event whose cost has exceeded the budget the most.
+
+closed events refers to event_name where status = 'Closed'; exceed the budget the most refers to MIN(remaining) where remaining < 0
+----------REPLY 0----------
+To answer the query:
+'Indicate the name of the closed event whose cost has exceeded the budget the most.'
+
+First, we need to find records from the event table where status is 'Closed'. We have:
+- {'event_id': 'recsgSUqFCJqekzL5', 'event_name': 'Fall Elections', ... 'status': 'Closed'}
+
+We now identify budgets linked to this closed event by using the event_id:
+- {'link_to_event': 'recsgSUqFCJqekzL5', ... 'remaining': -24.25}
+
+The requirement specifies finding the event with the minimum value of 'remaining' where the value is negative (indicating exceeding the budget). For this event, we have:
+- Remaining = -24.25 (for the category 'Food' in the budget table)
+
+Since there is only one closed event and its linked budgets show a minimum remaining value of -24.25, it is the event where the cost has exceeded the budget the most.
+
+Output the name of the corresponding event:
+- 'Fall Elections'
+
+Formulate this as a result following the given instructions:
+```
+#result: [('Fall Elections',)]
+```
+----------END----------

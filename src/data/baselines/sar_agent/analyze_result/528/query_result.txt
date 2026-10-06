@@ -1,0 +1,31 @@
+Query: SELECT DISTINCT `status` FROM `legalities` LIMIT 5;
+Explaination of the query: Check capitalization of status values.
+Result: [('Legal',), ('Banned',), ('Restricted',)]
+Query: SELECT code FROM sets WHERE name = 'Hour of Devastation' LIMIT 5;
+Explaination of the query: find set code
+Result: [('HOU',)]
+Query: SELECT DISTINCT `name`, CASE WHEN `legalities`.`status` = 'Legal' THEN `legalities`.`format` ELSE NULL END AS fmt
+FROM `legalities`
+JOIN `cards` ON `cards`.`uuid` = `legalities`.`uuid`
+WHERE `cards`.`setCode` = 'HOU'
+LIMIT 5;
+Explaination of the query: Check sample output.
+Result: [('Act of Heroism', 'commander'), ('Act of Heroism', 'duel'), ('Act of Heroism', 'legacy'), ('Act of Heroism', 'modern'), ('Act of Heroism', 'pauper')]
+Query: SELECT COUNT(*) FROM (SELECT DISTINCT `cards`.`name`, CASE WHEN `legalities`.`status` = 'Legal' THEN `legalities`.`format` ELSE NULL END AS fmt FROM `legalities` JOIN `cards` ON `cards`.`uuid` = `legalities`.`uuid` WHERE `cards`.`setCode` = 'HOU') WHERE fmt IS NULL;
+Explaination of the query: Count NULL format rows from annotated query to see incorrectness.
+Result: [(0,)]
+Query: SELECT DISTINCT `status` FROM `legalities` WHERE `uuid` IN (SELECT `uuid` FROM `cards` WHERE `setCode`='HOU') LIMIT 5;
+Explaination of the query: Check statuses related to Hour of Devastation cards
+Result: [('Legal',)]
+Query: SELECT COUNT(DISTINCT `name`) FROM `cards` WHERE `setCode`='HOU';
+Explaination of the query: Get number of distinct card names in the set to compare.
+Result: [(199,)]
+Query: SELECT COUNT(DISTINCT `name`) FROM (
+SELECT DISTINCT `cards`.`name`, CASE WHEN `legalities`.`status` = 'Legal' THEN `legalities`.`format` ELSE NULL END AS fmt
+FROM `legalities`
+JOIN `cards` ON `cards`.`uuid` = `legalities`.`uuid`
+WHERE `cards`.`setCode` = 'HOU'
+);
+
+Explaination of the query: Number of distinct card names returned by annotated query, to compare to 199.
+Result: [(199,)]

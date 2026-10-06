@@ -1,0 +1,14 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The question asks for the percentage of COMPUNDS (molecules) that have at least one triple-bond. Therefore the numerator must be the number of DISTINCT `molecule_id`s that appear in the `bond` table with `bond_type = '#'`, while the denominator is the total number of molecules in the `molecule` table. 
+
+The annotator’s query works only on the `bond` table and returns the percentage of bonds that are triple ( `'#'` ) out of all bonds ( `COUNT(# bonds)/COUNT(all bonds)` ). It never groups by or deduplicates on `molecule_id`, so it answers a different question. The SQL is syntactically valid and uses correct column names, but its logic does not match the requirement, so it is incorrect.  
+
+The wording of the question is clear and can only be interpreted in one reasonable way, so there is no ambiguity.  
+
+Revised:  
+```
+SELECT
+  CAST(COUNT(DISTINCT CASE WHEN b.`bond_type` = '#' THEN b.`molecule_id` END) AS REAL) * 100.0 /
+  (SELECT COUNT(*) FROM `molecule`) AS percent_of_compounds_with_triple_bond;
+```

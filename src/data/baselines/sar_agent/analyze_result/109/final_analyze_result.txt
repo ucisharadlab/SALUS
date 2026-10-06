@@ -1,0 +1,14 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The question wants the count of female clients who actually opened (i.e., are registered as OWNERS of) accounts whose branch is the Jesenik district. To answer that we must: (1) start from `account` rows located in the Jesenik district (`district.A2 = 'Jesenik'`); (2) reach the corresponding owners through `disp` with `type = 'OWNER'`; (3) filter those owners whose `client.gender = 'F'`; (4) count distinct clients.  
+The annotated query instead joins `client` directly to `district` via the client’s home district, completely ignoring the account and disposition tables, so it returns the number of female residents in Jesenik (26) rather than female owners of Jesenik-branch accounts (22). Hence it is incorrect.  
+Revised:  
+```
+SELECT COUNT(DISTINCT c.client_id) AS cnt
+FROM account a
+JOIN district d  ON d.district_id = a.district_id
+JOIN disp di     ON di.account_id = a.account_id AND di.type = 'OWNER'
+JOIN client c    ON c.client_id  = di.client_id
+WHERE c.gender = 'F'
+  AND d.A2 = 'Jesenik';
+```

@@ -1,0 +1,4 @@
+Correctness: No – the query counts atoms, not molecules; denominator isn’t restricted to carcinogenic molecules, and missing DISTINCT, yielding wrong percentage.
+Is_ambiguous: No – the question unambiguously asks for the share of carcinogenic molecules that contain at least one chlorine atom.
+Explanation: The correct calculation needs: (distinct carcinogenic molecules with at least one ‘cl’) / (total carcinogenic molecules). Database shows 152 carcinogenic molecules, 44 with chlorine → 28.95 %. Annotated query joins atom-molecule and counts rows, so both numerator and denominator use atom granularity and denominator includes non-carcinogenic molecules. Hence result ≈1.27 % is wrong.
+Revised: SELECT 100.0 * COUNT(DISTINCT m.molecule_id) / (SELECT COUNT(*) FROM molecule WHERE label = '+') AS percentage_cl_in_carcinogenic FROM molecule m JOIN atom a ON a.molecule_id = m.molecule_id WHERE m.label = '+' AND a.element = 'cl';

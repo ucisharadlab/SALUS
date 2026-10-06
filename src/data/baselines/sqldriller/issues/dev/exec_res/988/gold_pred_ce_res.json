@@ -1,0 +1,70 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "('Mack Papis',)"
+    ]
+  },
+  {
+    "gold": "SELECT T2.forename, T2.surname FROM pitStops AS T1 INNER JOIN drivers AS T2 on T1.driverId = T2.driverId WHERE T2.nationality = 'German' AND STRFTIME('%Y', T2.dob) BETWEEN '1980' AND '1985' GROUP BY T2.forename, T2.surname ORDER BY AVG(T1.duration) LIMIT 3",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "('Mack', 'Papis')"
+    ]
+  },
+  {
+    "pred": "SELECT driverId FROM (SELECT D.driverId, AVG(CAST(SUBSTR(P.duration, 1, LENGTH(P.duration) - 1) AS FLOAT)) AS avg_duration FROM drivers D JOIN pitStops P ON D.driverId = P.driverId WHERE D.nationality = 'German' AND strftime('%Y', D.dob) BETWEEN '1981' AND '1984' GROUP BY D.driverId ORDER BY avg_duration ASC LIMIT 3) AS SubQuery;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "(469,)"
+    ]
+  },
+  {
+    "pred": "WITH DriverPitStops AS (SELECT D.driverId, AVG(CAST(SUBSTR(P.duration, 1, LENGTH(P.duration) - 1) AS FLOAT)) AS AverageDuration FROM drivers D JOIN pitStops P ON D.driverId = P.driverId WHERE D.nationality = 'German' AND D.dob BETWEEN '1981-01-01' AND '1984-12-31' GROUP BY D.driverId) SELECT driverId FROM DriverPitStops ORDER BY AverageDuration ASC LIMIT 3;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "(469,)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.driverId FROM (SELECT D.driverId, AVG(CAST(SUBSTR(P.duration, 0, INSTR(P.duration, 's') - 1) AS FLOAT)) AS avg_duration FROM drivers D JOIN pitStops P ON D.driverId = P.driverId WHERE D.nationality = 'German' AND D.dob > '1980-12-31' AND D.dob < '1985-01-01' GROUP BY D.driverId) T1 ORDER BY T1.avg_duration ASC LIMIT 3;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "(469,)"
+    ]
+  },
+  {
+    "pred": "SELECT driverId FROM (SELECT driverId, AVG(CAST(SUBSTR(duration, 1, LENGTH(duration) - 1) AS FLOAT)) AS avgDuration FROM drivers JOIN pitStops USING (driverId) WHERE nationality = 'German' AND strftime('%Y', dob) BETWEEN '1981' AND '1984' GROUP BY driverId ORDER BY avgDuration ASC LIMIT 3) AS Result;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "(469,)"
+    ]
+  },
+  {
+    "pred": "WITH RankedDrivers AS (SELECT D.driverId, AVG(CAST(SUBSTR(P.duration, 1, LENGTH(P.duration) - 1) AS FLOAT)) AS AvgDuration FROM drivers D JOIN pitStops P ON D.driverId = P.driverId WHERE D.nationality = 'German' AND D.dob BETWEEN '1981-01-01' AND '1984-12-31' GROUP BY D.driverId) SELECT driverId FROM RankedDrivers ORDER BY AvgDuration ASC LIMIT 3;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "(469,)"
+    ]
+  },
+  {
+    "pred": "SELECT driverId FROM drivers D WHERE EXISTS (SELECT NULL FROM pitStops P WHERE D.driverId = P.driverId GROUP BY P.driverId HAVING D.nationality = 'German' AND strftime('%Y', D.dob) BETWEEN '1981' AND '1984' ORDER BY AVG(CAST(SUBSTR(P.duration, 1, LENGTH(P.duration) - 1) AS FLOAT)) ASC LIMIT 3);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "(469,)"
+    ]
+  },
+  {
+    "pred": "SELECT driverId FROM (SELECT D.driverId FROM drivers D JOIN pitStops P ON D.driverId = P.driverId WHERE D.nationality = 'German' AND strftime('%Y', D.dob) BETWEEN '1981' AND '1984' GROUP BY D.driverId ORDER BY AVG(CAST(SUBSTR(P.duration, 1, LENGTH(P.duration) - 1) AS FLOAT)) ASC LIMIT 3) AS TopDrivers;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "(469,)"
+    ]
+  },
+  {
+    "pred": "WITH CTE AS (SELECT D.driverId, AVG(CAST(SUBSTR(P.duration, 1, LENGTH(P.duration) - 1) AS FLOAT)) AS AvgDuration FROM drivers D INNER JOIN pitStops P ON D.driverId = P.driverId WHERE D.nationality = 'German' AND D.dob BETWEEN '1981-01-01' AND '1984-12-31' GROUP BY D.driverId) SELECT driverId FROM CTE ORDER BY AvgDuration ASC LIMIT 3;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/988/ce0.sqlite": [
+      "(469,)"
+    ]
+  }
+]

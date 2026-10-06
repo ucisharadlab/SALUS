@@ -1,0 +1,19 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation: The query simply counts female clients whose own residence district belongs to the region “south Bohemia”.  It never touches the account or disp tables, therefore it does not count “accounts”; if a woman owns two accounts she is still counted once, and if she lives elsewhere but owns an account in South Bohemia she is not counted at all.  According to the schema, to answer the question one has to
+1) start with `account`, join its `district_id` to `district` to find those accounts whose branch is in the South-Bohemia region,  
+2) join `disp` to link accounts to clients,  
+3) restrict to female clients (`client.gender = 'F'`), and finally  
+4) count the matching `account_id` values.  
+Because the annotated query skips all these steps, it does not answer the asked question.
+
+Moreover the wording “female clients' accounts in the region of South Bohemia” can be read in (at least) two ways:  
+• accounts whose branch is in South Bohemia, or  
+• accounts that belong to clients who live in South Bohemia.  
+Hence the question itself is ambiguous.
+
+Revised: SELECT COUNT(*)
+FROM `account`  a
+JOIN `district` d        ON a.`district_id` = d.`district_id`  AND d.`A3` = 'south Bohemia'
+JOIN `disp`     di       ON di.`account_id` = a.`account_id`
+JOIN `client`   c        ON c.`client_id`   = di.`client_id`  AND c.`gender` = 'F';

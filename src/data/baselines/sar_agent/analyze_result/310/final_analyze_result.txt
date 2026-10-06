@@ -1,0 +1,10 @@
+Correctness: No – the second figure is over-counted because every double-bond row is summed, so carcinogenic molecules with more than one double bond are counted multiple times.
+Is_ambiguous: No – the question clearly requests two numbers: (1) distinct molecules that have at least one double bond and (2) among those, how many are carcinogenic.
+Explanation: The join between `bond` and `molecule` filtered by `bond_type = '='` yields one row per double bond. `COUNT(DISTINCT T2.molecule_id)` correctly deduplicates molecules for the first number. However `SUM(CASE WHEN T2.label = '+' THEN 1 END)` is applied per row, not per molecule, inflating the carcinogenic count whenever a carcinogenic molecule possesses multiple double bonds. The second measure must therefore also deduplicate on molecule_id.
+Revised:
+SELECT
+    COUNT(DISTINCT m.molecule_id) AS total_with_double_bond,
+    COUNT(DISTINCT CASE WHEN m.label = '+' THEN m.molecule_id END) AS carcinogenic_with_double_bond
+FROM bond AS b
+JOIN molecule AS m ON b.molecule_id = m.molecule_id
+WHERE b.bond_type = '=';

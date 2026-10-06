@@ -1,0 +1,12 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The query aggregates the number of crimes in 1996 (column `A16`) for the two regions by summing rows where `A3 = 'east Bohemia'` and where `A3 = 'north Bohemia'`, then subtracts the second sum from the first.  Although it follows the schema, the question only says “the difference … in East and North Bohemia,” which does not specify an order or sign.  Hence three equally plausible interpretations exist: east – north, north – east, or the absolute difference.  The annotated query hard-codes east – north, returning –17 734.  If the evaluator expects +17 734 or 17 734, the answer will be marked wrong, so the pair is not reliably correct.  
+Revised:  
+For an unambiguous absolute difference:
+```
+SELECT ABS(
+         SUM(CASE WHEN `A3` = 'east Bohemia'  THEN `A16` ELSE 0 END) -
+         SUM(CASE WHEN `A3` = 'north Bohemia' THEN `A16` ELSE 0 END)
+       ) AS crime_difference_1996
+FROM `district`;
+```

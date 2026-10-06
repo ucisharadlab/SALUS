@@ -1,0 +1,28 @@
+Query: SELECT County, COUNT(*) as num FROM schools WHERE StatusType='Closed' GROUP BY County ORDER BY num DESC LIMIT 5
+Explaination of the query: Check top counties with closed schools
+Result: [('Los Angeles', 879), ('San Diego', 273), ('Alameda', 270), ('Santa Clara', 265), ('Orange', 192)]
+Query: SELECT DISTINCT County, School, ClosedDate FROM schools WHERE County = ( SELECT County FROM schools WHERE StatusType = 'Closed' GROUP BY County ORDER BY COUNT(School) DESC LIMIT 1 ) AND StatusType = 'Closed' AND School IS NOT NULL LIMIT 5
+Explaination of the query: Test annotated query output sample
+Result: [('Los Angeles', 'Progressive Education Entrepreneurial Charter', '2004-10-15'), ('Los Angeles', 'Opportunities Unlimited Charter High', '2014-06-30'), ('Los Angeles', 'Wisdom Academy for Young Scientists', '2015-05-29'), ('Los Angeles', 'Via Nueva Academy', '2011-06-28'), ('Los Angeles', 'Celerity Sirius Charter', '2016-06-30')]
+Query: SELECT County, School, COUNT(*) as c FROM schools WHERE StatusType='Closed' GROUP BY County, School HAVING c>1 LIMIT 5
+Explaination of the query: check duplicate school records in closed status
+Result: [('Alameda', None, 6), ('Alameda', 'Leadership Preparatory High', 2), ('Alameda', 'Linda Vista Elementary', 2), ('Alameda', 'Longfellow Elementary', 2), ('Alameda', 'Washington Elementary', 2)]
+Query: SELECT County, COUNT(*) as total_rows, COUNT(DISTINCT School) as distinct_schools FROM schools WHERE StatusType='Closed' GROUP BY County ORDER BY total_rows DESC LIMIT 10
+Explaination of the query: compare total rows vs distinct schools by county
+Result: [('Los Angeles', 879, 850), ('San Diego', 273, 271), ('Alameda', 270, 260), ('Santa Clara', 265, 263), ('Orange', 192, 187), ('San Bernardino', 187, 182), ('Sacramento', 177, 172), ('Contra Costa', 140, 137), ('Fresno', 128, 119), ('San Joaquin', 125, 120)]
+Query: SELECT County, COUNT(DISTINCT School) as distinct_schools
+FROM schools WHERE StatusType='Closed'
+GROUP BY County
+ORDER BY distinct_schools DESC
+LIMIT 5
+Explaination of the query: top counties by distinct closed school names
+Result: [('Los Angeles', 850), ('San Diego', 271), ('Santa Clara', 263), ('Alameda', 260), ('Orange', 187)]
+Query: SELECT County, COUNT(*) total_rows, COUNT(DISTINCT School) as distinct_schools FROM schools WHERE StatusType='Closed' GROUP BY County ORDER BY total_rows DESC LIMIT 20
+Explaination of the query: top counties by closed school rows and distinct names
+Result: [('Los Angeles', 879, 850), ('San Diego', 273, 271), ('Alameda', 270, 260), ('Santa Clara', 265, 263), ('Orange', 192, 187), ('San Bernardino', 187, 182), ('Sacramento', 177, 172), ('Contra Costa', 140, 137), ('Fresno', 128, 119), ('San Joaquin', 125, 120), ('Riverside', 118, 112), ('San Mateo', 116, 109), ('San Francisco', 111, 106), ('Kern', 83, 78), ('Marin', 75, 75), ('Santa Barbara', 69, 64), ('Sonoma', 67, 64), ('Nevada', 65, 58), ('Ventura', 64, 61), ('Shasta', 64, 63)]
+Query: SELECT DISTINCT County, School, ClosedDate FROM schools WHERE County = ( SELECT County FROM schools WHERE StatusType = 'Closed' GROUP BY County ORDER BY COUNT(School) DESC LIMIT 1 ) AND StatusType = 'Closed' AND School IS NOT NULL LIMIT 5
+Explaination of the query: sample output
+Result: [('Los Angeles', 'Progressive Education Entrepreneurial Charter', '2004-10-15'), ('Los Angeles', 'Opportunities Unlimited Charter High', '2014-06-30'), ('Los Angeles', 'Wisdom Academy for Young Scientists', '2015-05-29'), ('Los Angeles', 'Via Nueva Academy', '2011-06-28'), ('Los Angeles', 'Celerity Sirius Charter', '2016-06-30')]
+Query: SELECT County, COUNT(DISTINCT School) as d FROM schools WHERE StatusType='Closed' GROUP BY County ORDER BY d DESC LIMIT 1
+Explaination of the query: find top county by distinct closed schools
+Result: [('Los Angeles', 850)]

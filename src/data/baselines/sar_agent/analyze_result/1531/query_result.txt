@@ -1,0 +1,54 @@
+Query: SELECT COUNT(*) FROM `yearmonth` LIMIT 5;
+Explaination of the query: Check if yearmonth table exists and row count.
+Result: [(383282,)]
+Query: SELECT T2.CustomerID, SUM(T2.Amount * T2.Price) as total_spent
+FROM `transactions_1k` T2
+GROUP BY T2.CustomerID
+ORDER BY total_spent DESC
+LIMIT 5;
+Explaination of the query: Find top spending customers by total spend calculated from transactions table.
+Result: [(13665, 1521297.3599999999), (16358, 809557.67), (7938, 554529.36), (39407, 434277.2), (6220, 430351.89999999997)]
+Query: SELECT `CustomerID`, MAX(`Consumption`) as max_cons FROM `yearmonth` ORDER BY max_cons DESC LIMIT 5;
+Explaination of the query: find highest consumption directly (since there is no grouping, each row counts individually, consumption maybe by date).
+Result: [(12459, 2052187.11)]
+Query: WITH cust_spend AS (SELECT `CustomerID`, SUM(`Amount` * `Price`) AS total_spent, SUM(`Amount` * `Price`)*1.0 / SUM(`Amount`) as avg_price_per_item FROM `transactions_1k` GROUP BY `CustomerID`), top_cust AS (SELECT `CustomerID`, avg_price_per_item FROM cust_spend ORDER BY total_spent DESC LIMIT 1) SELECT top_cust.`CustomerID`, top_cust.avg_price_per_item, customers.`Currency` FROM top_cust JOIN `customers` ON customers.`CustomerID` = top_cust.`CustomerID` LIMIT 5;
+Explaination of the query: Compute top spending customer and average price per item; show currency.
+Result: [(13665, 5762.49, 'CZK')]
+Query: SELECT CustomerID, Consumption FROM `yearmonth` ORDER BY Consumption DESC LIMIT 5;
+Explaination of the query: Check top consumption rows
+Result: [(12459, 2052187.11), (16358, 1882582.36), (12459, 1851401.46), (12459, 1830161.05), (12459, 1807542.44)]
+Query: SELECT T2.CustomerID, SUM(T2.Price / T2.Amount) as avg_wrong, COUNT(*) as n_trans
+FROM `transactions_1k` T2
+WHERE T2.CustomerID = (
+     SELECT CustomerID
+     FROM `yearmonth`
+     ORDER BY Consumption DESC
+     LIMIT 1
+)
+GROUP BY T2.CustomerID
+LIMIT 5;
+Explaination of the query: Run annotated formula for candidate customer from yearmonth highest consumption row
+Result: [(12459, 203.8560787354258, 10)]
+Query: WITH cust_totals AS (
+    SELECT  t.`CustomerID`,
+            SUM(t.`Amount` * t.`Price`)           AS total_spent,
+            SUM(t.`Amount` * t.`Price`)*1.0 /
+            SUM(t.`Amount`)                       AS avg_price_per_item
+    FROM    `transactions_1k` t
+    GROUP BY t.`CustomerID`
+),
+top_cust AS (
+    SELECT  `CustomerID`, avg_price_per_item
+    FROM    cust_totals
+    ORDER BY total_spent DESC
+    LIMIT 1
+)
+SELECT  tc.`CustomerID`,
+        tc.`avg_price_per_item`,
+        c.`Currency`
+FROM    top_cust tc
+JOIN    `customers` c
+  ON    c.`CustomerID` = tc.`CustomerID`
+LIMIT 5;
+Explaination of the query: Compute top spending customer and verify result
+Result: [(13665, 5762.49, 'CZK')]

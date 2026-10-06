@@ -1,0 +1,76 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce1.sqlite": [
+      "('PSS, PM, SJS',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce2.sqlite": [
+      "('PM',)",
+      "('PSS',)",
+      "('RA',)",
+      "('SJS',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.Diagnosis FROM Laboratory T1 JOIN Patient T2 ON T1.ID = T2.ID WHERE T1.IGM <= 40 OR T1.IGM >= 400 GROUP BY T2.Diagnosis ORDER BY COUNT(T2.Diagnosis) DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce1.sqlite": [
+      "('PSS, PM, SJS',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce2.sqlite": [
+      "('SLE, PSS, MCTD',)"
+    ]
+  },
+  {
+    "pred": "SELECT Diagnosis FROM Patient WHERE ID IN (SELECT ID FROM Laboratory WHERE IGM <= 40 OR IGM >= 400) GROUP BY Diagnosis ORDER BY COUNT(*) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce1.sqlite": [
+      "('Vasculitis synd, PN susp',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce2.sqlite": [
+      "('SLE, PSS, MCTD',)"
+    ]
+  },
+  {
+    "pred": "SELECT Diagnosis FROM (SELECT T2.Diagnosis FROM Laboratory T1 JOIN Patient T2 ON T1.ID = T2.ID WHERE T1.IGM <= 40 OR T1.IGM >= 400) GROUP BY Diagnosis ORDER BY COUNT(Diagnosis) DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce1.sqlite": [
+      "('PSS, PM, SJS',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce2.sqlite": [
+      "('SLE, PSS, MCTD',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.Diagnosis FROM Laboratory T1 JOIN Patient T2 ON T1.ID = T2.ID WHERE T1.IGM <= 40 OR T1.IGM >= 400 GROUP BY T2.Diagnosis HAVING COUNT(T2.Diagnosis) = (SELECT MAX(Cnt) FROM (SELECT COUNT(T2.Diagnosis) AS Cnt FROM Laboratory T1 JOIN Patient T2 ON T1.ID = T2.ID WHERE T1.IGM <= 40 OR T1.IGM >= 400 GROUP BY T2.Diagnosis));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce1.sqlite": [
+      "('PSS, PM, SJS',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce2.sqlite": [
+      "('PM, PSS, RA, SJS',)",
+      "('SLE, PSS, MCTD',)"
+    ]
+  },
+  {
+    "pred": "WITH AbnormalIgMPatients AS (SELECT ID FROM Laboratory WHERE IGM <= 40 OR IGM >= 400) SELECT Diagnosis FROM Patient JOIN AbnormalIgMPatients ON Patient.ID = AbnormalIgMPatients.ID GROUP BY Diagnosis ORDER BY COUNT(*) DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce1.sqlite": [
+      "('PSS, PM, SJS',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce2.sqlite": [
+      "('SLE, PSS, MCTD',)"
+    ]
+  },
+  {
+    "pred": "SELECT Diagnosis FROM Patient WHERE ID IN (SELECT ID FROM Laboratory WHERE IGM <= 40 OR IGM >= 400) GROUP BY Diagnosis HAVING COUNT(*) = (SELECT MAX(Count) FROM (SELECT COUNT(*) AS Count FROM Patient WHERE ID IN (SELECT ID FROM Laboratory WHERE IGM <= 40 OR IGM >= 400) GROUP BY Diagnosis))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce1.sqlite": [
+      "('PSS, PM, SJS',)",
+      "('Vasculitis synd, PN susp',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1255/ce2.sqlite": [
+      "('PM, PSS, RA, SJS',)",
+      "('SLE, PSS, MCTD',)"
+    ]
+  }
+]

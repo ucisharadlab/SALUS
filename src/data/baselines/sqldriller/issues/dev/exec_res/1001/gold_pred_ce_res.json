@@ -1,0 +1,117 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Luis Barbazza',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": [
+      "('Herbert Lang',)"
+    ]
+  },
+  {
+    "gold": "SELECT T2.forename, T2.surname FROM qualifying AS T1 INNER JOIN drivers AS T2 on T1.driverId = T2.driverId INNER JOIN races AS T3 ON T1.raceid = T3.raceid WHERE q3 IS NOT NULL AND T3.year = 2008 AND T3.circuitId IN ( SELECT circuitId FROM circuits WHERE name = 'Marina Bay Street Circuit' ) ORDER BY CAST(SUBSTR(q3, 1, INSTR(q3, ':') - 1) AS INTEGER) * 60 + CAST(SUBSTR(q3, INSTR(q3, ':') + 1, INSTR(q3, '.') - INSTR(q3, ':') - 1) AS REAL) + CAST(SUBSTR(q3, INSTR(q3, '.') + 1) AS REAL) / 1000 ASC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Luis', 'Barbazza')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": [
+      "('Herbert', 'Lang')"
+    ]
+  },
+  {
+    "pred": "SELECT T4.forename, T4.surname FROM circuits T1 JOIN races T2 ON T1.circuitId = T2.circuitId JOIN qualifying T3 ON T2.raceId = T3.raceId JOIN drivers T4 ON T3.driverId = T4.driverId WHERE T1.name = 'Marina Bay Street Circuit' AND T2.year = 2008 AND T3.q3 = (SELECT MIN(q3) FROM qualifying WHERE q3 IS NOT NULL AND raceId = T2.raceId)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Herbert', 'Lang')",
+      "('Luis', 'Barbazza')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": [
+      "('Herbert', 'Lang')"
+    ]
+  },
+  {
+    "pred": "SELECT forename, surname FROM drivers WHERE driverId = (SELECT driverId FROM qualifying WHERE raceId = (SELECT raceId FROM races WHERE year = 2008 AND circuitId = (SELECT circuitId FROM circuits WHERE name = 'Marina Bay Street Circuit')) AND q3 = (SELECT MIN(q3) FROM qualifying WHERE q3 IS NOT NULL AND raceId = (SELECT raceId FROM races WHERE year = 2008 AND circuitId = (SELECT circuitId FROM circuits WHERE name = 'Marina Bay Street Circuit'))))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Luis', 'Barbazza')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT D.forename, D.surname FROM drivers D INNER JOIN (SELECT Q.driverId FROM qualifying Q INNER JOIN races R ON Q.raceId = R.raceId WHERE R.year = 2008 AND R.circuitId = (SELECT circuitId FROM circuits WHERE name = 'Marina Bay Street Circuit') AND Q.q3 = (SELECT MIN(q3) FROM qualifying WHERE q3 IS NOT NULL AND raceId = R.raceId)) AS Fastest ON D.driverId = Fastest.driverId",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Luis', 'Barbazza')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT D.forename, D.surname FROM drivers D, qualifying Q, races R, circuits C WHERE D.driverId = Q.driverId AND Q.raceId = R.raceId AND R.circuitId = C.circuitId AND C.name = 'Marina Bay Street Circuit' AND R.year = 2008 AND Q.q3 = (SELECT MIN(q3) FROM qualifying WHERE q3 IS NOT NULL AND raceId = R.raceId)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Herbert', 'Lang')",
+      "('Luis', 'Barbazza')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": [
+      "('Herbert', 'Lang')"
+    ]
+  },
+  {
+    "pred": "SELECT D.forename, D.surname FROM drivers D WHERE EXISTS (SELECT 1 FROM qualifying Q JOIN races R ON Q.raceId = R.raceId JOIN circuits C ON R.circuitId = C.circuitId WHERE D.driverId = Q.driverId AND C.name = 'Marina Bay Street Circuit' AND R.year = 2008 AND Q.q3 = (SELECT MIN(q3) FROM qualifying WHERE q3 IS NOT NULL AND raceId = R.raceId))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Luis', 'Barbazza')",
+      "('Herbert', 'Lang')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": [
+      "('Herbert', 'Lang')"
+    ]
+  },
+  {
+    "pred": "SELECT forename, surname FROM drivers WHERE driverId IN (SELECT driverId FROM qualifying WHERE raceId IN (SELECT raceId FROM races WHERE year = 2008 AND circuitId = (SELECT circuitId FROM circuits WHERE name = 'Marina Bay Street Circuit')) AND q3 = (SELECT MIN(q3) FROM qualifying WHERE q3 IS NOT NULL AND raceId IN (SELECT raceId FROM races WHERE year = 2008 AND circuitId = (SELECT circuitId FROM circuits WHERE name = 'Marina Bay Street Circuit'))))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Luis', 'Barbazza')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT D.forename, D.surname FROM drivers D JOIN qualifying Q ON D.driverId = Q.driverId JOIN races R ON Q.raceId = R.raceId JOIN circuits C ON R.circuitId = C.circuitId WHERE C.name = 'Marina Bay Street Circuit' AND R.year = 2008 AND Q.q3 = (SELECT MIN(Q2.q3) FROM qualifying Q2 WHERE Q2.q3 IS NOT NULL AND Q2.raceId = R.raceId)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Herbert', 'Lang')",
+      "('Luis', 'Barbazza')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": [
+      "('Herbert', 'Lang')"
+    ]
+  },
+  {
+    "pred": "SELECT D.forename, D.surname FROM drivers D WHERE D.driverId = (SELECT Q.driverId FROM qualifying Q WHERE Q.raceId = (SELECT R.raceId FROM races R WHERE R.year = 2008 AND R.circuitId = (SELECT C.circuitId FROM circuits C WHERE C.name = 'Marina Bay Street Circuit')) AND Q.q3 = (SELECT MIN(q3) FROM qualifying WHERE q3 IS NOT NULL AND raceId = Q.raceId))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Luis', 'Barbazza')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT D.forename, D.surname FROM drivers D, qualifying Q WHERE D.driverId = Q.driverId AND Q.raceId IN (SELECT R.raceId FROM races R WHERE R.year = 2008 AND R.circuitId IN (SELECT C.circuitId FROM circuits C WHERE C.name = 'Marina Bay Street Circuit')) AND Q.q3 = (SELECT MIN(q3) FROM qualifying WHERE q3 IS NOT NULL AND raceId = Q.raceId)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Herbert', 'Lang')",
+      "('Luis', 'Barbazza')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": [
+      "('Herbert', 'Lang')"
+    ]
+  },
+  {
+    "pred": "SELECT D.forename, D.surname FROM drivers D JOIN qualifying Q ON D.driverId = Q.driverId WHERE Q.raceId = (SELECT R.raceId FROM races R JOIN circuits C ON R.circuitId = C.circuitId WHERE C.name = 'Marina Bay Street Circuit' AND R.year = 2008) AND Q.q3 = (SELECT MIN(q3) FROM qualifying WHERE q3 IS NOT NULL AND raceId = Q.raceId)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce0.sqlite": [
+      "('Herbert', 'Lang')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1001/ce1.sqlite": [
+      "('Herbert', 'Lang')"
+    ]
+  }
+]

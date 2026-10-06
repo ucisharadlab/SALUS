@@ -1,0 +1,54 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "gold": "SELECT T1.account_id  FROM account AS T1 INNER JOIN disp AS T2 ON T1.account_id = T2.account_id INNER JOIN client AS T3 ON T2.client_id = T3.client_id INNER JOIN district AS T4 on T4.district_id = T1.district_id WHERE T2.client_id = ( SELECT client_id FROM client ORDER BY birth_date DESC LIMIT 1) GROUP BY T4.A11, T1.account_id",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.account_id FROM client T1 JOIN disp T2 ON T1.client_id = T2.client_id JOIN account T3 ON T2.account_id = T3.account_id JOIN district T4 ON T3.district_id = T4.district_id WHERE T1.birth_date = (SELECT MAX(birth_date) FROM client) AND T4.A11 = (SELECT MAX(A11) FROM district);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT account.account_id FROM account JOIN (SELECT account_id FROM disp WHERE client_id IN (SELECT client_id FROM client WHERE birth_date = (SELECT MAX(birth_date) FROM client))) AS youngest_clients ON account.account_id = youngest_clients.account_id JOIN district ON account.district_id = district.district_id WHERE district.A11 = (SELECT MAX(A11) FROM district);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT DISTINCT account_id FROM account WHERE district_id IN (SELECT district_id FROM district WHERE A11 = (SELECT MAX(A11) FROM district)) AND account_id IN (SELECT account_id FROM disp WHERE client_id IN (SELECT client_id FROM client WHERE birth_date = (SELECT MAX(birth_date) FROM client)));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T2.account_id FROM (SELECT * FROM client WHERE birth_date = (SELECT MAX(birth_date) FROM client)) T1 JOIN disp T2 ON T1.client_id = T2.client_id JOIN (SELECT * FROM account WHERE district_id IN (SELECT district_id FROM district WHERE A11 = (SELECT MAX(A11) FROM district))) T3 ON T2.account_id = T3.account_id;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT account_id FROM account WHERE account_id IN (SELECT account_id FROM disp WHERE client_id = (SELECT client_id FROM client WHERE birth_date = (SELECT MAX(birth_date) FROM client))) AND district_id IN (SELECT district_id FROM district WHERE A11 = (SELECT MAX(A11) FROM district));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T2.account_id FROM client T1 INNER JOIN disp T2 ON T1.client_id = T2.client_id INNER JOIN account T3 ON T2.account_id = T3.account_id INNER JOIN district T4 ON T3.district_id = T4.district_id WHERE T1.birth_date = (SELECT MAX(birth_date) FROM client) AND T4.A11 = (SELECT MAX(A11) FROM district);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT account.account_id FROM account JOIN disp ON account.account_id = disp.account_id JOIN client ON disp.client_id = client.client_id JOIN district ON account.district_id = district.district_id WHERE client.birth_date = (SELECT MAX(birth_date) FROM client) AND district.A11 = (SELECT MAX(A11) FROM district);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT account_id FROM account WHERE district_id = (SELECT district_id FROM district WHERE A11 = (SELECT MAX(A11) FROM district)) AND account_id IN (SELECT account_id FROM disp JOIN client ON disp.client_id = client.client_id WHERE client.birth_date = (SELECT MAX(birth_date) FROM client));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/95/ce0.sqlite": []
+  }
+]

@@ -1,0 +1,32 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation:  
+The annotated query computes SUM(Consumption)/12 per customer and returns the maximum of that average-over-12-months figure.  
+• Table `yearmonth` already stores one row per customer-month, so the “biggest monthly consumption” is simply the maximum single value of `Consumption`, not an averaged value.  
+• Dividing by 12 is arbitrary because customers often have other than 12 months of data (e.g., 17, 20 … months).  
+• Executing the correct logic (MAX(Consumption)) for euro customers gives 227 434.61, whereas the annotated query gives 85 002.47 – therefore the annotated query is wrong.  
+
+The question itself is ambiguous: “biggest monthly consumption” could mean (a) the largest single-month consumption, or (b) the highest average monthly consumption across the customer’s history.  Both interpretations are reasonable.
+
+Revised:  
+If interpretation (a) is intended – maximum single-month value:  
+```
+SELECT MAX(`y`.`Consumption`) AS BiggestMonthlyConsumption
+FROM `yearmonth` AS y
+JOIN `customers` AS c ON y.`CustomerID` = c.`CustomerID`
+WHERE c.`Currency` = 'EUR';
+```
+
+If interpretation (b) is intended – customer with highest average monthly consumption:  
+```
+SELECT MAX(total_consumption * 1.0 / months) AS BiggestAvgMonthlyConsumption
+FROM (
+    SELECT y.`CustomerID`,
+           SUM(y.`Consumption`) AS total_consumption,
+           COUNT(*)             AS months
+    FROM `yearmonth` y
+    JOIN `customers` c ON y.`CustomerID` = c.`CustomerID`
+    WHERE c.`Currency` = 'EUR'
+    GROUP BY y.`CustomerID`
+) sub;
+```

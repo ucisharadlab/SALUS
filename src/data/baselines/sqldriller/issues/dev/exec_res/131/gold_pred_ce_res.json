@@ -1,0 +1,84 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "('2147483648',)"
+    ]
+  },
+  {
+    "gold": "SELECT T2.A3 FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.status IN ('C', 'D') GROUP BY T2.A3 ORDER BY SUM(T3.amount) DESC LIMIT 1",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "('2147483648',)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM loan T1 JOIN account T2 ON T1.account_id = T2.account_id JOIN district T3 ON T2.district_id = T3.district_id WHERE T1.status IN ('C', 'D') GROUP BY T3.district_id ORDER BY COUNT(*) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT district_id FROM district WHERE district_id IN (SELECT T2.district_id FROM account T2 JOIN loan T1 ON T2.account_id = T1.account_id WHERE T1.status IN ('C', 'D') GROUP BY T2.district_id ORDER BY COUNT(T1.loan_id) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM district T3 INNER JOIN account T2 ON T3.district_id = T2.district_id INNER JOIN loan T1 ON T2.account_id = T1.account_id WHERE T1.status IN ('C', 'D') GROUP BY T3.district_id HAVING COUNT(T1.loan_id) = (SELECT MAX(loan_count) FROM (SELECT COUNT(T1.loan_id) AS loan_count FROM loan T1 JOIN account T2 ON T1.account_id = T2.account_id WHERE T1.status IN ('C', 'D') GROUP BY T2.district_id));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM district T3 WHERE T3.district_id = (SELECT T2.district_id FROM account T2 JOIN loan T1 ON T2.account_id = T1.account_id WHERE T1.status IN ('C', 'D') GROUP BY T2.district_id ORDER BY COUNT(T1.loan_id) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT district_id FROM (SELECT T2.district_id, COUNT(*) AS active_loans FROM loan T1 JOIN account T2 ON T1.account_id = T2.account_id WHERE T1.status IN ('C', 'D') GROUP BY T2.district_id) AS subquery ORDER BY active_loans DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM district T3 JOIN (SELECT T2.district_id, COUNT(*) AS loan_count FROM account T2 JOIN loan T1 ON T2.account_id = T1.account_id WHERE T1.status IN ('C', 'D') GROUP BY T2.district_id) AS subquery ON T3.district_id = subquery.district_id ORDER BY subquery.loan_count DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM district T3, account T2, loan T1 WHERE T3.district_id = T2.district_id AND T2.account_id = T1.account_id AND T1.status IN ('C', 'D') GROUP BY T3.district_id ORDER BY COUNT(T1.loan_id) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM district T3 JOIN account T2 ON T3.district_id = T2.district_id JOIN loan T1 ON T2.account_id = T1.account_id WHERE T1.status IN ('C', 'D') GROUP BY T3.district_id ORDER BY COUNT(T1.loan_id) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT district_id FROM (SELECT district_id FROM account JOIN loan ON account.account_id = loan.account_id WHERE loan.status IN ('C', 'D') GROUP BY district_id ORDER BY COUNT(loan_id) DESC LIMIT 1) AS highest_active;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM district T3 WHERE EXISTS (SELECT 1 FROM account T2 JOIN loan T1 ON T2.account_id = T1.account_id WHERE T1.status IN ('C', 'D') AND T2.district_id = T3.district_id GROUP BY T2.district_id ORDER BY COUNT(*) DESC LIMIT 1)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/131/ce0.sqlite": [
+      "(1,)"
+    ]
+  }
+]

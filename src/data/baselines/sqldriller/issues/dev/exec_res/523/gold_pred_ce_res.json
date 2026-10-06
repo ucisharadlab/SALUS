@@ -1,0 +1,82 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1, 'Spanish')"
+    ]
+  },
+  {
+    "gold": "SELECT (CAST(SUM(T1.id) AS REAL) / COUNT(T1.id)) / 4, T2.language FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.id = T2.id WHERE T1.releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY T1.releaseDate ORDER BY COUNT(T2.language) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": []
+  },
+  {
+    "pred": "SELECT AVG(yearly_count) AS average_sets_per_year, (SELECT language FROM (SELECT language, COUNT(*) AS lang_count FROM set_translations WHERE setCode IN (SELECT code FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31') GROUP BY language ORDER BY lang_count DESC LIMIT 1)) AS most_common_language FROM (SELECT COUNT(*) AS yearly_count FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY strftime('%Y', releaseDate))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  },
+  {
+    "pred": "SELECT AVG(count_per_year) AS average_annual_sets, (SELECT language FROM set_translations WHERE setCode IN (SELECT code FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31') GROUP BY language ORDER BY COUNT(language) DESC LIMIT 1) AS common_language FROM (SELECT COUNT(id) AS count_per_year FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY strftime('%Y', releaseDate))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  },
+  {
+    "pred": "WITH YearlySets AS (SELECT strftime('%Y', releaseDate) AS year, COUNT(*) AS set_count FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY year), CommonLanguage AS (SELECT language FROM set_translations JOIN sets ON sets.code = set_translations.setCode WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY language ORDER BY COUNT(*) DESC LIMIT 1) SELECT AVG(set_count) AS average_sets, (SELECT language FROM CommonLanguage) AS most_common_language FROM YearlySets",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  },
+  {
+    "pred": "SELECT AVG(annual_sets) AS average_sets, (SELECT language FROM set_translations JOIN sets ON sets.code = set_translations.setCode WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY language ORDER BY COUNT(*) DESC LIMIT 1) AS common_language FROM (SELECT COUNT(*) AS annual_sets FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY strftime('%Y', releaseDate))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  },
+  {
+    "pred": "WITH AnnualData AS (SELECT strftime('%Y', releaseDate) AS year, COUNT(*) AS num_sets FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY year), LanguageData AS (SELECT language, COUNT(*) AS lang_count FROM set_translations JOIN sets ON sets.code = set_translations.setCode WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY language ORDER BY lang_count DESC LIMIT 1) SELECT AVG(num_sets) AS average_sets, (SELECT language FROM LanguageData) AS most_common_language FROM AnnualData",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  },
+  {
+    "pred": "SELECT AVG(yearly_count) AS average_sets, (SELECT language FROM (SELECT language, COUNT(*) AS lang_count FROM set_translations JOIN sets ON sets.code = set_translations.setCode WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY language ORDER BY lang_count DESC LIMIT 1)) AS most_common_language FROM (SELECT COUNT(*) AS yearly_count FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY strftime('%Y', releaseDate))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  },
+  {
+    "pred": "WITH YearlyReleases AS (SELECT strftime('%Y', releaseDate) AS year, COUNT(*) AS sets_count FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY year), PopularLanguage AS (SELECT language FROM set_translations JOIN sets ON sets.code = set_translations.setCode WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY language ORDER BY COUNT(*) DESC LIMIT 1) SELECT AVG(sets_count) AS average_annual_sets, (SELECT language FROM PopularLanguage) AS most_common_language FROM YearlyReleases",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  },
+  {
+    "pred": "SELECT AVG(count_sets) AS average_sets_per_year, (SELECT language FROM set_translations JOIN sets ON sets.code = set_translations.setCode WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY language ORDER BY COUNT(*) DESC LIMIT 1) AS most_common_language FROM (SELECT COUNT(*) AS count_sets FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY strftime('%Y', releaseDate))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  },
+  {
+    "pred": "WITH YearlyCount AS (SELECT strftime('%Y', releaseDate) AS year, COUNT(*) AS sets_per_year FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY year), LanguageFrequency AS (SELECT language FROM set_translations JOIN sets ON sets.code = set_translations.setCode WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY language ORDER BY COUNT(*) DESC LIMIT 1) SELECT AVG(sets_per_year) AS average_sets, (SELECT language FROM LanguageFrequency) AS most_common_language FROM YearlyCount",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  },
+  {
+    "pred": "SELECT AVG(yearly_total) AS average_sets, (SELECT language FROM (SELECT language, COUNT(*) AS lang_count FROM set_translations JOIN sets ON sets.code = set_translations.setCode WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY language ORDER BY lang_count DESC LIMIT 1)) AS most_common_language FROM (SELECT COUNT(*) AS yearly_total FROM sets WHERE releaseDate BETWEEN '2012-01-01' AND '2015-12-31' GROUP BY strftime('%Y', releaseDate))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/523/ce3.sqlite": [
+      "(1.0, 'Spanish')"
+    ]
+  }
+]

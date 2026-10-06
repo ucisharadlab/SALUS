@@ -1,0 +1,7 @@
+Correctness: No – the annotated query returns every qualifying post id instead of the requested single aggregate value.
+Is_ambiguous: No – the question clearly asks for the total (a single count) of posts whose view count is above the average.
+Explanation: The sub-query correctly calculates the overall average `ViewCount`, and the `WHERE` clause properly filters posts exceeding that average. However, `SELECT Id` outputs one row per post, not the total number of such posts. An aggregate function `COUNT(*)` (or `COUNT(Id)`) is required to satisfy the “total number” requirement. No further ambiguities or schema issues exist.
+Revised:
+SELECT COUNT(*) AS total_posts_above_avg
+FROM posts
+WHERE `ViewCount` > (SELECT AVG(`ViewCount`) FROM posts);

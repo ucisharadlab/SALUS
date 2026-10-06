@@ -1,0 +1,19 @@
+Correctness: No – the annotated SQL counts promo cards per artist instead of rulings per card, and filters to promo only, so it does not find the card with the most ruling information.
+Is_ambiguous: No – the request is clear: return the card(s) with the highest number of rulings along with artist and promo flag.
+Explanation: The question needs count of rows in rulings per card. Annotated query groups by artist, ignores ruling counts, filters to isPromo=1, and duplicates rows because no aggregation after join. Sample results show wrong cards (should be Teferi's Protection). Therefore incorrect. No ambiguity.
+Revised: 
+WITH ruling_counts AS (
+    SELECT c.uuid,
+           c.name,
+           c.artist,
+           c.isPromo,
+           COUNT(r.id) AS num_rulings
+    FROM `cards` c
+    LEFT JOIN `rulings` r ON c.uuid = r.uuid
+    GROUP BY c.uuid
+), max_r AS (
+    SELECT MAX(num_rulings) AS max_cnt FROM ruling_counts
+)
+SELECT name, artist, isPromo
+FROM ruling_counts, max_r
+WHERE num_rulings = max_cnt;

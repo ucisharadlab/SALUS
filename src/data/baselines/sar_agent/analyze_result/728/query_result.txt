@@ -1,0 +1,31 @@
+Query: SELECT name FROM sqlite_master LIMIT 5;
+Explaination of the query: list tables
+Result: [('alignment',), ('attribute',), ('colour',), ('gender',), ('publisher',)]
+Query: SELECT name FROM sqlite_master WHERE type='table' ORDER BY name LIMIT 100;
+Explaination of the query: list all tables to confirm schema
+Result: [('alignment',), ('attribute',), ('colour',), ('gender',), ('hero_attribute',), ('hero_power',), ('publisher',), ('race',), ('superhero',), ('superpower',)]
+Query: SELECT colour.colour AS EyeColor, COUNT(superhero.id) AS Count, RANK() OVER (ORDER BY COUNT(superhero.id) DESC) AS PopularityRank 
+FROM superhero 
+INNER JOIN colour ON superhero.eye_colour_id = colour.id 
+INNER JOIN publisher ON superhero.publisher_id = publisher.id 
+WHERE publisher.publisher_name = 'Marvel Comics' 
+GROUP BY colour.colour LIMIT 5;
+Explaination of the query: test result of annotated query
+Result: [('Blue', 126, 1), ('Brown', 89, 2), ('No Colour', 47, 3), ('Green', 40, 4), ('Red', 31, 5)]
+Query: SELECT colour.colour AS EyeColor, COUNT(superhero.id) AS Count, RANK() OVER (ORDER BY COUNT(superhero.id) DESC) AS PopularityRank 
+FROM superhero 
+INNER JOIN colour ON superhero.eye_colour_id = colour.id 
+INNER JOIN publisher ON superhero.publisher_id = publisher.id 
+WHERE publisher.publisher_name = 'Marvel Comics' 
+GROUP BY colour.colour LIMIT 100;
+Explaination of the query: check full ordering
+Result: [('Blue', 126, 1), ('Brown', 89, 2), ('No Colour', 47, 3), ('Green', 40, 4), ('Red', 31, 5), ('Yellow', 13, 6), ('White', 12, 7), ('Black', 11, 8), ('Grey', 4, 9), ('Hazel', 3, 10), ('Purple', 2, 11), ('Gold', 2, 11), ('Yellow/Blue', 1, 13), ('White/Red', 1, 13), ('Violet', 1, 13), ('Silver', 1, 13), ('Green/Blue', 1, 13), ('Blue/White', 1, 13), ('Amber', 1, 13)]
+Query: SELECT colour.colour AS EyeColor, COUNT(superhero.id) AS Count, RANK() OVER (ORDER BY COUNT(superhero.id) DESC) AS PopularityRank
+FROM superhero
+INNER JOIN colour ON superhero.eye_colour_id = colour.id
+INNER JOIN publisher ON superhero.publisher_id = publisher.id
+WHERE publisher.publisher_name = 'Marvel Comics'
+GROUP BY colour.colour
+ORDER BY Count DESC LIMIT 5;
+Explaination of the query: desc order test
+Result: [('Blue', 126, 1), ('Brown', 89, 2), ('No Colour', 47, 3), ('Green', 40, 4), ('Red', 31, 5)]

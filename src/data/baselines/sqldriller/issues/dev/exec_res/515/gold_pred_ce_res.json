@@ -1,0 +1,56 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": [
+      "('2019/7/5', 'standard')"
+    ]
+  },
+  {
+    "gold": "SELECT T1.originalReleaseDate, T2.format FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'mythic' AND T1.originalReleaseDate IS NOT NULL AND T2.status = 'Legal' AND T1.originalReleaseDate = (SELECT MIN(originalReleaseDate) FROM cards AS T1 INNER JOIN legalities AS T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'mythic' AND T1.originalReleaseDate IS NOT NULL AND T2.status = 'Legal')",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": [
+      "('2019/7/5', 'standard')"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(T1.originalReleaseDate), T2.format FROM cards T1 JOIN legalities T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'mythic' AND T2.status = 'legal' GROUP BY T1.originalReleaseDate, T2.format",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": []
+  },
+  {
+    "pred": "SELECT T1.originalReleaseDate, T2.format FROM cards T1 INNER JOIN legalities T2 ON T1.uuid = T2.uuid WHERE T1.rarity = 'mythic' AND T2.status = 'legal' AND T1.originalReleaseDate = (SELECT MIN(originalReleaseDate) FROM cards WHERE rarity = 'mythic')",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": []
+  },
+  {
+    "pred": "SELECT earliest_date, format FROM (SELECT MIN(originalReleaseDate) AS earliest_date FROM cards WHERE rarity = 'mythic') AS earliest JOIN cards T1 ON T1.originalReleaseDate = earliest.earliest_date JOIN legalities T2 ON T1.uuid = T2.uuid WHERE T2.status = 'legal'",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": []
+  },
+  {
+    "pred": "WITH earliest_mythic AS (SELECT MIN(originalReleaseDate) AS earliest_date FROM cards WHERE rarity = 'mythic') SELECT earliest_date, format FROM earliest_mythic JOIN cards T1 ON T1.originalReleaseDate = earliest_mythic.earliest_date JOIN legalities T2 ON T1.uuid = T2.uuid WHERE T2.status = 'legal'",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": []
+  },
+  {
+    "pred": "SELECT originalReleaseDate, format FROM cards JOIN legalities ON cards.uuid = legalities.uuid WHERE cards.rarity = 'mythic' AND legalities.status = 'legal' AND originalReleaseDate = (SELECT MIN(originalReleaseDate) FROM cards WHERE rarity = 'mythic')",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": []
+  },
+  {
+    "pred": "SELECT (SELECT MIN(originalReleaseDate) FROM cards WHERE rarity = 'mythic') AS oldest_date, format FROM cards JOIN legalities ON cards.uuid = legalities.uuid WHERE cards.rarity = 'mythic' AND legalities.status = 'legal' AND cards.originalReleaseDate = oldest_date",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": []
+  },
+  {
+    "pred": "SELECT originalReleaseDate, format FROM cards, legalities WHERE cards.uuid = legalities.uuid AND cards.rarity = 'mythic' AND legalities.status = 'legal' AND originalReleaseDate = (SELECT MIN(originalReleaseDate) FROM cards WHERE rarity = 'mythic')",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": []
+  },
+  {
+    "pred": "WITH mythic_cards AS (SELECT uuid, originalReleaseDate FROM cards WHERE rarity = 'mythic'), legal_formats AS (SELECT uuid, format FROM legalities WHERE status = 'legal') SELECT MIN(mythic_cards.originalReleaseDate), legal_formats.format FROM mythic_cards JOIN legal_formats ON mythic_cards.uuid = legal_formats.uuid",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/515/ce3.sqlite": [
+      "(None, None)"
+    ]
+  }
+]

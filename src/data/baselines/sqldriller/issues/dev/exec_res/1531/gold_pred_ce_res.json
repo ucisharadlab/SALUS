@@ -1,0 +1,82 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 45.66, 'CZK')"
+    ]
+  },
+  {
+    "gold": "SELECT T2.CustomerID, SUM(T2.Price / T2.Amount), T1.Currency FROM customers AS T1 INNER JOIN transactions_1k AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.CustomerID = ( SELECT CustomerID FROM yearmonth ORDER BY Consumption DESC LIMIT 1 ) GROUP BY T2.CustomerID, T1.Currency",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T2.CustomerID, T2.Currency, T1.AvgPricePerItem FROM (SELECT CustomerID, SUM(Price * Amount) / SUM(Amount) AS AvgPricePerItem FROM transactions_1k GROUP BY CustomerID ORDER BY SUM(Price * Amount) DESC LIMIT 1) T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  },
+  {
+    "pred": "WITH CustomerSpending AS (SELECT CustomerID, SUM(Price * Amount) AS TotalSpending FROM transactions_1k GROUP BY CustomerID), TopCustomer AS (SELECT CustomerID FROM CustomerSpending ORDER BY TotalSpending DESC LIMIT 1), AvgPrice AS (SELECT CustomerID, SUM(Price * Amount) / SUM(Amount) AS AvgPricePerItem FROM transactions_1k WHERE CustomerID IN (SELECT CustomerID FROM TopCustomer) GROUP BY CustomerID) SELECT T.CustomerID, C.Currency, T.AvgPricePerItem FROM AvgPrice T JOIN customers C ON T.CustomerID = C.CustomerID;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  },
+  {
+    "pred": "SELECT C.CustomerID, C.Currency, (SELECT SUM(Price * Amount) / SUM(Amount) FROM transactions_1k WHERE CustomerID = C.CustomerID) AS AvgPricePerItem FROM customers C WHERE C.CustomerID = (SELECT CustomerID FROM transactions_1k GROUP BY CustomerID ORDER BY SUM(Price * Amount) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  },
+  {
+    "pred": "SELECT C.CustomerID, C.Currency, A.AvgPricePerItem FROM customers C JOIN (SELECT CustomerID, SUM(Price * Amount) / SUM(Amount) AS AvgPricePerItem FROM transactions_1k GROUP BY CustomerID HAVING CustomerID = (SELECT CustomerID FROM transactions_1k GROUP BY CustomerID ORDER BY SUM(Price * Amount) DESC LIMIT 1)) A ON C.CustomerID = A.CustomerID;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  },
+  {
+    "pred": "WITH TotalSpending AS (SELECT CustomerID, SUM(Price * Amount) AS Total FROM transactions_1k GROUP BY CustomerID), MaxSpender AS (SELECT CustomerID FROM TotalSpending ORDER BY Total DESC LIMIT 1), AvgPrice AS (SELECT CustomerID, SUM(Price * Amount) / SUM(Amount) AS AvgPrice FROM transactions_1k WHERE CustomerID IN (SELECT CustomerID FROM MaxSpender) GROUP BY CustomerID) SELECT M.CustomerID, C.Currency, A.AvgPrice FROM MaxSpender M JOIN customers C ON M.CustomerID = C.CustomerID JOIN AvgPrice A ON M.CustomerID = A.CustomerID;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  },
+  {
+    "pred": "SELECT C.CustomerID, C.Currency, (SUM(T.Price * T.Amount) / SUM(T.Amount)) AS AvgPricePerItem FROM transactions_1k T JOIN customers C ON T.CustomerID = C.CustomerID GROUP BY T.CustomerID ORDER BY SUM(T.Price * T.Amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  },
+  {
+    "pred": "WITH Spending AS (SELECT CustomerID, SUM(Price * Amount) AS TotalSpending, SUM(Price * Amount) / SUM(Amount) AS AvgPricePerItem FROM transactions_1k GROUP BY CustomerID) SELECT C.CustomerID, C.Currency, S.AvgPricePerItem FROM Spending S JOIN customers C ON S.CustomerID = C.CustomerID WHERE S.TotalSpending = (SELECT MAX(TotalSpending) FROM Spending);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  },
+  {
+    "pred": "SELECT C.CustomerID, C.Currency, (SELECT SUM(Price * Amount) / SUM(Amount) FROM transactions_1k T WHERE T.CustomerID = C.CustomerID) AS AvgPricePerItem FROM customers C WHERE C.CustomerID = (SELECT CustomerID FROM transactions_1k GROUP BY CustomerID ORDER BY SUM(Price * Amount) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  },
+  {
+    "pred": "WITH CustomerTotal AS (SELECT CustomerID, SUM(Price * Amount) AS TotalSpending, SUM(Price * Amount) / SUM(Amount) AS AvgPricePerItem FROM transactions_1k GROUP BY CustomerID) SELECT C.CustomerID, C.Currency, T.AvgPricePerItem FROM CustomerTotal T JOIN customers C ON T.CustomerID = C.CustomerID WHERE T.TotalSpending = (SELECT MAX(TotalSpending) FROM CustomerTotal);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  },
+  {
+    "pred": "SELECT C.CustomerID, C.Currency, A.AvgPricePerItem FROM (SELECT CustomerID, SUM(Price * Amount) / SUM(Amount) AS AvgPricePerItem FROM transactions_1k GROUP BY CustomerID ORDER BY SUM(Price * Amount) DESC LIMIT 1) A JOIN customers C ON A.CustomerID = C.CustomerID;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1531/ce0.sqlite": [
+      "(7796, 'CZK', 2328.72)"
+    ]
+  }
+]

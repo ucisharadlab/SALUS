@@ -1,0 +1,13 @@
+Correctness: No – the query checks the post’s `Score = 0` instead of the comment’s `Score = 0`, so it returns the wrong count.
+Is_ambiguous: No – the intent is clear: count comments with score 0 on posts that have exactly one comment.
+Explanation:
+• We need posts where `CommentCount = 1`.
+• Among the single comment each of those posts has, we must test `comments.Score = 0` and count such comments.
+• Annotated query joins `comments` and `posts` correctly and filters `posts.CommentCount = 1`, but it also filters `posts.Score = 0`; the post’s score is irrelevant and different from the comment’s score.
+• Verification: annotated query returns 2 888 rows, but the correct query (with `comments.Score = 0`) returns 10 997 rows – clear discrepancy.
+Revised:
+SELECT COUNT(`c`.`Id`)
+FROM `comments` AS `c`
+JOIN `posts`   AS `p` ON `c`.`PostId` = `p`.`Id`
+WHERE `p`.`CommentCount` = 1
+  AND `c`.`Score` = 0;

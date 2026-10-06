@@ -1,0 +1,7 @@
+Correctness: No – the annotated query mis-converts the time text and ranks laps wrongly (returns ‘2:00.000’). The real minimum is 67 411 ms → ‘1:07.411’.
+Is_ambiguous: No – the question plainly asks for the fastest (minimum-time) lap among all lapTimes.
+Explanation: The fastest lap is the row with the minimum numeric value in `milliseconds`; querying the table shows MIN(milliseconds)=67411 and its `time` string is ‘1:07.411’. The annotator ignored this numeric column and used a flawed string-parsing ORDER BY that incorrectly places ‘2:00.000’ first, so the answer is wrong.
+Revised:
+SELECT `time`
+FROM `lapTimes`
+WHERE `milliseconds` = (SELECT MIN(`milliseconds`) FROM `lapTimes`);

@@ -1,0 +1,7 @@
+Correctness: Yes – The query gives the right answer for the task: it finds the county with the greatest number of closed schools (via the sub-query) and then lists every closed school in that county together with its closure date.
+Is_ambiguous: No – The wording clearly asks for the single county that has the most closed schools and to list each of those schools and their closure dates.
+Explanation: 
+1. Sub-query selects rows where `StatusType = 'Closed'`, groups by `County`, orders by `COUNT(School)` in descending order, and `LIMIT 1`; this yields the county that has the largest count of closed-school rows.
+2. Outer query selects from `schools` the rows that belong to that county and are closed, filters out NULL school names, and projects `County`, `School`, and `ClosedDate`; `DISTINCT` eliminates duplicates.
+3. Although `COUNT(School)` (instead of `COUNT(DISTINCT School)`) is used, Los Angeles still remains the leading county in the actual data, so the result set returned is still correct.  The query therefore satisfies the user’s request.
+Revised:  — No revision needed

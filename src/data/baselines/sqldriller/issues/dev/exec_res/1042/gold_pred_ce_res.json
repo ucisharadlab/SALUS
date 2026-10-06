@@ -1,0 +1,73 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": []
+  },
+  {
+    "gold": "SELECT t1.name FROM League AS t1 INNER JOIN Match AS t2 ON t1.id = t2.league_id WHERE t2.season = '2009/2010' GROUP BY t1.name HAVING (CAST(SUM(t2.home_team_goal) AS REAL) / COUNT(DISTINCT t2.id)) - (CAST(SUM(t2.away_team_goal) AS REAL) / COUNT(DISTINCT t2.id)) > 0",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT L.name FROM League L JOIN Match M ON L.id = M.league_id WHERE M.season = '2009/2010' GROUP BY L.id HAVING AVG(M.home_team_goal) > (SELECT AVG(home_team_goal) FROM Match WHERE season = '2009/2010' AND league_id = L.id) - AVG(M.home_team_goal)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": [
+      "('France Ligue 1',)"
+    ]
+  },
+  {
+    "pred": "SELECT name FROM League WHERE id IN (SELECT league_id FROM Match WHERE season = '2009/2010' GROUP BY league_id HAVING AVG(home_team_goal) > AVG(home_team_goal) - AVG(home_team_goal))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": [
+      "('France Ligue 1',)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.name FROM League T1 INNER JOIN (SELECT league_id FROM Match WHERE season = '2009/2010' GROUP BY league_id HAVING AVG(home_team_goal) > AVG(home_team_goal) - AVG(home_team_goal)) T2 ON T1.id = T2.league_id",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": [
+      "('France Ligue 1',)"
+    ]
+  },
+  {
+    "pred": "SELECT name FROM League WHERE id IN (SELECT league_id FROM Match GROUP BY league_id, season HAVING season = '2009/2010' AND AVG(home_team_goal) > AVG(home_team_goal) - AVG(home_team_goal))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": [
+      "('France Ligue 1',)"
+    ]
+  },
+  {
+    "pred": "SELECT L.name FROM League L WHERE EXISTS (SELECT 1 FROM Match M WHERE M.league_id = L.id AND M.season = '2009/2010' GROUP BY M.league_id HAVING AVG(M.home_team_goal) > AVG(M.home_team_goal) - AVG(M.home_team_goal))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": [
+      "('France Ligue 1',)"
+    ]
+  },
+  {
+    "pred": "SELECT L.name FROM League L, (SELECT league_id FROM Match WHERE season = '2009/2010' GROUP BY league_id HAVING AVG(home_team_goal) > AVG(home_team_goal) - AVG(home_team_goal)) AS Subquery WHERE L.id = Subquery.league_id",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": [
+      "('France Ligue 1',)"
+    ]
+  },
+  {
+    "pred": "SELECT DISTINCT L.name FROM League L JOIN Match M ON L.id = M.league_id WHERE M.season = '2009/2010' GROUP BY L.id, M.league_id HAVING AVG(M.home_team_goal) > AVG(M.home_team_goal) - AVG(M.home_team_goal)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": [
+      "('France Ligue 1',)"
+    ]
+  },
+  {
+    "pred": "SELECT L.name FROM League L INNER JOIN (SELECT league_id, AVG(home_team_goal) AS avg_home_goals FROM Match WHERE season = '2009/2010' GROUP BY league_id HAVING avg_home_goals > AVG(home_team_goal) - avg_home_goals) AS Sub ON L.id = Sub.league_id",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": [
+      "('France Ligue 1',)"
+    ]
+  },
+  {
+    "pred": "SELECT L.name FROM League L WHERE L.id IN (SELECT M.league_id FROM Match M WHERE M.season = '2009/2010' GROUP BY M.league_id HAVING AVG(M.home_team_goal) > AVG(M.home_team_goal) - AVG(M.home_team_goal))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1042/ce0.sqlite": [
+      "('France Ligue 1',)"
+    ]
+  }
+]

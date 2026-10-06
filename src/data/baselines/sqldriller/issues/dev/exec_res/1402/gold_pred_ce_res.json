@@ -1,0 +1,80 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Medium',)"
+    ]
+  },
+  {
+    "gold": "SELECT t_shirt_size FROM member GROUP BY t_shirt_size ORDER BY COUNT(t_shirt_size) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Small',)"
+    ]
+  },
+  {
+    "pred": "SELECT t_shirt_size FROM member GROUP BY t_shirt_size ORDER BY COUNT(t_shirt_size) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Small',)"
+    ]
+  },
+  {
+    "pred": "SELECT t_shirt_size FROM (SELECT t_shirt_size, COUNT(t_shirt_size) AS size_count FROM member GROUP BY t_shirt_size) AS size_counts ORDER BY size_count DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Medium',)"
+    ]
+  },
+  {
+    "pred": "WITH SizeCounts AS (SELECT t_shirt_size, COUNT(*) AS count FROM member GROUP BY t_shirt_size) SELECT t_shirt_size FROM SizeCounts WHERE count = (SELECT MAX(count) FROM SizeCounts);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Medium',)",
+      "('Small',)"
+    ]
+  },
+  {
+    "pred": "SELECT t_shirt_size, MAX(size_count) FROM (SELECT t_shirt_size, COUNT(t_shirt_size) AS size_count FROM member GROUP BY t_shirt_size) GROUP BY t_shirt_size ORDER BY size_count DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Small', 8)"
+    ]
+  },
+  {
+    "pred": "SELECT t_shirt_size FROM member GROUP BY t_shirt_size ORDER BY COUNT(*) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Small',)"
+    ]
+  },
+  {
+    "pred": "WITH RankedSizes AS (SELECT t_shirt_size, RANK() OVER (ORDER BY COUNT(t_shirt_size) DESC) AS rank FROM member GROUP BY t_shirt_size) SELECT t_shirt_size FROM RankedSizes WHERE rank = 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Small',)",
+      "('Medium',)"
+    ]
+  },
+  {
+    "pred": "SELECT t_shirt_size FROM member WHERE t_shirt_size IN (SELECT t_shirt_size FROM member GROUP BY t_shirt_size ORDER BY COUNT(t_shirt_size) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Small',)",
+      "('Small',)",
+      "('Small',)",
+      "('Small',)",
+      "('Small',)",
+      "('Small',)",
+      "('Small',)",
+      "('Small',)"
+    ]
+  },
+  {
+    "pred": "SELECT t_shirt_size, COUNT(t_shirt_size) AS count FROM member GROUP BY t_shirt_size HAVING count = (SELECT MAX(count) FROM (SELECT COUNT(t_shirt_size) AS count FROM member GROUP BY t_shirt_size) temp);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1402/ce0.sqlite": [
+      "('Medium', 8)",
+      "('Small', 8)"
+    ]
+  }
+]

@@ -1,0 +1,39 @@
+Query: SELECT name FROM sqlite_master WHERE type='table'
+Explaination of the query: List tables
+Result: [('atom',), ('bond',), ('connected',), ('molecule',)]
+Query: SELECT COUNT(*) FROM bond
+Explaination of the query: number bonds
+Result: [(12379,)]
+Query: SELECT `atom_id` FROM `atom` WHERE `molecule_id`='TR006' LIMIT 5
+Explaination of the query: show atoms
+Result: [('TR006_1',), ('TR006_10',), ('TR006_11',), ('TR006_12',), ('TR006_13',)]
+Query: SELECT DISTINCT `bond_id` FROM `bond` WHERE `molecule_id`='TR006' ORDER BY `bond_id` LIMIT 5
+Explaination of the query: bonds of TR006 list
+Result: [('TR006_11_12',), ('TR006_11_13',), ('TR006_12_22',), ('TR006_1_2',), ('TR006_1_3',)]
+Query: SELECT DISTINCT T2.`bond_id` FROM `atom` AS T1 INNER JOIN `connected` AS T2 ON T1.`atom_id` = T2.`atom_id` WHERE T1.`molecule_id` = 'TR006' ORDER BY T2.`bond_id` LIMIT 5
+Explaination of the query: run annotated query top 5
+Result: [('TR006_11_12',), ('TR006_11_13',), ('TR006_12_22',), ('TR006_1_2',), ('TR006_1_3',)]
+Query: SELECT DISTINCT T2.`bond_id` FROM `atom` AS T1 INNER JOIN `connected` AS T2 ON T1.`atom_id` = T2.`atom_id` WHERE T1.`molecule_id` = 'TR006' ORDER BY T2.`bond_id` LIMIT 2
+Explaination of the query: run annotated query LIMIT 2
+Result: [('TR006_11_12',), ('TR006_11_13',)]
+Query: SELECT COUNT(DISTINCT `bond_id`) FROM `bond` WHERE `molecule_id`='TR006'
+Explaination of the query: count bonds for TR006 (distinct)
+Result: [(41,)]
+Query: SELECT DISTINCT `bond_id` FROM `bond` WHERE `molecule_id`='TR006' ORDER BY `bond_id` LIMIT 2
+Explaination of the query: simple query to compare
+Result: [('TR006_11_12',), ('TR006_11_13',)]
+Query: SELECT COUNT(*) FROM `connected` AS c WHERE c.`bond_id` LIKE 'TR006%' AND c.`atom_id` NOT LIKE 'TR006%'
+Explaination of the query: connected rows for TR006 bonds where first atom is not TR006
+Result: [(0,)]
+Query: WITH join_bonds AS (
+  SELECT DISTINCT T2.`bond_id`
+  FROM `atom` AS T1
+  INNER JOIN `connected` AS T2 ON T1.`atom_id` = T2.`atom_id`
+  WHERE T1.`molecule_id` = 'TR006'
+)
+SELECT `bond_id` FROM `bond` WHERE `molecule_id`='TR006' EXCEPT SELECT `bond_id` FROM join_bonds LIMIT 5
+Explaination of the query: find bonds of TR006 missing from annotated join
+Result: []
+Query: WITH join_bonds AS (SELECT DISTINCT T2.`bond_id` FROM `atom` AS T1 INNER JOIN `connected` AS T2 ON T1.`atom_id` = T2.`atom_id` WHERE T1.`molecule_id` = 'TR006') SELECT `bond_id` FROM join_bonds EXCEPT SELECT `bond_id` FROM `bond` WHERE `molecule_id`='TR006' LIMIT 5
+Explaination of the query: Bonds captured by join but not listed in bond table for TR006
+Result: []

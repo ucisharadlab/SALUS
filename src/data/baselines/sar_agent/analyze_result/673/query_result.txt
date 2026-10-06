@@ -1,0 +1,20 @@
+Query: SELECT MAX(`Age`) FROM `users`
+Explaination of the query: Find the maximum age
+Result: [(94,)]
+Query: SELECT MAX(`Age`) FROM `users`
+Explaination of the query: Find the maximum age
+Result: [(94,)]
+Query: SELECT COUNT(*) FROM `users` WHERE `Age` = (SELECT MAX(`Age`) FROM `users`);
+Explaination of the query: count oldest users
+Result: [(48,)]
+Query: WITH oldest_users AS (SELECT `Id` FROM `users` WHERE `Age` = (SELECT MAX(`Age`) FROM `users`))
+SELECT COUNT(DISTINCT `PostId`) FROM `votes` WHERE `UserId` IN (SELECT `Id` FROM oldest_users);
+
+Explaination of the query: Total distinct posts voted by oldest users
+Result: [(1,)]
+Query: SELECT AVG(`PostId`) FROM `votes` WHERE `UserId` IN ( SELECT `Id` FROM `users` WHERE `Age` = ( SELECT MAX(`Age`) FROM `users` ));
+Explaination of the query: Run annotated query
+Result: [(170.0,)]
+Query: WITH oldest_users AS (SELECT `Id` FROM `users` WHERE `Age` = (SELECT MAX(`Age`) FROM `users`)), user_post_counts AS (SELECT `UserId`, COUNT(DISTINCT `PostId`) AS post_cnt FROM `votes` WHERE `UserId` IN (SELECT `Id` FROM oldest_users) GROUP BY `UserId`) SELECT AVG(post_cnt) FROM user_post_counts LIMIT 5;
+Explaination of the query: Compute average number of DISTINCT posts voted by oldest users
+Result: [(1.0,)]

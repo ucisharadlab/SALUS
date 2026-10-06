@@ -1,0 +1,24 @@
+Query: SELECT DISTINCT `operation` FROM `trans` LIMIT 20
+Explaination of the query: Check operation values
+Result: [('VKLAD',), ('PREVOD Z UCTU',), ('PREVOD NA UCET',), ('VYBER',), ('VYBER KARTOU',), (None,)]
+Query: SELECT COUNT(*) FROM `trans` WHERE `type`='VYDAJ' LIMIT 5
+Explaination of the query: Check number of withdrawals
+Result: [(634571,)]
+Query: SELECT `date`, COUNT(*) FROM `trans` WHERE `date` LIKE '1996-01%' LIMIT 5
+Explaination of the query: Preview of January transactions
+Result: [('1996-01-13', 21405)]
+Query: SELECT `trans_id`, `amount`, `operation`, `date`, `account_id` FROM `trans` WHERE `type`='VYDAJ' AND `operation`!='VYBER KARTOU' AND `date` LIKE '1996-01%' ORDER BY `amount` DESC LIMIT 5
+Explaination of the query: inspect top debit withdrawals non credit card
+Result: [(2412452, 63700, 'VYBER', '1996-01-25', 7957), (98706, 59600, 'VYBER', '1996-01-16', 337), (1857943, 59400, 'VYBER', '1996-01-11', 6289), (472045, 57900, 'VYBER', '1996-01-31', 1605), (957071, 56700, 'VYBER', '1996-01-12', 3260)]
+Query: SELECT T1.A2 AS district_name, T3.amount
+FROM district T1
+JOIN account T2 ON T2.district_id = T1.district_id
+JOIN trans T3 ON T3.account_id = T2.account_id
+WHERE T3.type='VYDAJ' AND T3.operation!='VYBER KARTOU' AND T3.date LIKE '1996-01%'
+ORDER BY T3.amount DESC
+LIMIT 5
+Explaination of the query: Top 5 individual non credit card withdrawal transactions with district names
+Result: [('Trutnov', 63700), ('Pelhrimov', 59600), ('Zlin', 59400), ('Olomouc', 57900), ('Frydek - Mistek', 56700)]
+Query: SELECT COUNT(*) FROM `trans` WHERE `type`='VYDAJ' AND `operation`='VYBER KARTOU' LIMIT 5
+Explaination of the query: Count credit card withdrawals
+Result: [(8036,)]

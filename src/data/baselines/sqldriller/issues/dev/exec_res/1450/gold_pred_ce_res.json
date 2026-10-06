@@ -1,0 +1,62 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "gold": "SELECT DISTINCT T3.city, T3.county FROM income AS T1 INNER JOIN member AS T2 ON T1.link_to_member = T2.member_id INNER JOIN zip_code AS T3 ON T3.zip_code = T2.zip WHERE T1.amount > 40",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": [
+      "('Frankewing', 'Barnstable County')"
+    ]
+  },
+  {
+    "pred": "SELECT Z.city, Z.state FROM event E JOIN attendance A ON E.event_id = A.link_to_event JOIN member M ON A.link_to_member = M.member_id JOIN zip_code Z ON M.zip = Z.zip_code GROUP BY E.event_id HAVING COUNT(DISTINCT A.link_to_member) > 40;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT city, state FROM zip_code WHERE zip_code IN (SELECT zip FROM member WHERE member_id IN (SELECT link_to_member FROM attendance WHERE link_to_event IN (SELECT event_id FROM event GROUP BY event_id HAVING COUNT(*) > 40)));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT DISTINCT Z.city, Z.state FROM zip_code Z INNER JOIN member M ON Z.zip_code = M.zip INNER JOIN attendance A ON M.member_id = A.link_to_member INNER JOIN event E ON A.link_to_event = E.event_id GROUP BY E.event_id HAVING COUNT(A.link_to_member) > 40;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT city, state FROM zip_code WHERE zip_code IN (SELECT M.zip FROM member M JOIN attendance A ON M.member_id = A.link_to_member JOIN event E ON A.link_to_event = E.event_id GROUP BY E.event_id HAVING COUNT(A.link_to_member) > 40);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT Z.city, Z.state FROM zip_code Z JOIN member M ON Z.zip_code = M.zip JOIN attendance A ON M.member_id = A.link_to_member JOIN event E ON A.link_to_event = E.event_id WHERE E.event_id IN (SELECT event_id FROM attendance GROUP BY link_to_event HAVING COUNT(link_to_member) > 40);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT Z.city, Z.state FROM (SELECT zip FROM member WHERE member_id IN (SELECT link_to_member FROM attendance GROUP BY link_to_event HAVING COUNT(link_to_member) > 40)) AS Subquery JOIN zip_code Z ON Subquery.zip = Z.zip_code;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT DISTINCT Z.city, Z.state FROM event E, attendance A, member M, zip_code Z WHERE E.event_id = A.link_to_event AND A.link_to_member = M.member_id AND M.zip = Z.zip_code GROUP BY E.event_id HAVING COUNT(DISTINCT A.link_to_member) > 40;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT Z.city, Z.state FROM zip_code Z WHERE EXISTS (SELECT 1 FROM member M JOIN attendance A ON M.member_id = A.link_to_member JOIN event E ON A.link_to_event = E.event_id WHERE M.zip = Z.zip_code GROUP BY E.event_id HAVING COUNT(*) > 40);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT city, state FROM zip_code WHERE zip_code IN (SELECT M.zip FROM member M INNER JOIN attendance A ON M.member_id = A.link_to_member INNER JOIN event E ON A.link_to_event = E.event_id GROUP BY E.event_id HAVING COUNT(*) > 40);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT Z.city, Z.state FROM zip_code Z JOIN (SELECT M.zip FROM member M JOIN attendance A ON M.member_id = A.link_to_member GROUP BY A.link_to_event HAVING COUNT(*) > 40) AS FilteredEvents ON Z.zip_code = FilteredEvents.zip;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1450/ce0.sqlite": []
+  }
+]

@@ -1,0 +1,130 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Golden Plains Adult', '2013-10-07')",
+      "('California School for the Deaf-Fremont', '2003-09-04')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Andros Karperos', '1990-10-29')",
+      "('California School for the Deaf-Fremont', '2003-09-04')"
+    ]
+  },
+  {
+    "gold": "SELECT DISTINCT County, School, ClosedDate FROM schools WHERE County = ( SELECT County FROM schools WHERE StatusType = 'Closed' GROUP BY County ORDER BY COUNT(School) DESC LIMIT 1 ) AND StatusType = 'Closed' AND school IS NOT NULL",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Yuba', 'Golden Plains Adult', '2013-10-07')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')"
+    ]
+  },
+  {
+    "pred": "SELECT County, School, ClosedDate FROM schools WHERE StatusType = 'Closed' GROUP BY County, School, ClosedDate ORDER BY COUNT(*) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Sierra', 'Andros Karperos', '1990-10-29')"
+    ]
+  },
+  {
+    "pred": "SELECT T1.County, T1.School, T1.ClosedDate FROM schools AS T1 WHERE T1.StatusType = 'Closed' GROUP BY T1.County, T1.School, T1.ClosedDate HAVING COUNT(*) = (SELECT MAX(Cnt) FROM (SELECT COUNT(*) AS Cnt FROM schools WHERE StatusType = 'Closed' GROUP BY County));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')",
+      "('Yuba', 'Golden Plains Adult', '2013-10-07')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Sierra', 'Andros Karperos', '1990-10-29')",
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')"
+    ]
+  },
+  {
+    "pred": "SELECT County, School, ClosedDate FROM schools WHERE StatusType = 'Closed' ORDER BY (SELECT COUNT(*) FROM schools AS T2 WHERE T2.County = schools.County AND T2.StatusType = 'Closed') DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Yuba', 'Golden Plains Adult', '2013-10-07')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Sierra', 'Andros Karperos', '1990-10-29')"
+    ]
+  },
+  {
+    "pred": "WITH ClosedSchools AS (SELECT County, School, ClosedDate, COUNT(*) OVER (PARTITION BY County) AS CountyClosedCount FROM schools WHERE StatusType = 'Closed') SELECT County, School, ClosedDate FROM ClosedSchools WHERE CountyClosedCount = (SELECT MAX(CountyClosedCount) FROM ClosedSchools);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')",
+      "('Yuba', 'Golden Plains Adult', '2013-10-07')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Sierra', 'Andros Karperos', '1990-10-29')",
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')"
+    ]
+  },
+  {
+    "pred": "SELECT County, School, ClosedDate FROM schools WHERE StatusType = 'Closed' AND County IN (SELECT County FROM schools WHERE StatusType = 'Closed' GROUP BY County ORDER BY COUNT(*) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Yuba', 'Golden Plains Adult', '2013-10-07')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')"
+    ]
+  },
+  {
+    "pred": "SELECT County, School, ClosedDate FROM schools WHERE StatusType = 'Closed' ORDER BY (SELECT COUNT(*) FROM schools T2 WHERE T2.StatusType = 'Closed' AND T2.County = schools.County) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Yuba', 'Golden Plains Adult', '2013-10-07')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Sierra', 'Andros Karperos', '1990-10-29')"
+    ]
+  },
+  {
+    "pred": "SELECT County, School, ClosedDate FROM schools WHERE StatusType = 'Closed' GROUP BY County, School, ClosedDate HAVING COUNT(*) = (SELECT MAX(Cnt) FROM (SELECT County, COUNT(*) AS Cnt FROM schools WHERE StatusType = 'Closed' GROUP BY County));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')",
+      "('Yuba', 'Golden Plains Adult', '2013-10-07')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Sierra', 'Andros Karperos', '1990-10-29')",
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')"
+    ]
+  },
+  {
+    "pred": "SELECT County, School, ClosedDate FROM schools WHERE StatusType = 'Closed' AND County = (SELECT County FROM schools WHERE StatusType = 'Closed' GROUP BY County ORDER BY COUNT(*) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Yuba', 'Golden Plains Adult', '2013-10-07')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')"
+    ]
+  },
+  {
+    "pred": "SELECT County, School, ClosedDate FROM schools WHERE StatusType = 'Closed' GROUP BY County, School, ClosedDate ORDER BY COUNT(County) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Sierra', 'Andros Karperos', '1990-10-29')"
+    ]
+  },
+  {
+    "pred": "SELECT County, School, ClosedDate FROM schools WHERE StatusType = 'Closed' GROUP BY County, School, ClosedDate HAVING COUNT(County) = (SELECT MAX(Cnt) FROM (SELECT County, COUNT(*) AS Cnt FROM schools WHERE StatusType = 'Closed' GROUP BY County));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce0.sqlite": [
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')",
+      "('Yuba', 'Golden Plains Adult', '2013-10-07')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/49/ce1.sqlite": [
+      "('Sierra', 'Andros Karperos', '1990-10-29')",
+      "('Tuolumne', 'California School for the Deaf-Fremont', '2003-09-04')"
+    ]
+  }
+]

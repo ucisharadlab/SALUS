@@ -1,0 +1,54 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce1.sqlite": []
+  },
+  {
+    "gold": "SELECT T1.DisplayName FROM users AS T1 INNER JOIN postHistory AS T2 ON T1.Id = T2.UserId INNER JOIN posts AS T3 ON T2.PostId = T3.Id WHERE T1.DisplayName = 'Harvey Motulsky' OR T1.DisplayName = 'Noah Snyder' GROUP BY T1.DisplayName ORDER BY SUM(T3.ViewCount) DESC LIMIT 1",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce1.sqlite": [
+      "('Noah Snyder',)"
+    ]
+  },
+  {
+    "pred": "SELECT DisplayName, MAX(total_views) FROM (SELECT U.DisplayName, SUM(P.ViewCount) AS total_views FROM users U JOIN posts P ON U.Id = P.OwnerUserId WHERE U.DisplayName IN ('Harvey Motulsky', 'Noah Snyder') AND P.ViewCount IS NOT NULL GROUP BY U.DisplayName) GROUPED_RESULTS;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce0.sqlite": [
+      "(None, None)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce1.sqlite": [
+      "(None, None)"
+    ]
+  },
+  {
+    "pred": "SELECT U.DisplayName, SUM(P.ViewCount) AS total_views FROM users U JOIN posts P ON U.Id = P.OwnerUserId WHERE U.DisplayName IN ('Harvey Motulsky', 'Noah Snyder') AND P.ViewCount IS NOT NULL GROUP BY U.DisplayName HAVING SUM(P.ViewCount) = (SELECT MAX(total_views) FROM (SELECT SUM(P.ViewCount) AS total_views FROM posts P JOIN users U ON P.OwnerUserId = U.Id WHERE U.DisplayName IN ('Harvey Motulsky', 'Noah Snyder') AND P.ViewCount IS NOT NULL GROUP BY U.DisplayName) AS subquery);",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce1.sqlite": []
+  },
+  {
+    "pred": "WITH UserPosts AS (SELECT U.DisplayName, P.ViewCount FROM users U JOIN posts P ON U.Id = P.OwnerUserId WHERE U.DisplayName IN ('Harvey Motulsky', 'Noah Snyder') AND P.ViewCount IS NOT NULL) SELECT DisplayName, SUM(ViewCount) AS total_views FROM UserPosts GROUP BY DisplayName ORDER BY SUM(ViewCount) DESC LIMIT 1;",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT DisplayName, MAX(total_views) FROM (SELECT DisplayName, SUM(ViewCount) AS total_views FROM (SELECT U.DisplayName, P.ViewCount FROM users U JOIN posts P ON U.Id = P.OwnerUserId WHERE U.DisplayName IN ('Harvey Motulsky', 'Noah Snyder') AND P.ViewCount IS NOT NULL) GROUP BY DisplayName) AS Popularity GROUP BY DisplayName;",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT U.DisplayName, SUM(P.ViewCount) AS total_views FROM users U JOIN posts P ON U.Id = P.OwnerUserId WHERE (U.DisplayName = 'Harvey Motulsky' OR U.DisplayName = 'Noah Snyder') AND P.ViewCount IS NOT NULL GROUP BY U.DisplayName ORDER BY SUM(P.ViewCount) DESC LIMIT 1;",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT DisplayName, MAX(total_views) FROM (SELECT DisplayName, SUM(ViewCount) AS total_views FROM (SELECT U.DisplayName, P.ViewCount FROM users U INNER JOIN posts P ON U.Id = P.OwnerUserId WHERE U.DisplayName IN ('Harvey Motulsky', 'Noah Snyder') AND P.ViewCount IS NOT NULL) GROUP BY DisplayName) AS Popularity GROUP BY DisplayName;",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/634/ce1.sqlite": []
+  }
+]

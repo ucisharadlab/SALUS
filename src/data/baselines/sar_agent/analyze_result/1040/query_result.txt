@@ -1,0 +1,47 @@
+Query: SELECT COUNT(DISTINCT `id`) AS cnt_id, COUNT(DISTINCT `player_api_id`) AS cnt_api FROM Player
+Explaination of the query: Check uniqueness of id vs player_api_id
+Result: [(11060, 11060)]
+Query: SELECT t1.player_name, AVG(t2.heading_accuracy) AS avg_head
+FROM Player AS t1
+JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id
+WHERE t1.height > 180
+GROUP BY t1.id
+ORDER BY avg_head DESC
+LIMIT 5
+Explaination of the query: Compute result expected
+Result: [('Michael Ballack', 91.8), ('Fernando Llorente', 91.52380952380952), ('John Terry', 91.33333333333333), ('Naldo', 90.39285714285714), ('Per Mertesacker', 90.26470588235294)]
+Query: SELECT t1.player_name
+FROM Player AS t1
+INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id
+WHERE t1.height > 180
+GROUP BY t1.id
+ORDER BY CAST(SUM(t2.heading_accuracy) AS REAL) / COUNT(t2.`player_fifa_api_id`) DESC
+LIMIT 5
+Explaination of the query: Test annotated query equivalence with top 5
+Result: [('Michael Ballack',), ('Fernando Llorente',), ('John Terry',), ('Naldo',), ('Per Mertesacker',)]
+Query: SELECT COUNT(*) AS total, COUNT(`heading_accuracy`) AS non_null FROM Player_Attributes
+Explaination of the query: Check nulls in heading_accuracy
+Result: [(183978, 183142)]
+Query: SELECT t1.player_name, AVG(t2.heading_accuracy) AS avg_head
+FROM Player AS t1
+JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id
+WHERE t1.height > 180
+GROUP BY t1.id
+ORDER BY avg_head DESC
+LIMIT 10
+Explaination of the query: Correct query using AVG
+Result: [('Michael Ballack', 91.8), ('Fernando Llorente', 91.52380952380952), ('John Terry', 91.33333333333333), ('Naldo', 90.39285714285714), ('Per Mertesacker', 90.26470588235294), ('Luca Toni', 90.26470588235294), ('Didier Drogba', 90.23529411764706), ('Miroslav Klose', 90.17647058823529), ('Daniel van Buyten', 90.17647058823529), ('Fernando Morientes', 89.8)]
+Query: SELECT t1.player_name
+FROM Player AS t1
+INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id
+WHERE t1.height > 180
+GROUP BY t1.id
+ORDER BY CAST(SUM(t2.heading_accuracy) AS REAL) / COUNT(t2.`player_fifa_api_id`) DESC
+LIMIT 10
+Explaination of the query: Run annotated query to compare top 10
+Result: [('Michael Ballack',), ('Fernando Llorente',), ('John Terry',), ('Naldo',), ('Per Mertesacker',), ('Luca Toni',), ('Didier Drogba',), ('Miroslav Klose',), ('Daniel van Buyten',), ('Fernando Morientes',)]
+Query: SELECT COUNT(*) AS total_rows, COUNT(`heading_accuracy`) AS non_null_rows
+FROM Player_Attributes
+WHERE `player_api_id` = (SELECT player_api_id FROM Player WHERE player_name = 'Michael Ballack' LIMIT 1)
+Explaination of the query: Check missing heading_accuracy rows for Michael Ballack
+Result: [(10, 10)]

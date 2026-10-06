@@ -1,0 +1,21 @@
+Query: SELECT DisplayName FROM users WHERE Id = ( SELECT OwnerUserId FROM posts WHERE ParentId IS NOT NULL ORDER BY Score DESC LIMIT 1 ) LIMIT 5
+Explaination of the query: Test annotated query to confirm it runs and returns something
+Result: [('ars',)]
+Query: SELECT Id, ParentId, Score, OwnerUserId FROM posts WHERE ParentId IS NOT NULL ORDER BY Score DESC LIMIT 5
+Explaination of the query: See top scoring child posts data
+Result: [(1632, 1595, 164, 251), (730, 726, 146, 159), (30909, 20523, 140, 7290), (83262, 83136, 135, 5836), (2700, 2691, 129, 29)]
+Query: SELECT OwnerUserId FROM posts WHERE Id = 1595
+Explaination of the query: Owner of parent post for top child
+Result: [(890,)]
+Query: SELECT `DisplayName` FROM `users` WHERE `Id` = 890 LIMIT 5
+Explaination of the query: Display name of owner of parent post
+Result: [('Fabian Fagerholm',)]
+Query: SELECT u.`DisplayName`
+FROM `posts` AS c
+JOIN `posts` AS p ON p.`Id` = c.`ParentId`
+JOIN `users` AS u ON u.`Id` = p.`OwnerUserId`
+WHERE c.`ParentId` IS NOT NULL
+ORDER BY c.`Score` DESC
+LIMIT 5
+Explaination of the query: Display name of parent post owner for top scoring child posts (check top 5)
+Result: [('Fabian Fagerholm',), ('robin girard',), ('Ari',), ('LessFaceMoreBook',), ('claws',)]

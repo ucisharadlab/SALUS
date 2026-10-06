@@ -1,0 +1,110 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483648',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('September Meeting',)",
+      "('Habitat for Humanity',)"
+    ]
+  },
+  {
+    "gold": "SELECT T2.event_name FROM budget AS T1 INNER JOIN event AS T2 ON T1.link_to_event = T2.event_id ORDER BY T1.amount DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483648',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('September Meeting',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 JOIN budget T1 ON T2.event_id = T1.link_to_event GROUP BY T2.event_name ORDER BY SUM(T1.amount) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('September Meeting',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_name FROM event WHERE event_id = (SELECT link_to_event FROM budget GROUP BY link_to_event ORDER BY SUM(amount) DESC LIMIT 1)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('September Meeting',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 WHERE T2.event_id IN (SELECT T1.link_to_event FROM budget T1 GROUP BY T1.link_to_event HAVING SUM(T1.amount) = (SELECT MAX(total_amount) FROM (SELECT SUM(amount) AS total_amount FROM budget GROUP BY link_to_event)))",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483648',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('Habitat for Humanity',)",
+      "('September Meeting',)"
+    ]
+  },
+  {
+    "pred": "WITH TotalBudget AS (SELECT link_to_event, SUM(amount) AS total_amount FROM budget GROUP BY link_to_event) SELECT T2.event_name FROM event T2 JOIN TotalBudget T1 ON T2.event_id = T1.link_to_event WHERE T1.total_amount = (SELECT MAX(total_amount) FROM TotalBudget)",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483648',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('Habitat for Humanity',)",
+      "('September Meeting',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 INNER JOIN (SELECT link_to_event, SUM(amount) AS total_amount FROM budget GROUP BY link_to_event) T1 ON T2.event_id = T1.link_to_event ORDER BY T1.total_amount DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483648',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('Habitat for Humanity',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_name FROM event WHERE event_id = (SELECT link_to_event FROM (SELECT link_to_event, SUM(amount) AS total_amount FROM budget GROUP BY link_to_event ORDER BY total_amount DESC LIMIT 1) T)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('September Meeting',)"
+    ]
+  },
+  {
+    "pred": "WITH RankedEvents AS (SELECT link_to_event, RANK() OVER (ORDER BY SUM(amount) DESC) AS rank FROM budget GROUP BY link_to_event) SELECT event_name FROM event JOIN RankedEvents ON event_id = link_to_event WHERE rank = 1",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483649',)",
+      "('2147483648',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('September Meeting',)",
+      "('Habitat for Humanity',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 JOIN (SELECT link_to_event, SUM(amount) AS total_amount FROM budget GROUP BY link_to_event) T1 ON T2.event_id = T1.link_to_event WHERE T1.total_amount = (SELECT MAX(total_amount) FROM (SELECT SUM(amount) AS total_amount FROM budget GROUP BY link_to_event) T)",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce0.sqlite": [
+      "('2147483648',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1369/ce1.sqlite": [
+      "('Habitat for Humanity',)",
+      "('September Meeting',)"
+    ]
+  }
+]

@@ -1,0 +1,36 @@
+Query: SELECT COUNT(*) FROM transactions_1k
+Explaination of the query: check table size
+Result: [(1000,)]
+Query: SELECT MIN(`Date`) FROM `transactions_1k`
+Explaination of the query: find earliest date
+Result: [('2012-08-23',)]
+Query: SELECT * FROM `transactions_1k` WHERE `Date` = (SELECT MIN(`Date`) FROM `transactions_1k`) LIMIT 5
+Explaination of the query: show earliest date rows
+Result: [(26, '2012-08-23', '20:19:00', 49788, 753582, 910, 2, 22, 520.56), (27, '2012-08-23', '20:19:00', 49788, 753582, 910, 23, 1, 123.91), (36, '2012-08-23', '20:12:00', 23339, 628682, 3114, 5, 3, 76.42), (47, '2012-08-23', '21:20:00', 9627, 587138, 1262, 2, 91, 1994.71), (65, '2012-08-23', '22:59:00', 18010, 620316, 128, 2, 33, 718.32)]
+Query: SELECT MIN(`Time`) FROM `transactions_1k` WHERE `Date`='2012-08-23'
+Explaination of the query: earliest time on earliest date
+Result: [('09:40:00',)]
+Query: SELECT DISTINCT `CustomerID`, `Time` FROM `transactions_1k` WHERE `Date`='2012-08-23' ORDER BY `Time` LIMIT 5
+Explaination of the query: list earliest times
+Result: [(44480, '09:40:00'), (6990, '09:50:00'), (46987, '09:51:00'), (23339, '20:12:00'), (49788, '20:19:00')]
+Query: SELECT `CustomerID`, `Date`, `Time` FROM `transactions_1k` ORDER BY `Date` ASC, `Time` ASC LIMIT 5
+Explaination of the query: identify earliest row
+Result: [(44480, '2012-08-23', '09:40:00'), (6990, '2012-08-23', '09:50:00'), (46987, '2012-08-23', '09:51:00'), (23339, '2012-08-23', '20:12:00'), (49788, '2012-08-23', '20:19:00')]
+Query: SELECT T2.`Segment` FROM `transactions_1k` AS T1 INNER JOIN `customers` AS T2 ON T1.`CustomerID` = T2.`CustomerID` WHERE T1.`Date` = (SELECT MIN(`Date`) FROM `transactions_1k`) LIMIT 5
+Explaination of the query: run annotated query sample
+Result: [('KAM',), ('KAM',), ('LAM',), ('KAM',), ('SME',)]
+Query: WITH first_tx AS (
+  SELECT `CustomerID`
+  FROM `transactions_1k`
+  ORDER BY `Date` ASC, `Time` ASC
+  LIMIT 1
+)
+SELECT `Segment` FROM `customers` WHERE `CustomerID` = (SELECT `CustomerID` FROM first_tx)
+Explaination of the query: Find segment of earliest customer
+Result: [('KAM',)]
+Query: SELECT `Date`, `Time`, COUNT(*) as cnt, GROUP_CONCAT(DISTINCT `CustomerID`) as custs
+FROM `transactions_1k`
+GROUP BY `Date`, `Time`
+ORDER BY `Date` ASC, `Time` ASC LIMIT 5
+Explaination of the query: check earliest timestamp duplicates
+Result: [('2012-08-23', '09:40:00', 1, '44480'), ('2012-08-23', '09:50:00', 1, '6990'), ('2012-08-23', '09:51:00', 1, '46987'), ('2012-08-23', '20:12:00', 1, '23339'), ('2012-08-23', '20:19:00', 2, '49788')]

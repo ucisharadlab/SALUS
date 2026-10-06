@@ -1,0 +1,15 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The annotated query filters only by the minimum `Date`, so it includes every customer who made a transaction on that day. The question asks for the segment of the single earliest customer, which requires finding the first transaction chronologically (earliest date **and** earliest time), extracting that customer, and returning exactly one segment value. Hence the annotated query is incorrect.  
+Revised:  
+```sql
+WITH first_tx AS (
+  SELECT `CustomerID`
+  FROM `transactions_1k`
+  ORDER BY `Date` ASC, `Time` ASC
+  LIMIT 1
+)
+SELECT `Segment`
+FROM `customers`
+WHERE `CustomerID` = (SELECT `CustomerID` FROM first_tx);
+```

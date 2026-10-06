@@ -1,0 +1,65 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1318/ce1.sqlite": [
+      "('Laugh Out Loud',)",
+      "('Fall Elections',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_id FROM event T2 JOIN (SELECT link_to_event, COUNT(link_to_member) AS num_attendees FROM attendance GROUP BY link_to_event) T1 ON T2.event_id = T1.link_to_event ORDER BY T1.num_attendees DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1318/ce1.sqlite": [
+      "('recHaMmaKyfktt5fW',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_id FROM event WHERE event_id IN (SELECT link_to_event FROM attendance GROUP BY link_to_event ORDER BY COUNT(link_to_member) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1318/ce1.sqlite": [
+      "('recHaMmaKyfktt5fW',)"
+    ]
+  },
+  {
+    "pred": "WITH EventAttendance AS (SELECT link_to_event, COUNT(link_to_member) AS attendees_count FROM attendance GROUP BY link_to_event) SELECT event_id FROM event JOIN EventAttendance ON event.event_id = EventAttendance.link_to_event ORDER BY attendees_count DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1318/ce1.sqlite": [
+      "('recHaMmaKyfktt5fW',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_id FROM event WHERE event_id = (SELECT link_to_event FROM attendance GROUP BY link_to_event ORDER BY COUNT(*) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1318/ce1.sqlite": [
+      "('recHaMmaKyfktt5fW',)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.event_id FROM (SELECT event_id FROM event JOIN (SELECT link_to_event, COUNT(*) AS total_attendance FROM attendance GROUP BY link_to_event) AS SubQuery ON event.event_id = SubQuery.link_to_event ORDER BY total_attendance DESC LIMIT 1) T1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1318/ce1.sqlite": [
+      "('recHaMmaKyfktt5fW',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_id FROM event WHERE event_id = (SELECT link_to_event FROM attendance GROUP BY link_to_event HAVING COUNT(link_to_member) = (SELECT MAX(count) FROM (SELECT COUNT(link_to_member) AS count FROM attendance GROUP BY link_to_event)));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1318/ce1.sqlite": [
+      "('recHaMmaKyfktt5fW',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_id FROM event WHERE event_id = (SELECT link_to_event FROM (SELECT link_to_event, COUNT(link_to_member) AS total_attendees FROM attendance GROUP BY link_to_event ORDER BY total_attendees DESC) AS MostAttended LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1318/ce1.sqlite": [
+      "('recHaMmaKyfktt5fW',)"
+    ]
+  },
+  {
+    "pred": "WITH RankedEvents AS (SELECT event_id, RANK() OVER (ORDER BY COUNT(link_to_member) DESC) AS rank FROM attendance JOIN event ON attendance.link_to_event = event.event_id GROUP BY link_to_event) SELECT event_id FROM RankedEvents WHERE rank = 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1318/ce1.sqlite": [
+      "('recHaMmaKyfktt5fW',)",
+      "('rectsBOijA23838qh',)"
+    ]
+  }
+]

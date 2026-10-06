@@ -1,0 +1,12 @@
+Correctness: No – the annotated query orders by SUM(T1.Score) after joining to comments, which equals posts.Score × comment_count, so it does not necessarily pick the highest-score post. It returns 35 instead of the correct 3.
+Is_ambiguous: No – the question unambiguously asks for the number of comments on the post with the maximum score.
+Explanation: The task is: (1) find the post with MAX(posts.Score); (2) count comments whose PostId equals that post Id. The annotated query joins posts and comments, groups by post, counts comments, but then orders by SUM(T1.Score). Because each post row is repeated per comment, SUM(T1.Score) enlarges with comment_count, so the chosen row is the one maximizing Score×comment_count, not the plain Score. Verification queries show the true answer is 3 comments for score 192, whereas the annotated query yields 35. Hence it is incorrect.
+Revised:
+SELECT COUNT(*)
+FROM `comments`
+WHERE `PostId` = (
+    SELECT `Id`
+    FROM `posts`
+    ORDER BY `Score` DESC
+    LIMIT 1
+);

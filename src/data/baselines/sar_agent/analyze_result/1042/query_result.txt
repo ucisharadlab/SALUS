@@ -1,0 +1,28 @@
+Query: SELECT t1.name, AVG(t2.home_team_goal) AS avg_home, AVG(t2.away_team_goal) AS avg_away
+FROM League t1 JOIN Match t2 ON t1.id=t2.league_id
+WHERE t2.season='2009/2010'
+GROUP BY t1.name
+ORDER BY t1.name
+LIMIT 5;
+Explaination of the query: Check average goals per league for that season.
+Result: [('Belgium Jupiler League', 1.4666666666666666, 1.223809523809524), ('England Premier League', 1.6973684210526316, 1.0736842105263158), ('France Ligue 1', 1.3894736842105264, 1.0210526315789474), ('Germany 1. Bundesliga', 1.5130718954248366, 1.3169934640522876), ('Italy Serie A', 1.5421052631578946, 1.068421052631579)]
+Query: SELECT t1.name 
+FROM League t1 
+JOIN Match t2 ON t1.id=t2.league_id 
+WHERE t2.season='2009/2010' 
+GROUP BY t1.name 
+HAVING AVG(t2.home_team_goal) > AVG(t2.away_team_goal)
+ORDER BY t1.name
+LIMIT 20;
+Explaination of the query: Run annotated query (simplified) to list leagues where home avg > away avg.
+Result: [('Belgium Jupiler League',), ('England Premier League',), ('France Ligue 1',), ('Germany 1. Bundesliga',), ('Italy Serie A',), ('Netherlands Eredivisie',), ('Poland Ekstraklasa',), ('Portugal Liga ZON Sagres',), ('Scotland Premier League',), ('Spain LIGA BBVA',), ('Switzerland Super League',)]
+Query: SELECT t1.name
+FROM League AS t1
+INNER JOIN Match AS t2 ON t1.id = t2.league_id
+WHERE t2.season = '2009/2010'
+GROUP BY t1.name
+HAVING (CAST(SUM(t2.home_team_goal) AS REAL) / COUNT(DISTINCT t2.id)) - (CAST(SUM(t2.away_team_goal) AS REAL) / COUNT(DISTINCT t2.id)) > 0
+ORDER BY t1.name
+LIMIT 20;
+Explaination of the query: Run the annotated query to verify result
+Result: [('Belgium Jupiler League',), ('England Premier League',), ('France Ligue 1',), ('Germany 1. Bundesliga',), ('Italy Serie A',), ('Netherlands Eredivisie',), ('Poland Ekstraklasa',), ('Portugal Liga ZON Sagres',), ('Scotland Premier League',), ('Spain LIGA BBVA',), ('Switzerland Super League',)]

@@ -1,0 +1,25 @@
+Correctness: No – the annotated query counts every Laboratory row in the denominator, so patients with more PT tests are over-represented and the percentage is not based on people nor limited to abnormal PT.  It therefore does not answer any reasonable interpretation of the question.
+Is_ambiguous: Yes – “percentage of female who has abnormal PT” can be read as (a) the share of abnormal-PT patients that are female or (b) the rate of abnormal PT among female patients.  Each needs a different denominator.
+Explanation: 1) The query joins Patient→Laboratory, filters age>55, then divides SUM(CASE …SEX='F' AND PT≥14) by COUNT(*).  COUNT(*) is every joined lab record, not persons, and not restricted to abnormal PT.  2) Multiple lab dates for the same patient inflate counts unpredictably.  3) Because of those issues the result is wrong.  4) The English wording leaves the reference group undefined, hence ambiguity.
+Revised:  If interpretation (a) is intended (share of abnormal-PT patients who are female):
+WITH older_abn AS (
+  SELECT DISTINCT p.`ID`, p.`SEX`
+  FROM `Patient` p
+  JOIN `Laboratory` l ON l.`ID` = p.`ID`
+  WHERE (strftime('%Y','now') - strftime('%Y',p.`Birthday`)) > 55
+    AND l.`PT` >= 14
+)
+SELECT 100.0 * SUM(CASE WHEN `SEX` = 'F' THEN 1 ELSE 0 END) / COUNT(*) AS pct_female_abn_PT
+FROM older_abn;
+
+If interpretation (b) is intended (rate of abnormal PT within older females):
+WITH older_female AS (
+  SELECT p.`ID`, MAX(CASE WHEN l.`PT` >= 14 THEN 1 ELSE 0 END) AS has_abn
+  FROM `Patient` p
+  JOIN `Laboratory` l ON l.`ID` = p.`ID`
+  WHERE (strftime('%Y','now') - strftime('%Y',p.`Birthday`)) > 55
+    AND p.`SEX` = 'F'
+  GROUP BY p.`ID`
+)
+SELECT 100.0 * SUM(has_abn) / COUNT(*) AS pct_female_with_abn_PT
+FROM older_female;

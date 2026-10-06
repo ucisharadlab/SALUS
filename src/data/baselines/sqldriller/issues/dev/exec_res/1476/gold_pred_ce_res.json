@@ -1,0 +1,70 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(-234.77,)"
+    ]
+  },
+  {
+    "gold": "SELECT SUM(IIF(T1.Currency = 'CZK', T2.Consumption, 0)) - SUM(IIF(T1.Currency = 'EUR', T2.Consumption, 0)) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE SUBSTR(T2.Date, 1, 4) = '2012'",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(-234.77,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(T1.Consumption) FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date BETWEEN '201201' AND '201212' AND T2.Currency = 'CZK') - (SELECT SUM(T1.Consumption) FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date BETWEEN '201201' AND '201212' AND T2.Currency = 'EUR') AS ConsumptionDifference;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CASE WHEN T2.Currency = 'CZK' THEN T1.Consumption ELSE 0 END) - SUM(CASE WHEN T2.Currency = 'EUR' THEN T1.Consumption ELSE 0 END) AS ConsumptionDifference FROM yearmonth T1 INNER JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date >= '201201' AND T1.Date <= '201212';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(-234.77,)"
+    ]
+  },
+  {
+    "pred": "WITH CZKConsumption AS (SELECT SUM(Consumption) AS TotalConsumption FROM yearmonth JOIN customers ON yearmonth.CustomerID = customers.CustomerID WHERE Date LIKE '2012%' AND Currency = 'CZK'), EURConsumption AS (SELECT SUM(Consumption) AS TotalConsumption FROM yearmonth JOIN customers ON yearmonth.CustomerID = customers.CustomerID WHERE Date LIKE '2012%' AND Currency = 'EUR') SELECT CZKConsumption.TotalConsumption - EURConsumption.TotalConsumption AS ConsumptionDifference FROM CZKConsumption, EURConsumption;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(Consumption) FROM yearmonth WHERE CustomerID IN (SELECT CustomerID FROM customers WHERE Currency = 'CZK') AND Date BETWEEN '201201' AND '201212') - (SELECT SUM(Consumption) FROM yearmonth WHERE CustomerID IN (SELECT CustomerID FROM customers WHERE Currency = 'EUR') AND Date BETWEEN '201201' AND '201212') AS ConsumptionDifference;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SUM(T1.Consumption) FILTER (WHERE T2.Currency = 'CZK')) - (SUM(T1.Consumption) FILTER (WHERE T2.Currency = 'EUR')) AS ConsumptionDifference FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Date >= '201201' AND T1.Date <= '201212';",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT CZK.Total - EUR.Total AS ConsumptionDifference FROM (SELECT SUM(Consumption) AS Total FROM yearmonth JOIN customers ON yearmonth.CustomerID = customers.CustomerID WHERE Date BETWEEN '201201' AND '201212' AND Currency = 'CZK') AS CZK, (SELECT SUM(Consumption) AS Total FROM yearmonth JOIN customers ON yearmonth.CustomerID = customers.CustomerID WHERE Date BETWEEN '201201' AND '201212' AND Currency = 'EUR') AS EUR;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(Consumption) FROM yearmonth INNER JOIN customers ON yearmonth.CustomerID = customers.CustomerID WHERE yearmonth.Date BETWEEN '201201' AND '201212' AND customers.Currency = 'CZK') - (SELECT SUM(Consumption) FROM yearmonth INNER JOIN customers ON yearmonth.CustomerID = customers.CustomerID WHERE yearmonth.Date BETWEEN '201201' AND '201212' AND customers.Currency = 'EUR') AS ConsumptionDifference;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "WITH TotalConsumption AS (SELECT Currency, SUM(Consumption) AS Total FROM yearmonth JOIN customers ON yearmonth.CustomerID = customers.CustomerID WHERE yearmonth.Date BETWEEN '201201' AND '201212' GROUP BY Currency) SELECT (SELECT Total FROM TotalConsumption WHERE Currency = 'CZK') - (SELECT Total FROM TotalConsumption WHERE Currency = 'EUR') AS ConsumptionDifference FROM TotalConsumption;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1476/ce0.sqlite": [
+      "(None,)"
+    ]
+  }
+]

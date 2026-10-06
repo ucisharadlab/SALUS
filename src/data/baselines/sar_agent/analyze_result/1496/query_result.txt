@@ -1,0 +1,31 @@
+Query: SELECT * FROM `customers` LIMIT 5
+Explaination of the query: Preview customers
+Result: [(3, 'SME', 'EUR'), (5, 'LAM', 'EUR'), (6, 'SME', 'EUR'), (7, 'LAM', 'EUR'), (9, 'SME', 'EUR')]
+Query: SELECT DISTINCT `Segment` FROM `customers` LIMIT 5
+Explaination of the query: See segments
+Result: [('SME',), ('LAM',), ('KAM',)]
+Query: SELECT T1.Segment, T1.CustomerID, SUM(T2.Consumption) as total_cons
+FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID
+WHERE T2.Date = '201309'
+GROUP BY T1.CustomerID
+ORDER BY total_cons ASC
+LIMIT 5
+Explaination of the query: Find lowest consumption customers September 2013
+Result: [('KAM', 43110, -123169.73), ('SME', 16177, -6592.61), ('SME', 47462, -1400.71), ('KAM', 45195, -1391.11), ('SME', 42762, -1369.01)]
+Query: SELECT T1.Segment, SUM(T2.Consumption) as total_consumption
+FROM `customers` T1 
+JOIN `yearmonth` T2 ON T1.CustomerID = T2.CustomerID
+WHERE T2.Date = '201309'
+GROUP BY T1.Segment
+ORDER BY total_consumption ASC
+LIMIT 5
+Explaination of the query: Aggregate consumption per segment September 2013
+Result: [('LAM', 120091351.67), ('SME', 124865094.62), ('KAM', 142678733.16)]
+Query: SELECT c.Segment, SUM(y.Consumption) AS total_consumption
+FROM `customers` c JOIN `yearmonth` y ON y.CustomerID = c.CustomerID
+WHERE y.Date = '201309'
+GROUP BY c.Segment
+ORDER BY total_consumption ASC
+LIMIT 5
+Explaination of the query: Compute total consumption per segment for September 2013
+Result: [('LAM', 120091351.67), ('SME', 124865094.62), ('KAM', 142678733.16)]

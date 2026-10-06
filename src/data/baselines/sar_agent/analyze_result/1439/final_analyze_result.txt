@@ -1,0 +1,14 @@
+Correctness: Yes  
+Is_ambiguous: Yes  
+Explanation: The annotated query joins member and major, filters to college = 'College of Agriculture and Applied Sciences' and major_name = 'Business', then selects the phone numbers. This accurately returns the phone(s) for members whose major is exactly named “Business”; execution shows one result, matching that strict interpretation, so the SQL is logically correct.  
+
+The phrasing of the natural-language question (“majored in business”) can also reasonably encompass other majors that include the word “Business” (e.g., “Business Education”, “Agribusiness”). The database contains a member with major “Business Education” in the same college whose phone is not returned. Because the question does not specify whether it means the exact major name or any business-related major, the scope is ambiguous.  
+
+Revised: If the broader interpretation is intended, the SQL should be:  
+```
+SELECT m.phone
+FROM `member` AS m
+JOIN `major` AS ma ON ma.major_id = m.`link_to_major`
+WHERE ma.`college` = 'College of Agriculture and Applied Sciences'
+  AND ma.`major_name` LIKE '%Business%';
+```

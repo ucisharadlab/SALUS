@@ -1,0 +1,11 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The query filters on promoTypes = 'bundle', which will miss any rows where the value is a comma-separated list that merely contains "bundle".  Even for rows that are returned, `purchaseUrls` is a TEXT blob that contains several key/value pairs with per-card hashed links; returning DISTINCT purchaseUrls therefore produces almost one row per card instead of the distinct purchasing websites that the question asks for.  The query therefore does not accurately list the websites.  
+Revised:  
+```
+-- If we only need the URL strings (not the site names) for every card that has “bundle”
+SELECT DISTINCT `purchaseUrls`
+FROM `cards`
+WHERE `promoTypes` LIKE '%bundle%';
+```
+(If just the site names such as cardKingdom, cardmarket, tcgplayer are required, further JSON/text parsing would be necessary.)

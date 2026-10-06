@@ -1,0 +1,10 @@
+Correctness: Yes
+Is_ambiguous: No
+Explanation: The query restricts the universe to single bonds (`bond_type = '-'`).  Because every bond record carries the `molecule_id`, an INNER JOIN with the molecule table correctly attaches the carcinogenic flag (`label`).  
+• Numerator `COUNT(CASE WHEN T2.label = '+' …)` therefore counts only those single-bond rows that belong to carcinogenic molecules.  
+• Denominator `COUNT(T1.bond_id)` counts all single-bond rows.  
+• Casting the numerator to REAL guarantees a floating-point result, the arithmetic expression produces the percentage, and `ROUND(... ,5)` delivers five decimal places as requested.  
+
+`bond_id` is unique, so no duplicates are introduced by the join and no DISTINCT is needed.  Column names and table names all exist in the schema, and the logic directly answers “What proportion of single bonds are carcinogenic?”
+
+Revised: (no revision needed)

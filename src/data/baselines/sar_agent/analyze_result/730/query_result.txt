@@ -1,0 +1,23 @@
+Query: SELECT superhero_name 
+FROM superhero AS T1
+WHERE EXISTS (
+  SELECT 1 FROM hero_power AS T2 
+  INNER JOIN superpower AS T3 ON T2.power_id = T3.id 
+  WHERE T3.power_name = 'Super Strength' AND T1.id = T2.hero_id)
+  AND EXISTS (
+  SELECT 1 FROM publisher AS T4 WHERE T4.publisher_name = 'Marvel Comics' AND T1.publisher_id = T4.id)
+LIMIT 5;
+Explaination of the query: Check results
+Result: [('3-D Man',), ('A-Bomb',), ('Abomination',), ('Abraxas',), ('Absorbing Man',)]
+Query: SELECT COUNT(*) FROM (SELECT superhero_name FROM superhero AS T1 JOIN hero_power AS T2 ON T1.id=T2.hero_id JOIN superpower AS T3 ON T2.power_id=T3.id JOIN publisher AS T4 ON T1.publisher_id=T4.id WHERE T3.power_name='Super Strength' AND T4.publisher_name='Marvel Comics');
+Explaination of the query: count of heroes meeting criteria
+Result: [(201,)]
+Query: SELECT COUNT(*) FROM (SELECT superhero_name FROM superhero AS T1
+WHERE EXISTS (SELECT 1 FROM hero_power AS T2 INNER JOIN superpower AS T3 ON T2.power_id = T3.id WHERE T3.power_name = 'Super Strength' AND T1.id = T2.hero_id)
+AND EXISTS (SELECT 1 FROM publisher AS T4 WHERE T4.publisher_name = 'Marvel Comics' AND T1.publisher_id = T4.id));
+Explaination of the query: count rows returned by annotated query
+Result: [(201,)]
+Query: SELECT DISTINCT publisher_name FROM publisher WHERE id IN (SELECT publisher_id FROM superhero WHERE id IN (SELECT hero_id FROM hero_power WHERE power_id = (SELECT id FROM superpower WHERE power_name = 'Super Strength')));
+
+Explaination of the query: unique publishers among heroes with super strength
+Result: [('',), ('ABC Studios',), ('Dark Horse Comics',), ('DC Comics',), ('George Lucas',), ('Hanna-Barbera',), ('HarperCollins',), ('Image Comics',), ('J. R. R. Tolkien',), ('Marvel Comics',), ('NBC - Heroes',), ('Shueisha',), ('Sony Pictures',), ('Star Trek',), ('SyFy',), ('Team Epic TV',), ('Universal Studios',), ('Wildstorm',)]

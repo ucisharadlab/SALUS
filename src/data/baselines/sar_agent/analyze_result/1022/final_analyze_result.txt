@@ -1,0 +1,7 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The query adds an unrelated filter "penalties" which keeps only records whose penalty-rating is non–zero. If the player(s) that own the minimum potential happen to have a 0 (or NULL) penalty value the query would wrongly return no row, therefore the logic is unsound. In addition it returns as many duplicate rows as there are attribute snapshots for that player, whereas the question asks for the preferred foot, not all rows.  
+The question itself is ambiguous: several players (and/or several dated attribute rows of the same player) can share the minimum potential, and their preferred foots could differ; the question does not specify how to break the tie.
+Revised: SELECT DISTINCT `preferred_foot`
+FROM `Player_Attributes`
+WHERE `potential` = (SELECT MIN(`potential`) FROM `Player_Attributes`);

@@ -1,0 +1,77 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(-173.06,)"
+    ]
+  },
+  {
+    "gold": "SELECT SUM(CASE WHEN SUBSTR(T1.event_date, 1, 4) = '2019' THEN T2.spent ELSE 0 END) - SUM(CASE WHEN SUBSTR(T1.event_date, 1, 4) = '2020' THEN T2.spent ELSE 0 END) AS num FROM event AS T1 INNER JOIN budget AS T2 ON T1.event_id = T2.link_to_event",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(-173.06,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(b.spent) FROM budget b JOIN event e ON b.link_to_event = e.event_id WHERE SUBSTR(e.event_date, 1, 4) = '2020') - (SELECT SUM(b.spent) FROM budget b JOIN event e ON b.link_to_event = e.event_id WHERE SUBSTR(e.event_date, 1, 4) = '2019') AS difference;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CASE WHEN SUBSTR(e.event_date, 1, 4) = '2020' THEN b.spent ELSE 0 END) - SUM(CASE WHEN SUBSTR(e.event_date, 1, 4) = '2019' THEN b.spent ELSE 0 END) AS difference FROM event e JOIN budget b ON e.event_id = b.link_to_event;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(173.06,)"
+    ]
+  },
+  {
+    "pred": "WITH TotalSpent2020 AS (SELECT SUM(b.spent) AS spent2020 FROM budget b JOIN event e ON b.link_to_event = e.event_id WHERE SUBSTR(e.event_date, 1, 4) = '2020'), TotalSpent2019 AS (SELECT SUM(b.spent) AS spent2019 FROM budget b JOIN event e ON b.link_to_event = e.event_id WHERE SUBSTR(e.event_date, 1, 4) = '2019') SELECT spent2020 - spent2019 AS difference FROM TotalSpent2020, TotalSpent2019;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(b.spent) FROM budget b INNER JOIN event e ON b.link_to_event = e.event_id WHERE SUBSTR(e.event_date, 1, 4) = '2020') - (SELECT SUM(b.spent) FROM budget b INNER JOIN event e ON b.link_to_event = e.event_id WHERE SUBSTR(e.event_date, 1, 4) = '2019') AS difference;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(b.spent * (CASE WHEN SUBSTR(e.event_date, 1, 4) = '2020' THEN 1 ELSE -1 END)) AS difference FROM budget b JOIN event e ON b.link_to_event = e.event_id WHERE SUBSTR(e.event_date, 1, 4) IN ('2019', '2020');",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(173.06,)"
+    ]
+  },
+  {
+    "pred": "WITH YearlySpending AS (SELECT SUBSTR(e.event_date, 1, 4) AS year, SUM(b.spent) AS total_spent FROM event e JOIN budget b ON e.event_id = b.link_to_event GROUP BY year) SELECT (SELECT total_spent FROM YearlySpending WHERE year = '2020') - (SELECT total_spent FROM YearlySpending WHERE year = '2019') AS difference;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(b.spent) FILTER (WHERE SUBSTR(e.event_date, 1, 4) = '2020') - SUM(b.spent) FILTER (WHERE SUBSTR(e.event_date, 1, 4) = '2019') AS difference FROM event e JOIN budget b ON e.event_id = b.link_to_event;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SUM(CASE WHEN SUBSTR(e.event_date, 1, 4) = '2020' THEN b.spent ELSE 0 END) - SUM(CASE WHEN SUBSTR(e.event_date, 1, 4) = '2019' THEN b.spent ELSE 0 END)) AS difference FROM budget b JOIN event e ON b.link_to_event = e.event_id;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(173.06,)"
+    ]
+  },
+  {
+    "pred": "WITH Expenses AS (SELECT SUBSTR(e.event_date, 1, 4) AS year, SUM(b.spent) AS total FROM budget b JOIN event e ON b.link_to_event = e.event_id GROUP BY year) SELECT (SELECT total FROM Expenses WHERE year = '2020') - (SELECT total FROM Expenses WHERE year = '2019') AS difference FROM Expenses GROUP BY year;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1340/ce0.sqlite": [
+      "(None,)"
+    ]
+  }
+]

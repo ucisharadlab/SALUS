@@ -1,0 +1,9 @@
+Correctness: No – the query counts total result rows per race instead of finishers because (time IS NOT NULL) is never NULL, so COUNT() includes every row.
+Is_ambiguous: No – “race number” is most reasonably interpreted as raceId.
+Explanation: A finisher is a result row where `time` is NOT NULL.  To count finishers you must use COUNT(`time`) (which ignores NULLs) or SUM(`time IS NOT NULL`).  The annotated query uses COUNT(time IS NOT NULL); since that expression always returns 0/1 (never NULL), every row is counted, giving total starters, not finishers.  Verification shows raceId 800 (55 rows, 17 finishers) is chosen by the bad query, while raceId 855 (38 rows, 19 finishers) actually has the most finishers.  Thus the query is wrong.
+Revised:
+SELECT `raceId`
+FROM `results`
+GROUP BY `raceId`
+ORDER BY COUNT(`time`) DESC
+LIMIT 1;

@@ -1,0 +1,10 @@
+Correctness: No – the query filters the proper rows but only returns the numeric id, not the card(s) themselves, and duplicates are not removed.
+Is_ambiguous: Yes – the wording “which card” is singular, yet 187 different card names satisfy the criteria, so it is unclear whether a single card or the full list is expected.
+Explanation: The conditions borderColor = 'black' and isFullArt = 1 correctly represent “black border” and “full artwork”.  Executing verification queries shows 471 rows and 187 distinct card names meet those conditions.  The annotated query projects only `id`, giving many duplicate printings and omitting the identifying `name`, therefore it does not truly answer “which card”.  Because many cards match, the English question itself lacks clarity on the desired result set.
+Revised:
+If the intent is to list every distinct card name that has a black border and full art:
+SELECT DISTINCT `name`
+FROM `cards`
+WHERE `borderColor` = 'black'
+  AND `isFullArt` = 1;
+If a single answer is intended, the question should be rewritten to specify which one (e.g., “What is the first card alphabetically …” or “How many such cards exist?”).

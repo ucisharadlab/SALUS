@@ -1,0 +1,36 @@
+Query: SELECT T1.name, T1.year, T2.milliseconds FROM `races` AS T1 INNER JOIN `lapTimes` AS T2 ON T2.raceId = T1.raceId INNER JOIN `drivers` AS T3 ON T3.driverId = T2.driverId WHERE T3.forename = 'Michael' AND T3.surname = 'Schumacher' ORDER BY T2.milliseconds ASC LIMIT 5;
+Explaination of the query: Get fastest lap times of Michael Schumacher
+Result: [('Austrian Grand Prix', 2003, 68337), ('Austrian Grand Prix', 2003, 68577), ('Austrian Grand Prix', 2003, 68617), ('Austrian Grand Prix', 2003, 68635), ('Austrian Grand Prix', 2003, 68933)]
+Query: SELECT MIN(`milliseconds`) FROM `lapTimes`;
+Explaination of the query: Check the absolute minimum lap time in lapTimes
+Result: [(67411,)]
+Query: SELECT MIN(`milliseconds`) FROM `lapTimes` l JOIN `drivers` d ON d.driverId = l.driverId WHERE d.forename='Michael' AND d.surname='Schumacher';
+Explaination of the query: fastest lap time of Michael Schumacher
+Result: [(68337,)]
+Query: SELECT T1.`name`, T1.`year`, T2.`milliseconds` FROM `races` AS T1 JOIN `lapTimes` AS T2 ON T2.`raceId` = T1.`raceId` JOIN `drivers` AS T3 ON T3.`driverId` = T2.`driverId` WHERE T3.`forename`='Michael' AND T3.`surname`='Schumacher' AND T2.`milliseconds` = (SELECT MIN(`milliseconds`) FROM `lapTimes` l JOIN `drivers` d ON d.`driverId`=l.`driverId` WHERE d.`forename`='Michael' AND d.`surname`='Schumacher') LIMIT 5;
+Explaination of the query: find races where he has minimum lap time
+Result: [('Austrian Grand Prix', 2003, 68337)]
+Query: SELECT r.name, r.year, l.milliseconds FROM `races` r JOIN `lapTimes` l ON l.raceId=r.raceId JOIN `drivers` d ON d.driverId=l.driverId WHERE d.forename='Michael' AND d.surname='Schumacher' ORDER BY l.milliseconds ASC LIMIT 10;
+Explaination of the query: see top 10 fastest laps
+Result: [('Austrian Grand Prix', 2003, 68337), ('Austrian Grand Prix', 2003, 68577), ('Austrian Grand Prix', 2003, 68617), ('Austrian Grand Prix', 2003, 68635), ('Austrian Grand Prix', 2003, 68933), ('Austrian Grand Prix', 2003, 68953), ('Austrian Grand Prix', 2003, 69107), ('Austrian Grand Prix', 2003, 69212), ('Austrian Grand Prix', 2003, 69266), ('Austrian Grand Prix', 2003, 69289)]
+Query: SELECT DISTINCT r.name, r.year FROM `races` r JOIN `lapTimes` l ON l.raceId=r.raceId JOIN `drivers` d ON d.driverId=l.driverId WHERE d.forename='Michael' AND d.surname='Schumacher' AND l.milliseconds=(SELECT MIN(l2.milliseconds) FROM `lapTimes` l2 JOIN `drivers` d2 ON d2.driverId=l2.driverId WHERE d2.forename='Michael' AND d2.surname='Schumacher');
+Explaination of the query: Check if multiple races have his min milliseconds
+Result: [('Austrian Grand Prix', 2003)]
+Query: SELECT r.name, r.year, MIN(l.milliseconds) as minms FROM `races` r JOIN `lapTimes` l ON l.raceId=r.raceId JOIN `drivers` d ON d.driverId=l.driverId WHERE d.forename='Michael' AND d.surname='Schumacher';
+Explaination of the query: Get minimal milliseconds of Schumacher along with race (but we need group?). Actually MIN returns across entire set, but we also want race details - can't just include r.name. But just verifying min value.
+Result: [('Austrian Grand Prix', 2003, 68337)]
+Query: SELECT l.raceId, r.name, r.year FROM `lapTimes` l JOIN `drivers` d ON d.driverId=l.driverId JOIN `races` r ON r.raceId=l.raceId WHERE d.forename='Michael' AND d.surname='Schumacher' AND l.milliseconds=(SELECT MIN(l2.milliseconds) FROM `lapTimes` l2 JOIN `drivers` d2 ON d2.driverId=l2.driverId WHERE d2.forename='Michael' AND d2.surname='Schumacher') LIMIT 5;
+Explaination of the query: confirm min lap duplicate races
+Result: [(113, 'Austrian Grand Prix', 2003)]
+Query: SELECT COUNT(*) FROM `lapTimes` l JOIN `drivers` d ON d.driverId=l.driverId WHERE d.forename='Michael' AND d.surname='Schumacher' AND l.milliseconds=68337;
+Explaination of the query: how many laps with min ms
+Result: [(1,)]
+Query: SELECT MIN(CAST(REPLACE(`fastestLapTime`,':','') AS INT)) FROM `results` r JOIN `drivers` d ON r.driverId=d.driverId WHERE d.forename='Michael' AND d.surname='Schumacher';
+Explaination of the query: quick attempt to compute min fastestLapTime but values not numeric; skip
+Result: [(110,)]
+Query: SELECT MIN(l.milliseconds) FROM `lapTimes` l JOIN `drivers` d ON d.driverId=l.driverId WHERE d.forename='Michael' AND d.surname='Schumacher';
+Explaination of the query: Compute Michael Schumacher's minimum lap time
+Result: [(68337,)]
+Query: SELECT d.driverId FROM `drivers` d WHERE d.forename='Michael' AND d.surname='Schumacher' LIMIT 5;
+Explaination of the query: Find Michael Schumacher driverId
+Result: [(30,)]

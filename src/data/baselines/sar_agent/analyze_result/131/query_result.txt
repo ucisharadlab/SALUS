@@ -1,0 +1,17 @@
+Query: SELECT COUNT(DISTINCT `A2`) AS cntA2, COUNT(DISTINCT `A3`) AS cntA3 FROM `district`
+Explaination of the query: Compare unique values counts for district_name and region
+Result: [(77, 8)]
+Query: SELECT `A2`, `A3` FROM `district` LIMIT 5
+Explaination of the query: Check sample values
+Result: [('Hl.m. Praha', 'Prague'), ('Benesov', 'central Bohemia'), ('Beroun', 'central Bohemia'), ('Kladno', 'central Bohemia'), ('Kolin', 'central Bohemia')]
+Query: SELECT T2.A3, SUM(T3.amount) as total FROM account AS T1
+INNER JOIN district AS T2 ON T1.district_id = T2.district_id 
+INNER JOIN loan AS T3 ON T1.account_id = T3.account_id 
+WHERE T3.status IN ('C','D') 
+GROUP BY T2.A3 
+ORDER BY total DESC LIMIT 5
+Explaination of the query: Get region totals from annotated query without limit
+Result: [('south Moravia', 15776220), ('north Moravia', 14045388), ('east Bohemia', 12209484), ('central Bohemia', 10839696), ('Prague', 9291852)]
+Query: SELECT T2.A2, SUM(T3.amount) as total FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN loan AS T3 ON T1.account_id = T3.account_id WHERE T3.status IN ('C','D') GROUP BY T2.A2 ORDER BY total DESC LIMIT 5
+Explaination of the query: Aggregate by district_name A2
+Result: [('Hl.m. Praha', 9291852), ('Brno - mesto', 3552216), ('Ostrava - mesto', 2530812), ('Zlin', 2500008), ('Karvina', 2313996)]

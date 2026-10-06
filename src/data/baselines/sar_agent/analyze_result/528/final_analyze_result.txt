@@ -1,0 +1,18 @@
+Correctness: Yes  
+Is_ambiguous: No  
+Explanation:  
+The question asks for every card that belongs to the set “Hour of Devastation” together with each play format in which that card is legal (status = 'Legal').
+
+The annotated query:
+1. Looks up the set code(s) for the set name ‘Hour of Devastation’ from `sets` (→ 'HOU').
+2. Joins `cards` (restricted to `setCode = 'HOU'`) with `legalities` on `uuid`.
+3. Projects the card `name` plus `CASE WHEN status = 'Legal' THEN format ELSE NULL END` and applies `DISTINCT`.
+
+Because every legality row for cards in set 'HOU' has `status = 'Legal'` (verified via test queries), the CASE expression always returns a non-NULL format, so the output is exactly the desired (card-name, legal-format) pairs.  No extra or missing rows occur, and the selection respects the schema.
+
+While placing `status = 'Legal'` in the WHERE clause would be cleaner and would guard against future non-legal statuses, its absence does not make the answer incorrect for the current data set.
+
+The question itself is precise; there is only one reasonable interpretation, so it is not ambiguous.
+
+Revised:
+(no revision required)

@@ -1,0 +1,83 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce1.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce2.sqlite": [
+      "('LAM', 'Highest', 75552.12)",
+      "('LAM', 'Lowest', 75552.12)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.Segment, ((SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END) - SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2012' THEN T1.Consumption ELSE 0 END)) / SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END)) * 100 AS PercentageIncrease FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND (SUBSTR(T1.Date, 1, 4) = '2012' OR SUBSTR(T1.Date, 1, 4) = '2013') GROUP BY T2.Segment",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce1.sqlite": [
+      "('KAM', 100.0)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce2.sqlite": [
+      "('LAM', 75529.94168718412)"
+    ]
+  },
+  {
+    "pred": "WITH YearlyConsumption AS (SELECT T2.Segment, SUBSTR(T1.Date, 1, 4) AS Year, SUM(T1.Consumption) AS TotalConsumption FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND (SUBSTR(T1.Date, 1, 4) = '2012' OR SUBSTR(T1.Date, 1, 4) = '2013') GROUP BY T2.Segment, SUBSTR(T1.Date, 1, 4)) SELECT Y2013.Segment, ((Y2013.TotalConsumption - Y2012.TotalConsumption) / Y2013.TotalConsumption) * 100 AS PercentageIncrease FROM YearlyConsumption Y2013 JOIN YearlyConsumption Y2012 ON Y2013.Segment = Y2012.Segment WHERE Y2013.Year = '2013' AND Y2012.Year = '2012'",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce1.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce2.sqlite": [
+      "('LAM', 75529.94168718412)"
+    ]
+  },
+  {
+    "pred": "SELECT Segment, ((TotalConsumption2013 - TotalConsumption2012) / TotalConsumption2013) * 100 AS PercentageIncrease FROM (SELECT T2.Segment, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END) AS TotalConsumption2013, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2012' THEN T1.Consumption ELSE 0 END) AS TotalConsumption2012 FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' GROUP BY T2.Segment) WHERE TotalConsumption2013 > 0 AND TotalConsumption2012 > 0",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce1.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce2.sqlite": []
+  },
+  {
+    "pred": "SELECT Segment, (YearlyDifference / Total2013) * 100 AS PercentageIncrease FROM (SELECT T2.Segment, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END) AS Total2013, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2012' THEN T1.Consumption ELSE 0 END) AS Total2012, (SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END) - SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2012' THEN T1.Consumption ELSE 0 END)) AS YearlyDifference FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND (SUBSTR(T1.Date, 1, 4) = '2012' OR SUBSTR(T1.Date, 1, 4) = '2013') GROUP BY T2.Segment)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce1.sqlite": [
+      "('KAM', 100.0)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce2.sqlite": [
+      "('LAM', 75529.94168718412)"
+    ]
+  },
+  {
+    "pred": "SELECT Segment, (Increase / Consumption2013) * 100 AS PercentageIncrease FROM (SELECT T2.Segment, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END) AS Consumption2013, (SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END) - SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2012' THEN T1.Consumption ELSE 0 END)) AS Increase FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND (SUBSTR(T1.Date, 1, 4) = '2012' OR SUBSTR(T1.Date, 1, 4) = '2013') GROUP BY T2.Segment)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce1.sqlite": [
+      "('KAM', 100.0)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce2.sqlite": [
+      "('LAM', 75529.94168718412)"
+    ]
+  },
+  {
+    "pred": "SELECT Segment, ((Total2013 - Total2012) / Total2013) * 100 AS PercentageIncrease FROM (SELECT T2.Segment, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END) AS Total2013, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2012' THEN T1.Consumption ELSE 0 END) AS Total2012 FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND (SUBSTR(T1.Date, 1, 4) = '2012' OR SUBSTR(T1.Date, 1, 4) = '2013') GROUP BY T2.Segment)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce1.sqlite": [
+      "('KAM', 100.0)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce2.sqlite": [
+      "('LAM', 75529.94168718412)"
+    ]
+  },
+  {
+    "pred": "SELECT Segment, ((Consumption2013 - Consumption2012) / Consumption2013) * 100 AS PercentageIncrease FROM (SELECT T2.Segment, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END) AS Consumption2013, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2012' THEN T1.Consumption ELSE 0 END) AS Consumption2012 FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND (SUBSTR(T1.Date, 1, 4) = '2012' OR SUBSTR(T1.Date, 1, 4) = '2013') GROUP BY T2.Segment)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce1.sqlite": [
+      "('KAM', 100.0)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce2.sqlite": [
+      "('LAM', 75529.94168718412)"
+    ]
+  },
+  {
+    "pred": "SELECT Segment, ((Year2013 - Year2012) / Year2013) * 100 AS PercentageIncrease FROM (SELECT T2.Segment, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2013' THEN T1.Consumption ELSE 0 END) AS Year2013, SUM(CASE WHEN SUBSTR(T1.Date, 1, 4) = '2012' THEN T1.Consumption ELSE 0 END) AS Year2012 FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' AND (SUBSTR(T1.Date, 1, 4) = '2012' OR SUBSTR(T1.Date, 1, 4) = '2013') GROUP BY T2.Segment)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce1.sqlite": [
+      "('KAM', 100.0)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1482/ce2.sqlite": [
+      "('LAM', 75529.94168718412)"
+    ]
+  }
+]

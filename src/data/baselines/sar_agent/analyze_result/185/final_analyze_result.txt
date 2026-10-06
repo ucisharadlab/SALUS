@@ -1,0 +1,14 @@
+Correctness: No – the annotated query counts clients whose residence district is Prague instead of clients who actually hold an account whose branch is in Prague, so it answers a different question.
+Is_ambiguous: No – the question clearly asks about customers linked to accounts at the Prague branch, not about where they live.
+Explanation: The requested proportion must be based on (1) accounts whose branch (account.district_id) is located in a district whose region A3 = 'Prague'; (2) clients connected to these accounts via disp; (3) distinct client_id so a customer with multiple Prague accounts is counted once. The annotated query joins district to client on client.district_id and ignores account and disp tables, thereby measuring residents of Prague, not customers with Prague-branch accounts. Running both queries shows a difference (48.9 % vs 49.8 %), confirming the logical error.
+Revised: WITH prague_clients AS (
+    SELECT DISTINCT c.client_id,
+           c.gender
+    FROM account  AS a
+    JOIN district AS dis ON a.district_id = dis.district_id
+    JOIN disp     AS d   ON d.account_id = a.account_id
+    JOIN client   AS c   ON c.client_id  = d.client_id
+    WHERE dis.A3 = 'Prague'
+)
+SELECT CAST(SUM(gender = 'F') AS REAL) / COUNT(*) * 100 AS female_percentage
+FROM prague_clients;

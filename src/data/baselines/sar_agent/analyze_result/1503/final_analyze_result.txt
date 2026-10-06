@@ -1,0 +1,12 @@
+Correctness: No – the query includes `ProductID` in the projection, while the question asks only for the product description.
+Is_ambiguous: No – the requirement is clear: return product descriptions for euro-denominated transactions.
+Explanation:
+• Objective: fetch descriptions of products that appear in transactions where the currency is EUR.
+• Proper logic: join transactions_1k → customers (to know currency) → products (to get description), filter by customers.Currency = 'EUR'.
+• The annotated query performs the right joins and filter and uses DISTINCT appropriately, but it returns two columns (`ProductID`, `Description`) instead of the single requested column, so it does not match the demanded output.
+Revised:
+SELECT DISTINCT `p`.`Description`
+FROM `transactions_1k` AS `t`
+JOIN `customers` AS `c` ON `t`.`CustomerID` = `c`.`CustomerID`
+JOIN `products`  AS `p` ON `t`.`ProductID` = `p`.`ProductID`
+WHERE `c`.`Currency` = 'EUR';

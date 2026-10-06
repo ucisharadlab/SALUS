@@ -1,0 +1,18 @@
+Correctness: No – the annotated query compares each card transaction to the average of ALL 1998 transactions (not only card ones) and returns possibly duplicated account_id values; it therefore does not correctly implement the requested condition and has unnecessary join. 
+Is_ambiguous: Yes – “account holder identification numbers” could refer either to account_id or to the client_id of the holder, so more than one reasonable interpretation exists.
+Explanation: 
+1. Question asks for card transactions (operation = 'VYBER KARTOU') in 1998 whose amount is below the average card-transaction amount for that same year.
+2. Annotated query computes the average over every 1998 transaction (≈ 5879) instead of only card withdrawals (≈ 2271). This changes which rows satisfy the < condition.
+3. It selects T1.account_id without DISTINCT, so the same account can appear multiple times; join with account adds nothing.
+4. Hence result set and logic are both wrong.
+Revised:
+SELECT DISTINCT `account_id`
+FROM `trans`
+WHERE strftime('%Y', `date`) = '1998'
+  AND `operation` = 'VYBER KARTOU'
+  AND `amount` < (
+        SELECT AVG(`amount`)
+        FROM `trans`
+        WHERE strftime('%Y', `date`) = '1998'
+          AND `operation` = 'VYBER KARTOU'
+      );

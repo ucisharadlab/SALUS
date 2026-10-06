@@ -1,0 +1,47 @@
+Query: SELECT MAX(`lap`) FROM `lapTimes`
+Explaination of the query: Find maximum lap number in lapTimes
+Result: [(78,)]
+Query: SELECT DISTINCT T2.name, T2.year, T1.location
+FROM circuits AS T1
+JOIN races AS T2 ON T1.circuitId = T2.circuitId
+JOIN lapTimes AS T3 ON T3.raceId = T2.raceId
+WHERE T3.lap = (SELECT MAX(`lap`) FROM `lapTimes`)
+LIMIT 5;
+Explaination of the query: Check distinct race-year-location where max lap (=78) recorded
+Result: [('Monaco Grand Prix', 2009, 'Monte-Carlo'), ('Monaco Grand Prix', 2007, 'Monte-Carlo'), ('Monaco Grand Prix', 2006, 'Monte-Carlo'), ('Monaco Grand Prix', 2005, 'Monte-Carlo'), ('Monaco Grand Prix', 2003, 'Monte-Carlo')]
+Query: SELECT COUNT(*) FROM circuits AS c
+JOIN races AS r ON c.circuitId = r.circuitId
+JOIN lapTimes AS l ON l.raceId = r.raceId
+WHERE l.lap = (SELECT MAX(`lap`) FROM lapTimes)
+Explaination of the query: Count number of rows returned by annotated query to estimate duplicates
+Result: [(135,)]
+Query: SELECT DISTINCT r.raceId, r.name, r.year, c.location FROM races r JOIN circuits c ON c.circuitId = r.circuitId JOIN lapTimes l ON l.raceId = r.raceId WHERE l.lap = (SELECT MAX(`lap`) FROM lapTimes) LIMIT 20;
+Explaination of the query: Show unique races with 78 laps
+Result: [(6, 'Monaco Grand Prix', 2009, 'Monte-Carlo'), (40, 'Monaco Grand Prix', 2007, 'Monte-Carlo'), (59, 'Monaco Grand Prix', 2006, 'Monte-Carlo'), (76, 'Monaco Grand Prix', 2005, 'Monte-Carlo'), (114, 'Monaco Grand Prix', 2003, 'Monte-Carlo'), (130, 'Monaco Grand Prix', 2002, 'Monte-Carlo'), (147, 'Monaco Grand Prix', 2001, 'Monte-Carlo'), (164, 'Monaco Grand Prix', 2000, 'Monte-Carlo'), (178, 'Monaco Grand Prix', 1999, 'Monte-Carlo'), (196, 'Monaco Grand Prix', 1998, 'Monte-Carlo'), (342, 'Monaco Grand Prix', 2010, 'Monte-Carlo'), (846, 'Monaco Grand Prix', 2011, 'Monte-Carlo'), (865, 'Monaco Grand Prix', 2012, 'Monte-Carlo'), (885, 'Monaco Grand Prix', 2013, 'Monte-Carlo'), (905, 'Monaco Grand Prix', 2014, 'Monte-Carlo'), (931, 'Monaco Grand Prix', 2015, 'Monte-Carlo'), (953, 'Monaco Grand Prix', 2016, 'Monte-Carlo'), (974, 'Monaco Grand Prix', 2017, 'Monte-Carlo')]
+Query: SELECT MAX(`laps`) FROM `results`
+Explaination of the query: Find maximum laps recorded in results table
+Result: [(200,)]
+Query: SELECT DISTINCT r.name, r.year, c.location
+FROM results res
+JOIN races r ON r.raceId = res.raceId
+JOIN circuits c ON c.circuitId = r.circuitId
+WHERE res.laps = 200
+LIMIT 20;
+Explaination of the query: Get races where any driver completed 200 laps which indicates race length
+Result: [('Indianapolis 500', 1960, 'Indianapolis'), ('Indianapolis 500', 1959, 'Indianapolis'), ('Indianapolis 500', 1958, 'Indianapolis'), ('Indianapolis 500', 1957, 'Indianapolis'), ('Indianapolis 500', 1956, 'Indianapolis'), ('Indianapolis 500', 1955, 'Indianapolis'), ('Indianapolis 500', 1954, 'Indianapolis'), ('Indianapolis 500', 1953, 'Indianapolis'), ('Indianapolis 500', 1952, 'Indianapolis'), ('Indianapolis 500', 1951, 'Indianapolis')]
+Query: WITH race_laps AS (SELECT `raceId`, MAX(`laps`) AS race_laps FROM `results` GROUP BY `raceId`) SELECT MAX(race_laps) FROM race_laps
+Explaination of the query: Compute maximum laps per race; find global maximum
+Result: [(200,)]
+Query: WITH race_laps AS (
+  SELECT `raceId`, MAX(`laps`) AS laps
+  FROM `results`
+  GROUP BY `raceId`
+), max_val AS (SELECT MAX(laps) AS max_laps FROM race_laps)
+SELECT r.`name`, r.`year`, c.`location`
+FROM race_laps rl
+JOIN races r ON r.`raceId` = rl.`raceId`
+JOIN circuits c ON c.`circuitId` = r.`circuitId`
+JOIN max_val mv ON rl.laps = mv.max_laps
+LIMIT 20;
+Explaination of the query: Return race, year, location for races that have maximum laps
+Result: [('Indianapolis 500', 1960, 'Indianapolis'), ('Indianapolis 500', 1959, 'Indianapolis'), ('Indianapolis 500', 1958, 'Indianapolis'), ('Indianapolis 500', 1957, 'Indianapolis'), ('Indianapolis 500', 1956, 'Indianapolis'), ('Indianapolis 500', 1955, 'Indianapolis'), ('Indianapolis 500', 1954, 'Indianapolis'), ('Indianapolis 500', 1953, 'Indianapolis'), ('Indianapolis 500', 1952, 'Indianapolis'), ('Indianapolis 500', 1951, 'Indianapolis')]

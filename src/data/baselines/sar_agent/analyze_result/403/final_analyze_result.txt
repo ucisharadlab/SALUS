@@ -1,0 +1,26 @@
+Correctness: No   
+Is_ambiguous: Yes   
+Explanation:  
+The query works on the table `foreign_data`.  
+1. The scalar sub-query computes the share of rows in `foreign_data` whose `language` is Spanish (≈12.50 %).  A row in `foreign_data` is one translation of one printing, **not** one card, so the percentage is not the “percentage of cards”.  
+2. The outer query returns one row for **every** Spanish translation (28 639 rows) and therefore repeats the same percentage value thousands of times.  The request “List them by name” implies each card should appear once, so `DISTINCT name` (or grouping) is required.  
+3. Because of (1) and (2) the query does not deliver a correct or useful answer under any natural reading of the question.  
+4. The question itself is ambiguous: it could mean  
+   • the overall percentage of cards that possess a Spanish printing and list those card names once, or  
+   • for each card, the percentage of its printings that are Spanish, or  
+   • something else.  Different interpretations need different SQL.  
+
+Revised (one reasonable interpretation – percentage of cards that have at least one Spanish printing and the list of those cards):
+```
+SELECT
+  ( SELECT CAST(COUNT(DISTINCT CASE WHEN fd.language = 'Spanish' THEN fd.uuid END) AS REAL)
+           * 100 / COUNT(DISTINCT c.uuid)
+    FROM cards AS c
+    LEFT JOIN foreign_data AS fd ON fd.uuid = c.uuid ) AS spanish_pct,
+  c.name
+FROM cards AS c
+JOIN foreign_data AS fd ON fd.uuid = c.uuid
+WHERE fd.language = 'Spanish'
+GROUP BY c.name;
+```
+This counts unique cards, removes duplicates, and lists each Spanish-language card name once together with the overall percentage.

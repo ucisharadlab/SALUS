@@ -1,0 +1,17 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation: The query counts all female clients and groups them by the *client’s* district (`client.district_id`).  It never checks whether the client is really an OWNER of an account, nor does it use the account table.  The question speaks of “female account holders”, which in the given schema normally means clients that have an OWNER disposition to an account and should therefore be derived through `disp` (filter `type = 'OWNER'`) and `account`.  Moreover, some clients are only `DISPONENT`; including them changes the counts.  Finally, the relevant district could just as well be the account’s district instead of the client’s, so the intent is ambiguous.  Because of these points the annotated query does not guarantee the required result.  
+Revised:  
+Possible corrected query if we assume “account holder = OWNER and district refers to the account’s district”:
+```
+SELECT d.`A2` AS district_name,
+       COUNT(DISTINCT cl.`client_id`) AS female_holders
+FROM disp AS di
+JOIN client AS cl   ON cl.`client_id` = di.`client_id`
+JOIN account AS ac  ON ac.`account_id` = di.`account_id`
+JOIN district AS d  ON d.`district_id` = ac.`district_id`
+WHERE cl.`gender` = 'F' AND di.`type` = 'OWNER'
+GROUP BY ac.`district_id`, d.`A2`
+ORDER BY female_holders DESC
+LIMIT 9;
+```

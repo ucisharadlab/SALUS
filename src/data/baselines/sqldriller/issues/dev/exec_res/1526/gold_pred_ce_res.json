@@ -1,0 +1,92 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": []
+  },
+  {
+    "gold": "SELECT CAST(SUM(IIF(SUBSTR(Date, 1, 4) = '2012', Consumption, 0)) - SUM(IIF(SUBSTR(Date, 1, 4) = '2013', Consumption, 0)) AS FLOAT) / SUM(IIF(SUBSTR(Date, 1, 4) = '2012', Consumption, 0)) FROM yearmonth WHERE CustomerID = ( SELECT T1.CustomerID FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE T1.Date = '2012-08-25' AND T1.Price = 634.8 )",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (Y2012.Consumption - Y2013.Consumption) / Y2012.Consumption AS DecreaseRate FROM (SELECT Consumption FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2012%') AS Y2012, (SELECT Consumption FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2013%') AS Y2013;",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": []
+  },
+  {
+    "pred": "WITH CustomerData AS (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8), Consumption2012 AS (SELECT Consumption FROM yearmonth WHERE CustomerID IN (SELECT CustomerID FROM CustomerData) AND Date LIKE '2012%'), Consumption2013 AS (SELECT Consumption FROM yearmonth WHERE CustomerID IN (SELECT CustomerID FROM CustomerData) AND Date LIKE '2013%') SELECT (Consumption2012.Consumption - Consumption2013.Consumption) / Consumption2012.Consumption AS DecreaseRate FROM Consumption2012, Consumption2013;",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT (MAX(CASE WHEN Y.Date LIKE '2012%' THEN Y.Consumption ELSE 0 END) - MAX(CASE WHEN Y.Date LIKE '2013%' THEN Y.Consumption ELSE 0 END)) / MAX(CASE WHEN Y.Date LIKE '2012%' THEN Y.Consumption ELSE 0 END) AS DecreaseRate FROM yearmonth Y WHERE Y.CustomerID = (SELECT T.CustomerID FROM transactions_1k T WHERE T.Date = '2012-08-25' AND T.Price = 634.8);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (Y2012 - Y2013) / Y2012 AS DecreaseRate FROM (SELECT SUM(Consumption) AS Y2012 FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2012%'), (SELECT SUM(Consumption) AS Y2013 FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2013%');",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT Consumption FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2012%') - (SELECT Consumption FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2013%') AS DecreaseRate FROM yearmonth GROUP BY CustomerID;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": [
+      "(None,)",
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (Y2012 - Y2013) / Y2012 AS DecreaseRate FROM (SELECT Consumption AS Y2012 FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2012%'), (SELECT Consumption AS Y2013 FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2013%');",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT (FIRST_VALUE(Consumption) OVER (PARTITION BY CustomerID ORDER BY Date ASC) - LAST_VALUE(Consumption) OVER (PARTITION BY CustomerID ORDER BY Date DESC)) / FIRST_VALUE(Consumption) OVER (PARTITION BY CustomerID ORDER BY Date ASC) AS DecreaseRate FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND (Date LIKE '2012%' OR Date LIKE '2013%');",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT (Y2012 - Y2013) / Y2012 AS DecreaseRate FROM (SELECT SUM(Consumption) AS Y2012 FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2012%') Y2012, (SELECT SUM(Consumption) AS Y2013 FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2013%') Y2013;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT Consumption FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2012%') - (SELECT Consumption FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2013%') / (SELECT Consumption FROM yearmonth WHERE CustomerID = (SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' AND Price = 634.8) AND Date LIKE '2012%') AS DecreaseRate FROM yearmonth;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1526/ce1.sqlite": [
+      "(None,)",
+      "(None,)"
+    ]
+  }
+]

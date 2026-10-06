@@ -1,0 +1,39 @@
+Correctness: No – the query does not restrict to female clients, picks just one district (of the single oldest female) then returns any account in that district, and computes the salary gap over all districts rather than using the female’s lowest‐salary district; hence it fails to answer the question.
+Is_ambiguous: Yes – the phrase “oldest and has lowest average salary” can be read in several ways (find the oldest female(s) and within them choose the lowest-salary one(s), or find the female who is simultaneously the very oldest and from the lowest-salary district, etc.).
+Explanation: 
+1. Sub-query in WHERE selects the district_id of the single oldest female (earliest birth_date).
+2. Main query keeps every account whose district_id equals that value; many of those accounts belong to male clients (verified: returned account 6 belongs to a male in sample rows).
+3. Gender filter therefore missing — requirement “female clients” not met.
+4. Ordering by T2.A11 after reducing to a single district is redundant; LIMIT 1/5 just yields arbitrary account(s).
+5. Gap calculation uses MAX(A11) – MIN(A11) over all districts, not the gap between that lowest value and the highest, which should use the female’s district for the low end.
+6. Result therefore wrong and incomplete.
+   Verification queries show annotated query returns five accounts (6,142,142,361,463) all paired with the constant gap 4431, confirming issues above.
+Revised: 
+WITH female_data AS (
+    SELECT c.`client_id`,
+           c.`birth_date`,
+           d.`A11` AS avg_salary,
+           a.`account_id`
+    FROM `client`  c
+    JOIN `disp`    dp ON dp.`client_id` = c.`client_id`
+    JOIN `account` a  ON a.`account_id` = dp.`account_id`
+    JOIN `district` d ON d.`district_id` = a.`district_id`
+    WHERE c.`gender` = 'F'
+),
+oldest_females AS (
+    SELECT *
+    FROM   female_data
+    WHERE  `birth_date` = (SELECT MIN(`birth_date`) FROM female_data)
+),
+lowest_salary_oldest AS (
+    SELECT *
+    FROM   oldest_females
+    WHERE  `avg_salary` = (SELECT MIN(`avg_salary`) FROM oldest_females)
+),
+salary_gap AS (
+    SELECT (SELECT MAX(`A11`) FROM `district`) -
+           (SELECT MIN(`avg_salary`) FROM oldest_females) AS gap
+)
+SELECT l.`account_id`, s.`gap`
+FROM   lowest_salary_oldest l
+CROSS  JOIN salary_gap s;

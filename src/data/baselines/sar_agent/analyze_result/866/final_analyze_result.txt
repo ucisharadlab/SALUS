@@ -1,0 +1,20 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The question asks for the driver who recorded a lap time of exactly 0:01:27 (i.e., 1 minute 27 seconds) in race 161 and wants the driver’s URL. In the table `lapTimes` the values are stored as “m:ss.xxx”. A search of race 161 shows no row with a time of exactly ‘1:27’, ‘1:27.0’, ‘1:27.00’, ‘1:27.000’, or the literal string ‘0:01:27’. Hence no such lap exists. 
+
+The annotated query relaxes the condition to `time LIKE '1:27%'`, which matches every lap that merely begins with “1:27” (e.g., 1:27.006, 1:27.781, …). That returns nine different drivers, contradicting the singular wording “the player” and therefore does not answer the question as written. 
+
+Because the database holds no exact 1:27 lap while several 1:27.xxx laps exist, the question itself is ambiguous/incorrect—there is no unique correct answer.
+
+Revised:
+If the intention is to look for an exact 1:27 lap (which would reveal that none exists and thus return an empty set):
+```
+SELECT d.forename,
+       d.surname,
+       d.url
+FROM lapTimes AS l
+JOIN drivers AS d ON d.driverId = l.driverId
+WHERE l.raceId = 161
+  AND l.time IN ('1:27', '1:27.0', '1:27.00', '1:27.000');
+```
+If the intent was “any lap starting with 1:27”, an additional rule (e.g., pick the fastest or first) would need to be specified to remove the ambiguity.

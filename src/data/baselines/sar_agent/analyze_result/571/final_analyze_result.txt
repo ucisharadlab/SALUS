@@ -1,0 +1,13 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The annotated query joins the `votes` and `posts` tables on `UserId = OwnerUserId`. For a given user this produces a row for every combination of that user’s vote with each of that user’s posts, i.e. (#votes × #posts) rows. `COUNT(T2.Id)` therefore becomes (#votes × #posts) while `COUNT(DISTINCT T1.Id)` is just #votes. Their division collapses to #posts, not the intended ratio (#posts / #votes). When verified on the data for user 24, the query returns 3 instead of the correct 0.375 (3 posts ÷ 8 votes). Thus the query is incorrect. The question itself clearly asks for “how many times is the number of posts compared to votes,” so there is no ambiguity.  
+Revised:  
+```
+SELECT CAST((SELECT COUNT(*)
+             FROM `posts`
+             WHERE `OwnerUserId` = 24) AS REAL)
+       /
+       (SELECT COUNT(*)
+        FROM `votes`
+        WHERE `UserId` = 24) AS post_to_vote_ratio;
+```

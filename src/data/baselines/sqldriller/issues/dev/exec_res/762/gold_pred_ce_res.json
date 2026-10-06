@@ -1,0 +1,124 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Projection',)",
+      "('Longevity',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Magic',)",
+      "('Water Control',)"
+    ]
+  },
+  {
+    "gold": "SELECT T2.power_name FROM hero_power AS T1 INNER JOIN superpower AS T2 ON T1.power_id = T2.id GROUP BY T2.power_name ORDER BY COUNT(T1.hero_id) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Projection',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Water Control',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.power_name FROM superpower T2 JOIN hero_power T1 ON T2.id = T1.power_id GROUP BY T2.power_name ORDER BY COUNT(T1.power_id) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Projection',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Water Control',)"
+    ]
+  },
+  {
+    "pred": "SELECT power_name FROM superpower WHERE id = (SELECT power_id FROM hero_power GROUP BY power_id ORDER BY COUNT(*) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Longevity',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Water Control',)"
+    ]
+  },
+  {
+    "pred": "WITH PowerCounts AS (SELECT power_id, COUNT(*) as cnt FROM hero_power GROUP BY power_id) SELECT power_name FROM superpower WHERE id = (SELECT power_id FROM PowerCounts ORDER BY cnt DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Projection',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Magic',)"
+    ]
+  },
+  {
+    "pred": "SELECT power_name FROM superpower WHERE id IN (SELECT power_id FROM hero_power GROUP BY power_id HAVING COUNT(power_id) = (SELECT MAX(cnt) FROM (SELECT COUNT(power_id) as cnt FROM hero_power GROUP BY power_id)));",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Projection',)",
+      "('Longevity',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Magic',)",
+      "('Water Control',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.power_name FROM (SELECT power_id, COUNT(*) as total FROM hero_power GROUP BY power_id) T1 JOIN superpower T2 ON T1.power_id = T2.id ORDER BY T1.total DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Projection',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Magic',)"
+    ]
+  },
+  {
+    "pred": "SELECT power_name FROM superpower WHERE id = (SELECT power_id FROM hero_power GROUP BY power_id ORDER BY COUNT(power_id) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Longevity',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Water Control',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.power_name FROM superpower T2 INNER JOIN (SELECT power_id FROM hero_power GROUP BY power_id ORDER BY COUNT(*) DESC LIMIT 1) T1 ON T2.id = T1.power_id;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Longevity',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Water Control',)"
+    ]
+  },
+  {
+    "pred": "WITH RankedPowers AS (SELECT power_id, RANK() OVER (ORDER BY COUNT(*) DESC) as rank FROM hero_power GROUP BY power_id) SELECT power_name FROM superpower WHERE id = (SELECT power_id FROM RankedPowers WHERE rank = 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Longevity',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Water Control',)"
+    ]
+  },
+  {
+    "pred": "SELECT power_name FROM superpower WHERE id = (SELECT power_id FROM (SELECT power_id, COUNT(*) as count FROM hero_power GROUP BY power_id ORDER BY count DESC LIMIT 1) T);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Longevity',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Water Control',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.power_name FROM hero_power T1 JOIN superpower T2 ON T1.power_id = T2.id GROUP BY T1.power_id ORDER BY COUNT(T1.power_id) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce0.sqlite": [
+      "('Longevity',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/762/ce1.sqlite": [
+      "('Water Control',)"
+    ]
+  }
+]

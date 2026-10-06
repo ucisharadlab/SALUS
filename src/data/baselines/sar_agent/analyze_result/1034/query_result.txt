@@ -1,0 +1,12 @@
+Query: SELECT COUNT(*) FROM (SELECT player_api_id FROM Player_Attributes WHERE SUBSTR(date,1,4)='2010' AND overall_rating=(SELECT MAX(overall_rating) FROM Player_Attributes WHERE SUBSTR(date,1,4)='2010'));
+Explaination of the query: Count rows returned by annotated query (without duplicates possibly multiple).
+Result: [(3,)]
+Query: SELECT player_api_id, COUNT(*) as cnt FROM Player_Attributes WHERE SUBSTR(date,1,4)='2010' AND overall_rating=(SELECT MAX(overall_rating) FROM Player_Attributes WHERE SUBSTR(date,1,4)='2010') GROUP BY player_api_id LIMIT 5;
+Explaination of the query: Check if multiple players share max rating and duplicates per player.
+Result: [(30657, 1), (30981, 2)]
+Query: SELECT p.player_api_id FROM Player_Attributes AS p WHERE SUBSTR(p.date, 1, 4) = '2010' AND p.overall_rating = (SELECT MAX(pa.overall_rating) FROM Player_Attributes AS pa WHERE SUBSTR(pa.date, 1, 4) = '2010') LIMIT 5;
+Explaination of the query: Return first 5 rows of annotated query result
+Result: [(30657,), (30981,), (30981,)]
+Query: SELECT DISTINCT p.player_api_id FROM Player_Attributes AS p WHERE SUBSTR(p.date, 1, 4) = '2010' AND p.overall_rating = (SELECT MAX(pa.overall_rating) FROM Player_Attributes AS pa WHERE SUBSTR(pa.date, 1, 4) = '2010') LIMIT 5;
+Explaination of the query: distinct ids of players at max rating in 2010
+Result: [(30657,), (30981,)]

@@ -1,0 +1,109 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Combat',)",
+      "('Intelligence',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": [
+      "('Intelligence',)"
+    ]
+  },
+  {
+    "gold": "SELECT T3.attribute_name FROM superhero AS T1 INNER JOIN hero_attribute AS T2 ON T1.id = T2.hero_id INNER JOIN attribute AS T3 ON T2.attribute_id = T3.id WHERE T1.superhero_name = 'Black Panther' ORDER BY T2.attribute_value ASC LIMIT 1",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Intelligence',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": [
+      "('Intelligence',)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.attribute_name FROM superhero T1 JOIN hero_attribute T2 ON T1.id = T2.hero_id JOIN attribute T3 ON T2.attribute_id = T3.id WHERE T1.superhero_name = 'Black Panther' AND T2.attribute_value IS NOT NULL GROUP BY T3.attribute_name ORDER BY MIN(T2.attribute_value) LIMIT 1",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Combat',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": [
+      "('Intelligence',)"
+    ]
+  },
+  {
+    "pred": "SELECT attribute.attribute_name FROM attribute JOIN hero_attribute ON attribute.id = hero_attribute.attribute_id JOIN superhero ON superhero.id = hero_attribute.hero_id WHERE superhero.superhero_name = 'Black Panther' GROUP BY attribute.attribute_name HAVING MIN(hero_attribute.attribute_value) = (SELECT MIN(attribute_value) FROM hero_attribute JOIN superhero ON superhero.id = hero_attribute.hero_id WHERE superhero.superhero_name = 'Black Panther')",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Combat',)",
+      "('Intelligence',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": [
+      "('Intelligence',)"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(T2.attribute_value), T3.attribute_name FROM superhero T1 INNER JOIN hero_attribute T2 ON T1.id = T2.hero_id INNER JOIN attribute T3 ON T2.attribute_id = T3.id WHERE T1.superhero_name = 'Black Panther' GROUP BY T3.attribute_name ORDER BY 1 ASC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "(15, 'Combat')"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": [
+      "(40, 'Intelligence')"
+    ]
+  },
+  {
+    "pred": "SELECT attribute_name FROM attribute WHERE id IN (SELECT attribute_id FROM hero_attribute WHERE hero_id = (SELECT id FROM superhero WHERE superhero_name = 'Black Panther') AND attribute_value = (SELECT MIN(attribute_value) FROM hero_attribute WHERE hero_id = (SELECT id FROM superhero WHERE superhero_name = 'Black Panther')))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Combat',)",
+      "('Intelligence',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT T3.attribute_name FROM superhero T1, hero_attribute T2, attribute T3 WHERE T1.id = T2.hero_id AND T2.attribute_id = T3.id AND T1.superhero_name = 'Black Panther' GROUP BY T3.attribute_name HAVING MIN(T2.attribute_value) = (SELECT MIN(attribute_value) FROM hero_attribute, superhero WHERE superhero.id = hero_attribute.hero_id AND superhero.superhero_name = 'Black Panther')",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Combat',)",
+      "('Intelligence',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": [
+      "('Intelligence',)"
+    ]
+  },
+  {
+    "pred": "SELECT attribute_name FROM attribute WHERE id = (SELECT attribute_id FROM hero_attribute WHERE hero_id = (SELECT id FROM superhero WHERE superhero_name = 'Black Panther') ORDER BY attribute_value ASC LIMIT 1)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Intelligence',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT attribute_name FROM attribute WHERE id = (SELECT attribute_id FROM hero_attribute JOIN superhero ON superhero.id = hero_attribute.hero_id WHERE superhero.superhero_name = 'Black Panther' ORDER BY attribute_value LIMIT 1)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Intelligence',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": [
+      "('Intelligence',)"
+    ]
+  },
+  {
+    "pred": "SELECT attribute_name FROM attribute WHERE id = (SELECT attribute_id FROM hero_attribute WHERE hero_id = (SELECT id FROM superhero WHERE superhero_name = 'Black Panther') AND attribute_value = (SELECT MIN(attribute_value) FROM hero_attribute WHERE hero_id = (SELECT id FROM superhero WHERE superhero_name = 'Black Panther')))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Intelligence',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT T3.attribute_name FROM superhero T1 JOIN hero_attribute T2 ON T1.id = T2.hero_id JOIN attribute T3 ON T2.attribute_id = T3.id WHERE T1.superhero_name = 'Black Panther' GROUP BY T3.attribute_name HAVING MIN(T2.attribute_value) = (SELECT MIN(attribute_value) FROM hero_attribute WHERE hero_id = T1.id)",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce0.sqlite": [
+      "('Combat',)",
+      "('Intelligence',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/830/ce1.sqlite": [
+      "('Intelligence',)"
+    ]
+  }
+]

@@ -1,0 +1,23 @@
+Correctness: No – the annotated query only requires a molecule to have at least one atom whose element is not ‘s’ and at least one bond whose type is not ‘=’. It does not exclude molecules that also contain sulphur atoms or double bonds, thus over-counting.
+Is_ambiguous: No – despite awkward wording, the intended request is clearly to count molecules that contain neither sulphur atoms nor double bonds.
+Explanation: 
+1. Required logic
+   • “without sulphur element” ⇒ every atom in the molecule must have element ≠ 's'.
+   • “not having double bond”  ⇒ every bond in the molecule must have bond_type ≠ '='.
+   • We must count molecules that satisfy both conditions simultaneously.
+2. Problems with the annotated SQL
+   • It joins `atom` and `bond` on `molecule_id` and keeps rows where a single atom is non-S AND a single bond is non-double.  The same molecule can still possess S atoms or double bonds in other rows, so it is incorrectly included.
+   • Using COUNT(DISTINCT T1.molecule_id) therefore yields a superset of the desired molecules.
+3. Correct approach
+   • Filter at the molecule level, e.g., via NOT EXISTS or GROUP BY/HAVING, so that no sulphur atoms and no ‘=’ bonds exist at all in the molecule.
+Revised:
+SELECT COUNT(*)
+FROM `molecule` AS m
+WHERE NOT EXISTS (SELECT 1
+                  FROM `atom` AS a
+                  WHERE a.`molecule_id` = m.`molecule_id`
+                    AND a.`element` = 's')
+  AND NOT EXISTS (SELECT 1
+                  FROM `bond` AS b
+                  WHERE b.`molecule_id` = m.`molecule_id`
+                    AND b.`bond_type` = '=');

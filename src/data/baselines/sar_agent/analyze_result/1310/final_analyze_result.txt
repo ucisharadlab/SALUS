@@ -1,0 +1,14 @@
+Correctness: Yes – The query joins Patient with Laboratory, filters to male (`SEX = 'M'`) records whose prothrombin time is within the stated normal range (`PT < 14`), and returns the overall average PT, which is one valid interpretation of the request.
+Is_ambiguous: Yes – The wording could also be interpreted as first computing each male patient’s mean PT (so every patient contributes one value) and then averaging those values.  The current query instead weights patients with more measurements more heavily, so both approaches are plausible.
+Explanation: The annotated SQL follows the schema, uses the necessary join, applies the normal-range filter, and calculates AVG(PT).  This directly answers the question if we assume every qualifying measurement should be included in the average.  However, because the question speaks of “patients” rather than “measurements”, an equally reasonable alternative is to compute one PT per patient before averaging; the question does not specify which, creating ambiguity.
+Revised: No SQL change is needed if the intended meaning is to average all qualifying measurements.  If the intention is per-patient weighting, a revised query would be:
+```
+SELECT AVG(person_avg_pt)
+FROM (
+  SELECT AVG(L.`PT`) AS person_avg_pt
+  FROM `Patient` P
+  JOIN `Laboratory` L ON P.`ID` = L.`ID`
+  WHERE P.`SEX` = 'M' AND L.`PT` < 14
+  GROUP BY P.`ID`
+) sub;
+```

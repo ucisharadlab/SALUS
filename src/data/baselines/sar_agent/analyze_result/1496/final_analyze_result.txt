@@ -1,0 +1,14 @@
+Correctness: No – the query aggregates by CustomerID instead of by Segment, therefore it returns the segment of the single lowest-consuming customer rather than the segment whose overall consumption is the smallest.
+Is_ambiguous: No – the question clearly asks for the segment with the lowest total consumption in September 2013.
+Explanation:  
+• Required logic: join customers and yearmonth, restrict to Date = ‘201309’, sum Consumption per Segment, order ascending, take top-1.  
+• Annotated query uses GROUP BY CustomerID, so SUM is per customer. LIMIT 1 thereafter selects a single customer’s segment, not the segment with the lowest total.  
+• Verification: aggregating per segment gives totals LAM ≈120 M, SME ≈125 M, KAM ≈143 M; the correct answer is LAM, but the annotated query would often return the segment of an individual customer (e.g., KAM in sample run).  
+Revised:  
+SELECT c.Segment
+FROM `customers` c
+JOIN `yearmonth` y ON y.CustomerID = c.CustomerID
+WHERE y.Date = '201309'
+GROUP BY c.Segment
+ORDER BY SUM(y.Consumption) ASC
+LIMIT 1;

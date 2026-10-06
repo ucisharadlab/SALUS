@@ -1,0 +1,10 @@
+Correctness: No – the annotated query sorts by the string column `manaCost`, causing lexicographical rather than numeric ordering, so it does not return the cards with the highest cost; it also misses `convertedManaCost` and ignores legality status duplicates.
+Is_ambiguous: No – despite the typo “uncoverted”, the question’s intent (largest mana cost in Duel format) is clear.
+Explanation: The question asks for the 10 highest-cost cards legal in Duel format. The numeric cost is stored in `convertedManaCost`. Using string `manaCost` ranks X-spells first (`{X}{X}{X}` etc.). Verification queries show the real top costs are cards like Draco (16) and Autochthon Wurm (15). The annotated query therefore returns the wrong list. Adding a status filter (`status = 'Legal'`) is also advisable.  
+Revised: 
+SELECT DISTINCT `name`
+FROM `cards`
+WHERE `uuid` IN (SELECT `uuid` FROM `legalities` WHERE `format` = 'duel' AND `status` = 'Legal')
+  AND `convertedManaCost` IS NOT NULL
+ORDER BY `convertedManaCost` DESC, `name`
+LIMIT 10;

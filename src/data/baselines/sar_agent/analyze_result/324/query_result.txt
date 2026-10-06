@@ -1,0 +1,29 @@
+Query: SELECT COUNT(*) as num_atoms FROM `atom` LIMIT 5
+Explaination of the query: get number of atoms
+Result: [(12333,)]
+Query: SELECT * FROM `bond` LIMIT 5
+Explaination of the query: preview bond data
+Result: [('TR000_1_2', 'TR000', '-'), ('TR000_2_3', 'TR000', '-'), ('TR000_2_4', 'TR000', '-'), ('TR000_2_5', 'TR000', '-'), ('TR001_10_11', 'TR001', '=')]
+Query: SELECT COUNT(DISTINCT `atom_id`) as total_atoms FROM `atom` LIMIT 5
+Explaination of the query: total distinct atoms count
+Result: [(12333,)]
+Query: SELECT COUNT(*) FROM `bond` WHERE `bond_type` = '-' LIMIT 5
+Explaination of the query: count single bonds
+Result: [(10528,)]
+Query: SELECT COUNT(DISTINCT `c`.`atom_id`) FROM `connected` c JOIN `bond` b ON c.`bond_id` = b.`bond_id` WHERE b.`bond_type` = '-' LIMIT 5
+Explaination of the query: count distinct atoms involved in at least one single bond
+Result: [(11854,)]
+Query: WITH single_atoms AS (
+  SELECT DISTINCT `c`.`atom_id`
+  FROM `connected` c
+  JOIN `bond` b ON b.`bond_id` = c.`bond_id`
+  WHERE b.`bond_type` = '-'
+), total_atoms AS (
+  SELECT COUNT(DISTINCT `atom_id`) AS cnt FROM `atom`
+)
+SELECT 100.0 * (SELECT COUNT(*) FROM single_atoms) / (SELECT cnt FROM total_atoms) AS pct LIMIT 5
+Explaination of the query: calculate percentage of atoms with at least one single bond
+Result: [(96.1161112462499,)]
+Query: SELECT COUNT(*) FROM `bond` LIMIT 5
+Explaination of the query: total bonds
+Result: [(12379,)]

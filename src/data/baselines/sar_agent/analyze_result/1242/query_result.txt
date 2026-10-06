@@ -1,0 +1,30 @@
+Query: SELECT `Date` FROM Laboratory LIMIT 5
+Explaination of the query: Look at sample date format
+Result: [('1991-09-11',), ('1991-09-17',), ('1991-09-19',), ('1991-09-20',), ('1991-09-21',)]
+Query: SELECT COUNT(*) FROM Laboratory
+Explaination of the query: check dataset size
+Result: [(13908,)]
+Query: SELECT COUNT(*) FROM Laboratory WHERE STRFTIME('%Y', `Date`)='1984' LIMIT 5
+Explaination of the query: count 1984 records
+Result: [(941,)]
+Query: SELECT COUNT(DISTINCT `Patient`.`ID`) FROM `Patient` INNER JOIN `Laboratory` ON Patient.ID = Laboratory.ID WHERE STRFTIME('%Y', Laboratory.`Date`) = '1984' AND Laboratory.PLT BETWEEN 100 AND 400 AND (CAST(STRFTIME('%Y', Laboratory.`Date`) AS INTEGER) - CAST(STRFTIME('%Y', Patient.`Birthday`) AS INTEGER)) < 50
+Explaination of the query: run similar logic to verify returns count
+Result: [(76,)]
+Query: SELECT DISTINCT T1.ID FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.PLT BETWEEN 100 AND 400 AND (CAST(STRFTIME('%Y', T2.Date) AS INTEGER) - CAST(STRFTIME('%Y', T1.Birthday) AS INTEGER)) < 50 AND STRFTIME('%Y', T2.Date) = '1984' LIMIT 5
+Explaination of the query: test annotated query output top 5 ids
+Result: [(30609,), (48473,), (52199,), (58139,), (81043,)]
+Query: SELECT '1984' - '1935'
+Explaination of the query: Test subtraction of year strings
+Result: [(49,)]
+Query: SELECT COUNT(*) FROM Laboratory WHERE PLT = 100
+Explaination of the query: count PLT exactly 100
+Result: [(3,)]
+Query: SELECT T1.ID, T1.Birthday, T2.Date, (CAST(STRFTIME('%Y', T2.Date) AS INTEGER) - CAST(STRFTIME('%Y', T1.Birthday) AS INTEGER)) AS age_years FROM Patient T1 JOIN Laboratory T2 ON T1.ID=T2.ID WHERE STRFTIME('%Y', T2.Date)='1984' ORDER BY age_years DESC LIMIT 5
+Explaination of the query: Check max age difference using method
+Result: [(125619, '1917-04-18', '1984-01-28', 67), (125619, '1917-04-18', '1984-02-02', 67), (125619, '1917-04-18', '1984-04-26', 67), (528900, '1919-12-30', '1984-01-27', 65), (528900, '1919-12-30', '1984-02-24', 65)]
+Query: SELECT COUNT(DISTINCT T1.ID) FROM Patient T1 JOIN Laboratory T2 ON T1.ID=T2.ID WHERE STRFTIME('%Y', T2.Date)='1984' AND T2.PLT BETWEEN 100 AND 400 AND ((JULIANDAY(T2.Date) - JULIANDAY(T1.Birthday))/365.25) < 50
+Explaination of the query: exact age calc
+Result: [(76,)]
+Query: SELECT COUNT(*) FROM Laboratory WHERE PLT = 400
+Explaination of the query: Count PLT 400
+Result: [(10,)]

@@ -1,0 +1,18 @@
+Query: SELECT T1.full_name FROM superhero AS T1 INNER JOIN hero_attribute AS T2 ON T1.id = T2.hero_id INNER JOIN attribute AS T3 ON T2.attribute_id = T3.id WHERE T3.attribute_name = 'Strength' AND T2.attribute_value = (SELECT MAX(T4.attribute_value) FROM hero_attribute AS T4 INNER JOIN attribute AS T5 ON T4.attribute_id = T5.id WHERE T5.attribute_name = 'Strength') LIMIT 5;
+Explaination of the query: Run annotated query to verify
+Result: [('Richard Milhouse Jones',), ('Abraxas',), ('-',), ('-',), ('En Sabah Nur',)]
+Query: SELECT DISTINCT `attribute_name` FROM `attribute` LIMIT 20;
+Explaination of the query: Check attribute names capitalization
+Result: [('Intelligence',), ('Strength',), ('Speed',), ('Durability',), ('Power',), ('Combat',)]
+Query: SELECT COUNT(*) FROM (SELECT T1.full_name FROM superhero AS T1 INNER JOIN hero_attribute AS T2 ON T1.id = T2.hero_id INNER JOIN attribute AS T3 ON T2.attribute_id = T3.id WHERE T3.attribute_name = 'Strength' AND T2.attribute_value = (SELECT MAX(T4.attribute_value) FROM hero_attribute AS T4 INNER JOIN attribute AS T5 ON T4.attribute_id = T5.id WHERE T5.attribute_name = 'Strength'))
+Explaination of the query: Count number of heroes with max strength
+Result: [(63,)]
+Query: SELECT `full_name`, COUNT(*) c FROM superhero AS T1 INNER JOIN hero_attribute AS T2 ON T1.id = T2.hero_id INNER JOIN attribute AS T3 ON T2.attribute_id = T3.id WHERE T3.attribute_name = 'Strength' AND T2.attribute_value = (SELECT MAX(T4.attribute_value) FROM hero_attribute AS T4 INNER JOIN attribute AS T5 ON T4.attribute_id = T5.id WHERE T5.attribute_name = 'Strength') GROUP BY `full_name` ORDER BY c DESC LIMIT 10;
+Explaination of the query: Check duplicates among returned full_names
+Result: [('-', 28), ('Ymir', 1), ('William Joseph Batson', 1), ('Uxas', 1), ('Thor Odinson', 1), ('Thanos', 1), ('Thaddeus E. Ross', 1), ('Teth-Adam', 1), ('Simon Williams', 1), ('Robert Reynolds', 1)]
+Query: SELECT `hero_id`, COUNT(*) c FROM `hero_attribute` WHERE `attribute_id` = (SELECT id FROM attribute WHERE attribute_name = 'Strength') GROUP BY `hero_id` HAVING c>1 LIMIT 5;
+Explaination of the query: Check duplicate hero strength rows
+Result: []
+Query: SELECT COUNT(DISTINCT `id`) FROM `superhero` WHERE `full_name`='-';
+Explaination of the query: count hero ids with full_name '-'
+Result: [(125,)]

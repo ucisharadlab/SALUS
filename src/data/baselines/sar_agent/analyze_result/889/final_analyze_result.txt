@@ -1,0 +1,14 @@
+Correctness: Yes  
+Is_ambiguous: No  
+Explanation: The question wants the most recent season (year) in which Brands Hatch was the venue for the British Grand Prix. This equals the maximum `year` in the `races` table where `name` = 'British Grand Prix' and the corresponding `circuitId` belongs to the circuit whose `name` = 'Brands Hatch'.
+The annotated query joins `circuits` and `races` on `circuitId`, applies exactly those two filters, orders by `year` descending and takes the first row. The resulting row has the `date` 1986-07-13 which definitively corresponds to the 1986 season, answering the question. All columns and tables exist, join condition is correct, and no additional DISTINCT/GROUP BY is required. Returning `date` instead of just `year` is still an acceptable answer because it clearly shows the year 1986.
+Revised: (optional, to match wording more precisely)
+```
+SELECT T2.year
+FROM circuits AS T1
+JOIN races   AS T2 ON T2.circuitId = T1.circuitId
+WHERE T1.name = 'Brands Hatch'
+  AND T2.name = 'British Grand Prix'
+ORDER BY T2.year DESC
+LIMIT 1;
+```

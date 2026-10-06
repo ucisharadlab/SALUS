@@ -1,0 +1,23 @@
+Correctness: No – the annotated query joins `account` to clients only through a shared `district_id`, therefore it returns all accounts that happen to be in the same district as the oldest-female client instead of the account(s) actually owned by that client. The ownership relation must go through `disp` (`client_id` ↔ `account_id`).
+Is_ambiguous: Yes – the phrase “have lowest average salary” can be interpreted in different scopes (lowest salary among the oldest-female subset vs. overall lowest-salary district), and the question does not specify which scope is intended.
+Explanation: 
+1. Oldest female birth_date = 1914-03-01, client_id = 2115, district_id = 51, district salary A11 = 8541.
+2. Account actually owned by client 2115 (via `disp`) is 1743.
+3. Annotated query returns 6, 142, 361, 463, 646 … – every account whose district_id = 51, most of which belong to other clients, proving the join logic is wrong.
+4. Because of this error the answer set is incorrect irrespective of how “lowest average salary” is read.
+Revised: 
+```sql
+SELECT DISTINCT a.account_id
+FROM client   c
+JOIN district d   ON d.district_id  = c.district_id
+JOIN disp     dp  ON dp.client_id   = c.client_id
+JOIN account  a   ON a.account_id   = dp.account_id
+WHERE c.gender = 'F'
+  AND c.birth_date = (SELECT MIN(birth_date) FROM client WHERE gender='F')
+  AND d.A11 = (
+        SELECT MIN(d2.A11)
+        FROM client c2
+        JOIN district d2 ON d2.district_id = c2.district_id
+        WHERE c2.gender='F' 
+          AND c2.birth_date = (SELECT MIN(birth_date) FROM client WHERE gender='F'));
+```

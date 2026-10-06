@@ -1,0 +1,19 @@
+Correctness:  No – the annotated query mixes district-level rows with school rows and therefore returns the wrong 7th-ranked entity.
+Is_ambiguous:  No – the question clearly targets the 7th highest-scoring school; only school rows should be considered.
+Explanation:  
+1. satscores contains both schools (`rtype = 'S'`) and district aggregates (`rtype = 'D'`).
+2. The annotated SQL orders all rows by `AvgScrMath` and applies `LIMIT 6,1`. Because a district row with 671 appears between the 5th and 6th schools, the offset lands on Oxford Academy (669) instead of the true 7th highest school.
+3. Filtering to `rtype = 'S'` shows the 7th highest school is University High (666) with postal street address “4771 Campus Drive”.
+4. Therefore the original query is incorrect.
+
+Revised:
+```sql
+SELECT s.MailStreet  AS postal_street_address,
+       s.School      AS school_name
+FROM   satscores sc
+JOIN   schools  s ON sc.cds = s.CDSCode
+WHERE  sc.rtype = 'S'            -- keep only schools
+ORDER  BY sc.AvgScrMath DESC,
+          sc.cds                 -- tiebreaker for stable ordering
+LIMIT 1 OFFSET 6;                -- 7th highest school
+```

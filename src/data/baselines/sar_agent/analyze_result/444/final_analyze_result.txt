@@ -1,0 +1,8 @@
+Correctness: No   
+Is_ambiguous: No   
+Explanation: The task asks for the foreign name of every card whose watermark is "boros" together with that card’s type.  The foreign names are stored in table `foreign_data` (column `name`).  The annotated query, however, selects `T1.name`, which is the English name from the `cards` table, not the foreign name.  Although it joins to `foreign_data`, it never uses the foreign columns, so the output does not satisfy the request.  All other aspects (join condition, watermark filter, DISTINCT) are fine, but the selected column is wrong, so the query is incorrect.  The question itself is answerable unambiguously by listing the foreign names and their types.  
+Revised: 
+SELECT DISTINCT `T2`.`name`, `T1`.`type`
+FROM `cards` AS `T1`
+JOIN `foreign_data` AS `T2` ON `T2`.`uuid` = `T1`.`uuid`
+WHERE `T1`.`watermark` = 'boros';

@@ -1,0 +1,19 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: 
+The question asks for the number of CLIENTS who are recorded as OWNER for an account whose statement frequency is weekly (frequency = 'POPLATEK TYDNE').  In table `disp` a row represents a client–account relationship, so the same client can appear more than once if the person owns several accounts.  
+The annotated query
+
+SELECT COUNT(T2.account_id)
+FROM `account` AS T1
+JOIN `disp`  AS T2 ON T2.account_id = T1.account_id
+WHERE T1.frequency = 'POPLATEK TYDNE' AND T2.type = 'OWNER';
+
+counts rows (one per qualifying account), not distinct clients.  Hence it would over-count whenever a client owns two or more weekly-issuance accounts.  Even though the current data set happens to contain at most one OWNER record per client, that behaviour is not guaranteed by the schema and the query does not logically match the question.
+
+Revised:
+SELECT COUNT(DISTINCT `disp`.`client_id`)
+FROM `disp`
+JOIN `account` ON `account`.`account_id` = `disp`.`account_id`
+WHERE `account`.`frequency` = 'POPLATEK TYDNE'
+  AND `disp`.`type` = 'OWNER';

@@ -1,0 +1,10 @@
+Correctness: No – counts a district record as a school so returns 2 instead of 1.
+Is_ambiguous: No – “schools” clearly refers to individual schools; intent is unambiguous.
+Explanation: The satscores table contains both school-level (rtype='S') and district-level (rtype='D') rows.  Joining with schools on CDSCode and filtering MailCity='Lakeport' gives two rows: one district row and one true school row (Clear Lake High).  Both have total SAT ≥1500, so the annotated query counts 2.  To answer the question we must restrict to school rows and preferably count distinct CDS codes to avoid duplicates; the correct result is 1.
+Revised:
+SELECT COUNT(DISTINCT T1.`cds`)
+FROM `satscores` AS T1
+JOIN `schools`  AS T2 ON T1.`cds` = T2.`CDSCode`
+WHERE T2.`MailCity` = 'Lakeport'
+  AND T1.`rtype` = 'S'
+  AND (T1.`AvgScrRead` + T1.`AvgScrMath` + T1.`AvgScrWrite`) >= 1500;

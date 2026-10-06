@@ -1,0 +1,24 @@
+Query: SELECT COUNT(*) FROM `Laboratory` LIMIT 5;
+Explaination of the query: check if table exists
+Result: [(13908,)]
+Query: SELECT COUNT(*) FROM `Patient` LIMIT 5;
+Explaination of the query: check if Patient table exists and row count
+Result: [(1238,)]
+Query: SELECT COUNT(*) FROM (SELECT T1.`Diagnosis` FROM `Patient` AS T1 INNER JOIN `Laboratory` AS T2 ON T1.`ID` = T2.`ID` WHERE (T2.`RA`='-' OR T2.`RA`='+-') AND T1.`Birthday`>'1985-01-01') LIMIT 5;
+Explaination of the query: count rows produced by annotated query
+Result: [(24,)]
+Query: SELECT COUNT(*) FROM (SELECT T1.`Diagnosis` FROM `Patient` AS T1 INNER JOIN `Laboratory` AS T2 ON T1.`ID` = T2.`ID` WHERE (T2.`RA`='-' OR T2.`RA`='+-') AND T1.`Birthday`>'1985-01-01') LIMIT 5;
+Explaination of the query: count results again but we saw earlier 24, can't test duplicates easily
+Result: [(24,)]
+Query: SELECT T1.`ID`, T1.`Diagnosis`, T2.`RA` FROM `Patient` T1 JOIN `Laboratory` T2 ON T1.`ID`=T2.`ID` WHERE (T2.`RA`='-' OR T2.`RA`='+-') AND T1.`Birthday`>'1985-01-01' LIMIT 5;
+Explaination of the query: inspect some rows
+Result: [(460574, 'SLE', '-'), (460574, 'SLE', '-'), (460574, 'SLE', '-'), (460574, 'SLE', '-'), (460574, 'SLE', '-')]
+Query: SELECT COUNT(DISTINCT `ID`) FROM (SELECT T1.`ID` FROM `Patient` AS T1 INNER JOIN `Laboratory` AS T2 ON T1.`ID` = T2.`ID` WHERE (T2.`RA`='-' OR T2.`RA`='+-') AND T1.`Birthday`>'1985-01-01') LIMIT 5;
+Explaination of the query: count distinct patients that satisfy
+Result: [(6,)]
+Query: SELECT COUNT(*) FROM (SELECT DISTINCT T1.`Diagnosis` FROM `Patient` AS T1 INNER JOIN `Laboratory` AS T2 ON T1.`ID`=T2.`ID` WHERE (T2.`RA`='-' OR T2.`RA`='+-') AND T1.`Birthday`>'1985-01-01') LIMIT 5;
+Explaination of the query: count distinct diseases with distinct to see difference
+Result: [(3,)]
+Query: SELECT DISTINCT T1.`Diagnosis` FROM `Patient` AS T1 JOIN `Laboratory` AS T2 ON T1.`ID`=T2.`ID` WHERE (T2.`RA`='-' OR T2.`RA`='+-') AND T1.`Birthday`>'1985-01-01' LIMIT 5;
+Explaination of the query: distinct diseases list
+Result: [('SLE',), ('RA susp',), ('SJS',)]

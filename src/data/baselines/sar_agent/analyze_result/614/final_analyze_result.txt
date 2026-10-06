@@ -1,0 +1,25 @@
+Correctness: Yes  
+Is_ambiguous: No  
+Explanation: The task is to compute the share of all users that have earned the badge whose `Name` is 'Teacher'.  
+• Total users = COUNT(*) from `users`.  
+• Users with the Teacher badge = DISTINCT count of `UserId` in `badges` where `Name` = 'Teacher'.  
+
+The annotated query:  
+SELECT CAST(COUNT(T1.Id) AS REAL) * 100 / (SELECT COUNT(Id) FROM users)
+FROM users AS T1
+INNER JOIN badges AS T2 ON T1.Id = T2.UserId
+WHERE T2.Name = 'Teacher';  
+
+– Joins users to badges, filters to Teacher badge, counts `T1.Id` (which is the user id).  
+– Divides by total users and multiplies by 100, producing the desired percentage.  
+
+Data checks show the Teacher badge appears at most once per user (COUNT(*) = COUNT(DISTINCT UserId)), so COUNT(T1.Id) equals the distinct-user count; result 11.6032 % matches 4679 / 40314 × 100.  
+
+Thus the query is logically correct with respect to the question and schema. The question wording is clear; only one reasonable interpretation exists. A more defensive version would use COUNT(DISTINCT T1.Id) but that is optional.  
+
+Revised:  
+```
+SELECT 100.0 * COUNT(DISTINCT b.UserId) / (SELECT COUNT(*) FROM users) AS teacher_badge_percentage
+FROM badges b
+WHERE b.Name = 'Teacher';
+```

@@ -1,0 +1,12 @@
+Correctness: No – the annotated SQL does not return the latest 10 comments and shows the wrong user name.
+Is_ambiguous: No – the request is clear: fetch 10 most-recent comments for that post and each commenter’s display name.
+Explanation: The query (1) restricts to only the comment whose CreationDate is the global MAX, so at most one row comes back; (2) joins users through posts.OwnerUserId, therefore outputting the post owner’s name rather than the commenter’s; (3) lacks ORDER BY and LIMIT 10; (4) omits fallback to comments.UserDisplayName; (5) even references a non-existent column alias causing runtime error.
+Revised:
+SELECT c.Text,
+       COALESCE(u.DisplayName, c.UserDisplayName) AS DisplayName
+FROM posts p
+JOIN comments c ON c.PostId = p.Id
+LEFT JOIN users u ON u.Id = c.UserId
+WHERE p.Title = 'Analysing wind data with R'
+ORDER BY c.CreationDate DESC
+LIMIT 10;

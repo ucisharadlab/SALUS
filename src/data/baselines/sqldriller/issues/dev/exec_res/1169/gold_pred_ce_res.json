@@ -1,0 +1,85 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(0.5,)"
+    ]
+  },
+  {
+    "gold": "SELECT CAST(SUM(CASE WHEN T2.UA <= 8.0 AND T1.SEX = 'M' THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN T2.UA <= 6.5 AND T1.SEX = 'F' THEN 1 ELSE 0 END) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(0.5,)"
+    ]
+  },
+  {
+    "pred": "SELECT CAST(SUM(CASE WHEN P.SEX = 'M' AND L.UA <= 8.0 THEN 1 ELSE 0 END) AS REAL) / SUM(CASE WHEN P.SEX = 'F' AND L.UA <= 6.5 THEN 1 ELSE 0 END) AS ratio FROM Patient P JOIN Laboratory L ON P.ID = L.ID WHERE L.UA IS NOT NULL;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(0.5,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT COUNT(*) FROM Patient P JOIN Laboratory L ON P.ID = L.ID WHERE P.SEX = 'M' AND L.UA <= 8.0) * 1.0 / (SELECT COUNT(*) FROM Patient P JOIN Laboratory L ON P.ID = L.ID WHERE P.SEX = 'F' AND L.UA <= 6.5) AS ratio;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(0.5,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(DISTINCT CASE WHEN P.SEX = 'M' AND L.UA <= 8.0 THEN P.ID END) * 1.0 / COUNT(DISTINCT CASE WHEN P.SEX = 'F' AND L.UA <= 6.5 THEN P.ID END)) AS ratio FROM Patient P INNER JOIN Laboratory L ON P.ID = L.ID;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(1.0,)"
+    ]
+  },
+  {
+    "pred": "WITH Male AS (SELECT COUNT(*) AS MaleCount FROM Patient P JOIN Laboratory L ON P.ID = L.ID WHERE P.SEX = 'M' AND L.UA <= 8.0), Female AS (SELECT COUNT(*) AS FemaleCount FROM Patient P JOIN Laboratory L ON P.ID = L.ID WHERE P.SEX = 'F' AND L.UA <= 6.5) SELECT MaleCount * 1.0 / FemaleCount AS ratio FROM Male, Female;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(0.5,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SUM(CASE WHEN P.SEX = 'M' THEN 1 ELSE 0 END) * 1.0 / SUM(CASE WHEN P.SEX = 'F' THEN 1 ELSE 0 END)) AS ratio FROM Patient P JOIN Laboratory L ON P.ID = L.ID WHERE (P.SEX = 'M' AND L.UA <= 8.0) OR (P.SEX = 'F' AND L.UA <= 6.5);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(0.5,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(*) FILTER (WHERE P.SEX = 'M' AND L.UA <= 8.0) * 1.0 / COUNT(*) FILTER (WHERE P.SEX = 'F' AND L.UA <= 6.5)) AS ratio FROM Patient P JOIN Laboratory L ON P.ID = L.ID;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(0.5,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT COUNT(P.ID) FROM Patient P JOIN Laboratory L ON P.ID = L.ID WHERE P.SEX = 'M' AND L.UA <= 8.0) * 1.0 / (SELECT COUNT(P.ID) FROM Patient P JOIN Laboratory L ON P.ID = L.ID WHERE P.SEX = 'F' AND L.UA <= 6.5) AS ratio FROM Patient P JOIN Laboratory L ON P.ID = L.ID GROUP BY P.SEX;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(0.5,)",
+      "(0.5,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(DISTINCT P.ID) FILTER (WHERE P.SEX = 'M' AND L.UA <= 8.0) * 1.0 / COUNT(DISTINCT P.ID) FILTER (WHERE P.SEX = 'F' AND L.UA <= 6.5)) AS ratio FROM Patient P JOIN Laboratory L ON P.ID = L.ID;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(1.0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(DISTINCT CASE WHEN P.SEX = 'M' AND L.UA <= 8.0 THEN P.ID ELSE NULL END) * 1.0 / COUNT(DISTINCT CASE WHEN P.SEX = 'F' AND L.UA <= 6.5 THEN P.ID ELSE NULL END)) AS ratio FROM Patient P JOIN Laboratory L ON P.ID = L.ID;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(1.0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SUM(CASE WHEN P.SEX = 'M' AND L.UA <= 8.0 THEN 1 ELSE 0 END) * 1.0 / SUM(CASE WHEN P.SEX = 'F' AND L.UA <= 6.5 THEN 1 ELSE 0 END)) AS ratio FROM Patient P JOIN Laboratory L ON P.ID = L.ID WHERE L.UA IS NOT NULL;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1169/ce0.sqlite": [
+      "(0.5,)"
+    ]
+  }
+]

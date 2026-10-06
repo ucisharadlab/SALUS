@@ -1,0 +1,33 @@
+Query: SELECT COUNT(*) FROM Laboratory
+Explaination of the query: check existence
+Result: [(13908,)]
+Query: SELECT LDH FROM Laboratory WHERE LDH < 500 ORDER BY LDH DESC LIMIT 5
+Explaination of the query: top LDH under 500
+Result: [(499,), (499,), (499,), (499,), (499,)]
+Query: SELECT * FROM Patient LIMIT 5
+Explaination of the query: inspect columns
+Result: [(2110, 'F', '1934-02-13', '1994-02-14', '1993-02-10', '+', 'RA susp.'), (11408, 'F', '1937-05-02', '1996-12-01', '1973-01-01', '+', 'PSS'), (12052, 'F', '1956-04-14', '1991-08-13', None, '+', 'SLE'), (14872, 'F', '1953-09-21', '1997-08-13', None, '+', 'MCTD'), (27654, 'F', '1936-03-25', None, '1992-02-03', '+', 'RA, SLE susp')]
+Query: SELECT `ID`,`LDH` FROM Laboratory WHERE `LDH`=499 LIMIT 5
+Explaination of the query: find sample patient with 499
+Result: [(1078741, 499), (1673252, 499), (2276582, 499), (4415406, 499), (4921572, 499)]
+Query: SELECT COUNT(DISTINCT `ID`) FROM Laboratory WHERE `LDH`=499
+Explaination of the query: how many IDs have LDH 499
+Result: [(5,)]
+Query: SELECT COUNT(DISTINCT `ID`) FROM Laboratory WHERE `LDH`=499
+Explaination of the query: number of distinct patients with LDH 499
+Result: [(5,)]
+Query: SELECT `ID`,`Description`,`First Date` FROM Patient WHERE `Description` IS NOT NULL LIMIT 5
+Explaination of the query: compare description vs first date
+Result: [(2110, '1994-02-14', '1993-02-10'), (11408, '1996-12-01', '1973-01-01'), (12052, '1991-08-13', None), (14872, '1997-08-13', None), (30609, '1991-08-13', None)]
+Query: SELECT T1.`First Date` FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.LDH = (SELECT MAX(LDH) FROM Laboratory WHERE LDH < 500) LIMIT 5
+Explaination of the query: execute annotated query
+Result: [('1992-09-21',), ('1995-08-08',), ('1989-12-02',), ('1990-05-08',), ('1993-01-25',)]
+Query: SELECT DISTINCT T1.`ID`, T1.`Description`, T1.`First Date` FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.LDH = (SELECT MAX(LDH) FROM Laboratory WHERE LDH < 500) LIMIT 10
+Explaination of the query: distinct patients with LDH 499
+Result: [(1078741, None, '1992-09-21'), (1673252, '1997-02-03', '1995-08-08'), (2276582, None, '1989-12-02'), (4415406, '1994-02-19', '1990-05-08'), (4921572, '1994-03-04', '1993-01-25')]
+Query: SELECT COUNT(*) FROM (SELECT DISTINCT `ID` FROM Laboratory WHERE `LDH`=499)
+Explaination of the query: number of patients with max normal LDH
+Result: [(5,)]
+Query: SELECT DISTINCT P.`ID`, P.`Description` FROM Patient P JOIN Laboratory L ON P.`ID` = L.`ID` WHERE L.`LDH` = (SELECT MAX(`LDH`) FROM Laboratory WHERE `LDH` < 500) AND P.`Description` IS NOT NULL LIMIT 10
+Explaination of the query: patient description of those with highest normal LDH
+Result: [(1673252, '1997-02-03'), (4415406, '1994-02-19'), (4921572, '1994-03-04')]

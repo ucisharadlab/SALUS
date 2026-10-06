@@ -1,0 +1,36 @@
+Query: SELECT `raceId`, `name`, `date` FROM `races` WHERE `date` = '1983-07-16' LIMIT 5;
+Explaination of the query: Check races with date 1983-07-16
+Result: [(460, 'British Grand Prix', '1983-07-16')]
+Query: SELECT CAST(COUNT(CASE WHEN T2.time IS NOT NULL THEN T2.driverId END) AS REAL) * 100.0 / COUNT(T2.driverId) AS completion_rate FROM races AS T1 INNER JOIN results AS T2 ON T2.raceId = T1.raceId WHERE T1.date = '1983-07-16' LIMIT 5;
+Explaination of the query: Compute completion rate for race at 1983-07-16
+Result: [(17.24137931034483,)]
+Query: SELECT COUNT(*) FROM `results` WHERE `raceId`=460 LIMIT 5;
+Explaination of the query: count driver results in raceId 460
+Result: [(29,)]
+Query: SELECT `driverId`, `statusId`, `time` FROM `results` WHERE `raceId`=460 LIMIT 5;
+Explaination of the query: inspect results for race 460
+Result: [(117, 1, '1:24:39.780'), (137, 1, '+19.161'), (175, 1, '+26.246'), (95, 1, '+38.952'), (163, 1, '+58.874')]
+Query: SELECT COUNT(*) FROM `results` WHERE `raceId`=460 AND `time` IS NULL LIMIT 5;
+Explaination of the query: count rows with NULL time for race 460
+Result: [(24,)]
+Query: SELECT `resultId`,`driverId`,`statusId`,`time` FROM `results` WHERE `raceId` = 460 AND `time` IS NOT NULL ORDER BY `statusId` LIMIT 5;
+Explaination of the query: Inspect time not null statuses
+Result: [(10880, 117, 1, '1:24:39.780'), (10881, 137, 1, '+19.161'), (10882, 175, 1, '+26.246'), (10883, 95, 1, '+38.952'), (10884, 163, 1, '+58.874')]
+Query: SELECT COUNT(DISTINCT `raceId`) FROM `races` WHERE `date` = '1983-07-16' LIMIT 5;
+Explaination of the query: Check if multiple races on the same date
+Result: [(1,)]
+Query: SELECT `status` , COUNT(*) FROM `results` r JOIN `status` s ON r.statusId = s.statusId WHERE r.raceId = 460 GROUP BY r.statusId LIMIT 5;
+Explaination of the query: See status counts for race 460
+Result: [('Finished', 5), ('Engine', 2), ('Gearbox', 1), ('+1 Lap', 4), ('+2 Laps', 6)]
+Query: SELECT `time` FROM `results` WHERE `raceId`=460 AND `statusId` IN (SELECT statusId FROM status WHERE status LIKE '+1 Lap' OR status LIKE '+2 Laps') LIMIT 10;
+Explaination of the query: Check time values for lapped statuses
+Result: [(None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,)]
+Query: SELECT s.status, COUNT(*) FROM results r JOIN status s ON r.statusId = s.statusId WHERE r.raceId = 460 AND (s.status = 'Finished' OR s.status LIKE '+%Lap%') GROUP BY s.status LIMIT 20;
+Explaination of the query: Number of finished categories including lapped
+Result: [('+1 Lap', 4), ('+2 Laps', 6), ('+3 Laps', 2), ('Finished', 5)]
+Query: SELECT COUNT(*) FROM `status` WHERE `status` LIKE '+%Lap%';
+Explaination of the query: Check status table pattern
+Result: [(33,)]
+Query: SELECT s.status, COUNT(*) FROM results r JOIN status s ON r.statusId = s.statusId WHERE r.raceId = 460 GROUP BY s.status ORDER BY COUNT(*) DESC LIMIT 100;
+Explaination of the query: Full status distribution for race 460
+Result: [('+2 Laps', 6), ('Finished', 5), ('+1 Lap', 4), ('Turbo', 3), ('Did not qualify', 3), ('Fuel system', 2), ('Engine', 2), ('+3 Laps', 2), ('Suspension', 1), ('Gearbox', 1)]

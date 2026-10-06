@@ -1,0 +1,38 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/518/ce7.sqlite": [
+      "('oldschool', 'Slaughter Drone')",
+      "('oldschool', 'Crux of Fate')"
+    ]
+  },
+  {
+    "pred": "SELECT T1.format, T2.name FROM legalities T1 INNER JOIN cards T2 ON T1.uuid = T2.uuid WHERE T1.status = 'Banned' GROUP BY T1.format HAVING COUNT(*) = (SELECT MAX(Cnt) FROM (SELECT COUNT(*) AS Cnt FROM legalities WHERE status = 'Banned' GROUP BY format))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/518/ce7.sqlite": [
+      "('oldschool', 'Slaughter Drone')"
+    ]
+  },
+  {
+    "pred": "WITH CountedFormats AS (SELECT format, COUNT(*) AS Cnt FROM legalities WHERE status = 'Banned' GROUP BY format), MaxFormat AS (SELECT format FROM CountedFormats WHERE Cnt = (SELECT MAX(Cnt) FROM CountedFormats)) SELECT legalities.format, cards.name FROM legalities JOIN cards ON legalities.uuid = cards.uuid WHERE legalities.format IN (SELECT format FROM MaxFormat) AND legalities.status = 'Banned'",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/518/ce7.sqlite": [
+      "('oldschool', 'Slaughter Drone')",
+      "('oldschool', 'Crux of Fate')"
+    ]
+  },
+  {
+    "pred": "SELECT T1.format, T2.name FROM legalities T1 JOIN cards T2 ON T1.uuid = T2.uuid WHERE T1.status = 'Banned' GROUP BY T1.format HAVING COUNT(T1.uuid) = (SELECT MAX(Cnt) FROM (SELECT COUNT(uuid) AS Cnt FROM legalities WHERE status = 'Banned' GROUP BY format))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/518/ce7.sqlite": [
+      "('oldschool', 'Slaughter Drone')"
+    ]
+  },
+  {
+    "pred": "WITH RankedFormats AS (SELECT format, RANK() OVER (ORDER BY COUNT(*) DESC) AS rk FROM legalities WHERE status = 'Banned' GROUP BY format) SELECT legalities.format, cards.name FROM legalities JOIN cards ON legalities.uuid = cards.uuid WHERE legalities.status = 'Banned' AND legalities.format IN (SELECT format FROM RankedFormats WHERE rk = 1)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/518/ce7.sqlite": [
+      "('oldschool', 'Slaughter Drone')",
+      "('oldschool', 'Crux of Fate')"
+    ]
+  }
+]

@@ -1,0 +1,150 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "gold": "SELECT T1.Segment FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID GROUP BY T1.Segment ORDER BY SUM(T2.Consumption) ASC LIMIT 1",
+    "score": 3,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.Segment FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Consumption IS NOT NULL GROUP BY T2.Segment ORDER BY SUM(T1.Consumption) ASC LIMIT 1;",
+    "score": 3,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT Segment FROM (SELECT T2.Segment, SUM(T1.Consumption) AS TotalConsumption FROM yearmonth T1 INNER JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Consumption > 0 GROUP BY T2.Segment) ORDER BY TotalConsumption ASC LIMIT 1;",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(Segment) FROM (SELECT T2.Segment FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID GROUP BY T2.Segment ORDER BY SUM(T1.Consumption) ASC) AS LeastConsumingSegment;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('KAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483648',)"
+    ]
+  },
+  {
+    "pred": "WITH ConsumptionPerSegment AS (SELECT T2.Segment, SUM(T1.Consumption) AS TotalConsumption FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID GROUP BY T2.Segment) SELECT Segment FROM ConsumptionPerSegment ORDER BY TotalConsumption ASC LIMIT 1;",
+    "score": 3,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT Segment FROM customers WHERE CustomerID IN (SELECT CustomerID FROM yearmonth GROUP BY CustomerID ORDER BY SUM(Consumption) ASC LIMIT 1);",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483648',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.Segment FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID GROUP BY T2.Segment HAVING SUM(T1.Consumption) = (SELECT MIN(SumConsumption) FROM (SELECT SUM(Consumption) AS SumConsumption FROM yearmonth GROUP BY CustomerID));",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": []
+  },
+  {
+    "pred": "SELECT Segment FROM customers WHERE CustomerID = (SELECT CustomerID FROM yearmonth GROUP BY CustomerID ORDER BY SUM(Consumption) ASC LIMIT 1);",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483648',)"
+    ]
+  },
+  {
+    "pred": "SELECT Segment FROM (SELECT T2.Segment, SUM(T1.Consumption) AS TotalConsumption FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID GROUP BY T2.Segment) AS ConsumptionData ORDER BY TotalConsumption ASC LIMIT 1;",
+    "score": 3,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT Segment FROM customers T2 WHERE EXISTS (SELECT NULL FROM yearmonth T1 WHERE T1.CustomerID = T2.CustomerID GROUP BY T1.CustomerID HAVING SUM(T1.Consumption) = (SELECT MIN(TotalConsumption) FROM (SELECT SUM(Consumption) AS TotalConsumption FROM yearmonth GROUP BY CustomerID)));",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": [
+      "('2147483648',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.Segment FROM yearmonth T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Consumption IS NOT NULL GROUP BY T2.Segment HAVING SUM(T1.Consumption) = (SELECT MIN(TotalConsumption) FROM (SELECT SUM(Consumption) AS TotalConsumption FROM yearmonth GROUP BY CustomerID))",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce0.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce1.sqlite": [
+      "('LAM',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1478/ce2.sqlite": []
+  }
+]

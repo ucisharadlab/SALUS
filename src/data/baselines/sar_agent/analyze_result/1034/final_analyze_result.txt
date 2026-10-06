@@ -1,0 +1,12 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The query looks at Player_Attributes rows in 2010 and keeps those whose overall_rating equals the maximum overall rating that year. 1) It returns one row per matching record, not one row per player. If a player has several 2010 snapshots with the same rating he will appear more than once (verified: player_api_id 30981 appears twice). 2) The phrase “highest above average overall ratings” could also be interpreted as “those whose rating is above (the) average”, or “highest rating above the average”, so more than one reasonable reading exists. Thus the query is not fully aligned with a unique interpretation and does not de-duplicate results.
+Revised:
+SELECT DISTINCT `player_api_id`
+FROM `Player_Attributes`
+WHERE SUBSTR(`date`,1,4)='2010'
+  AND `overall_rating` = (
+        SELECT MAX(`overall_rating`)
+        FROM `Player_Attributes`
+        WHERE SUBSTR(`date`,1,4)='2010'
+      );

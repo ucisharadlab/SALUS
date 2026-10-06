@@ -1,0 +1,12 @@
+Correctness: No – the annotated query counts every lap row instead of distinct drivers and mis-parses the lap time string, therefore returns 24 465 instead of the correct 9.
+Is_ambiguous: No – the question clearly requests the count of unique French drivers who have at least one lap time under 2 minutes.
+Explanation: 
+1. Requirement is about drivers; the query should count DISTINCT driverId.  
+2. `lapTimes` already contains numeric `milliseconds`, so string parsing is unnecessary; moreover the substring positions used are wrong (e.g. ‘1:49.088’ interpreted as 69.088 s instead of 109.088 s).  
+3. Correct approach: filter `milliseconds < 120000` and count distinct French drivers – this yields 9, verified via test query.
+Revised: 
+SELECT COUNT(DISTINCT d.driverId)
+FROM drivers AS d
+JOIN lapTimes AS l ON d.driverId = l.driverId
+WHERE d.nationality = 'French'
+  AND l.milliseconds < 120000;

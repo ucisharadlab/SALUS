@@ -1,0 +1,14 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The query links district → account → disp and filters out OWNER types, but it has two problems:
+1. It uses BETWEEN 8000 AND 9000, which keeps 8000 even though the question says the salary must EXCEED 8000 (> 8000) and be NO MORE THAN 9000 (≤ 9000).
+2. It returns every matching record, so the same account-type value appears many times; the question asks to “list the account types,” implying a unique set, so DISTINCT is needed.
+Because of these issues the annotated query does not fully answer the question.
+Revised:
+SELECT DISTINCT d.`type`
+FROM `district`  di
+JOIN `account`   a ON di.`district_id` = a.`district_id`
+JOIN `disp`      d ON a.`account_id`  = d.`account_id`
+WHERE d.`type` <> 'OWNER'
+  AND di.`A11`  >  8000
+  AND di.`A11` <= 9000;

@@ -1,0 +1,28 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation:  
+• The annotated query compares each individual expense to the global minimum `expense.cost` and returns the event(s) that contain that single cheapest expense.
+• Ordinary reading of the question “Which event has the lowest cost?” usually refers to the event whose overall / total cost is smallest, i.e., sum of all its expenses, not the single cheapest line-item.  The query therefore does not answer the most natural interpretation.
+• Even under the “cheapest single expense” interpretation the query could output the same event multiple times because the joins create duplicate rows; a DISTINCT (or GROUP BY) would be needed.
+• Because both interpretations (lowest total cost vs. lowest individual expense) are plausible, the question itself is ambiguous.
+
+Revised:  
+If the intended meaning is the event with the LOWEST TOTAL cost:
+```
+SELECT e.`event_name`
+FROM   `event`  e
+JOIN   `budget` b ON b.`link_to_event` = e.`event_id`
+JOIN   `expense` x ON x.`link_to_budget` = b.`budget_id`
+GROUP BY e.`event_id`
+HAVING SUM(x.`cost`) = (
+    SELECT MIN(total_cost)
+    FROM   (
+        SELECT e2.`event_id`, SUM(x2.`cost`) AS total_cost
+        FROM   `event`  e2
+        JOIN   `budget` b2 ON b2.`link_to_event` = e2.`event_id`
+        JOIN   `expense` x2 ON x2.`link_to_budget` = b2.`budget_id`
+        GROUP BY e2.`event_id`
+    ) AS t
+);
+```  
+(If the alternative “lowest single‐expense cost” were required, `SELECT DISTINCT e.event_name ... WHERE x.cost = (SELECT MIN(cost) FROM expense)` would suffice.)

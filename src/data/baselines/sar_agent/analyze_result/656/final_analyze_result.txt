@@ -1,0 +1,11 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The annotated query returns the display name of the user who owns the highest-scoring child post (uses the child post’s OwnerUserId). The question, however, asks for the display name tied to the PARENT post of that highest-scoring child. Correct logic: (1) find child post with max score (ParentId is not null); (2) follow its ParentId to the parent post; (3) obtain that parent post’s OwnerUserId and fetch the corresponding user.DisplayName. The provided query skips step 2, so the answer is wrong even though it executes.
+Revised:
+SELECT u.`DisplayName`
+FROM `posts` AS c
+JOIN `posts` AS p ON p.`Id` = c.`ParentId`
+JOIN `users` AS u ON u.`Id` = p.`OwnerUserId`
+WHERE c.`ParentId` IS NOT NULL
+ORDER BY c.`Score` DESC
+LIMIT 1;

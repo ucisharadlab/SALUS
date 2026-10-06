@@ -1,0 +1,14 @@
+Correctness: No – the annotated query returns the surrogate `id` of individual snapshots in Player_Attributes, not the unique identifier of players, and it doesn’t de-duplicate multiple rows per player, so it fails to answer the question.
+Is_ambiguous: No – Within this schema the meaningful player identifier used across tables is `player_api_id`, so the request is sufficiently clear.
+Explanation: Player_Attributes holds many dated rows per player. The original query orders all rows by `crossing` and picks the row ids, allowing the same player to appear several times and ignoring other players with equal/higher best scores. To obtain the top-5 players we must aggregate per player (MAX(crossing)) then sort and return the player identifier.
+Revised:
+```
+SELECT `player_api_id`
+FROM (
+    SELECT `player_api_id`, MAX(`crossing`) AS max_crossing
+    FROM `Player_Attributes`
+    GROUP BY `player_api_id`
+)
+ORDER BY max_crossing DESC, `player_api_id`
+LIMIT 5;
+```

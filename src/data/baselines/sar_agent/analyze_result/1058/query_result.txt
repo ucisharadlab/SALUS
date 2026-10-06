@@ -1,0 +1,18 @@
+Query: SELECT A FROM ( SELECT AVG(`finishing`) as result, 'Max' as A FROM `Player` AS T1 INNER JOIN `Player_Attributes` AS T2 ON T1.`player_api_id` = T2.`player_api_id` WHERE T1.`height` = ( SELECT MAX(`height`) FROM `Player` ) UNION SELECT AVG(`finishing`) as result, 'Min' as A FROM `Player` AS T1 INNER JOIN `Player_Attributes` AS T2 ON T1.`player_api_id` = T2.`player_api_id` WHERE T1.`height` = ( SELECT MIN(`height`) FROM `Player` ) ) ORDER BY result DESC LIMIT 5;
+Explaination of the query: Check what the annotated query returns
+Result: [('Min',), ('Max',)]
+Query: SELECT MAX(`height`) as max_h, MIN(`height`) as min_h FROM `Player` LIMIT 5;
+Explaination of the query: get extreme heights
+Result: [(208.28, 157.48)]
+Query: SELECT 'Max' as label, AVG(`finishing`) as avg_fin FROM `Player_Attributes` pa JOIN `Player` p ON p.`player_api_id`=pa.`player_api_id` WHERE p.`height`=(SELECT MAX(`height`) FROM `Player`) LIMIT 5;
+Explaination of the query: average finishing for tallest
+Result: [('Max', 15.5)]
+Query: SELECT 'Min' as label, AVG(`finishing`) as avg_fin FROM `Player_Attributes` pa JOIN `Player` p ON p.`player_api_id`=pa.`player_api_id` WHERE p.`height`=(SELECT MIN(`height`) FROM `Player`) LIMIT 5;
+Explaination of the query: average finishing for shortest
+Result: [('Min', 60.9)]
+Query: SELECT `player_name`, `height`, `player_api_id` FROM `Player` WHERE `height` = (SELECT MAX(`height`) FROM `Player`) LIMIT 5;
+Explaination of the query: tallest players
+Result: [('Kristof van Hout', 208.28, 148325)]
+Query: SELECT `player_name`, `height`, `player_api_id` FROM `Player` WHERE `height` = (SELECT MIN(`height`) FROM `Player`) LIMIT 5;
+Explaination of the query: shortest players
+Result: [('Juan Quero', 157.48, 97226)]

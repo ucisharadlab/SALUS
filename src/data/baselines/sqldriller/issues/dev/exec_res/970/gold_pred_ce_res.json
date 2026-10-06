@@ -1,0 +1,52 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": []
+  },
+  {
+    "gold": "SELECT T2.driverId FROM pitStops AS T1 INNER JOIN drivers AS T2 on T1.driverId = T2.driverId WHERE T2.nationality = 'German' AND STRFTIME('%Y', T2.dob) BETWEEN '1980' AND '1990' ORDER BY T1.time LIMIT 3",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": [
+      "(174,)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.driverId FROM drivers T1 JOIN lapTimes T2 ON T1.driverId = T2.driverId WHERE T1.nationality = 'German' AND strftime('%Y', T1.dob) BETWEEN '1980' AND '1990' GROUP BY T1.driverId ORDER BY MIN(T2.time) LIMIT 3",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT driverId FROM drivers WHERE nationality = 'German' AND strftime('%Y', dob) BETWEEN '1980' AND '1990' AND driverId IN (SELECT driverId FROM lapTimes GROUP BY driverId ORDER BY MIN(time) LIMIT 3)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT driverId FROM (SELECT T1.driverId FROM drivers T1 INNER JOIN lapTimes T2 ON T1.driverId = T2.driverId WHERE T1.nationality = 'German' AND strftime('%Y', T1.dob) BETWEEN '1980' AND '1990' GROUP BY T1.driverId ORDER BY MIN(T2.time)) LIMIT 3",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT D.driverId FROM drivers D JOIN (SELECT driverId, MIN(time) AS MinTime FROM lapTimes GROUP BY driverId) LT ON D.driverId = LT.driverId WHERE D.nationality = 'German' AND strftime('%Y', D.dob) BETWEEN '1980' AND '1990' ORDER BY LT.MinTime LIMIT 3",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT D.driverId FROM drivers D, lapTimes L WHERE D.driverId = L.driverId AND D.nationality = 'German' AND strftime('%Y', D.dob) BETWEEN '1980' AND '1990' GROUP BY D.driverId ORDER BY MIN(L.time) LIMIT 3",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT DISTINCT driverId FROM drivers WHERE nationality = 'German' AND strftime('%Y', dob) BETWEEN '1980' AND '1990' AND driverId IN (SELECT driverId FROM lapTimes GROUP BY driverId HAVING MIN(time) ORDER BY MIN(time) LIMIT 3)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT driverId FROM drivers WHERE nationality = 'German' AND strftime('%Y', dob) BETWEEN '1980' AND '1990' AND driverId IN (SELECT driverId FROM lapTimes GROUP BY driverId ORDER BY MIN(time) ASC LIMIT 3)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT driverId FROM (SELECT T1.driverId, MIN(T2.time) AS MinTime FROM drivers T1 JOIN lapTimes T2 ON T1.driverId = T2.driverId WHERE T1.nationality = 'German' AND strftime('%Y', T1.dob) BETWEEN '1980' AND '1990' GROUP BY T1.driverId ORDER BY MinTime) LIMIT 3",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/970/ce0.sqlite": []
+  }
+]

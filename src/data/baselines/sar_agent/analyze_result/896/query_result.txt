@@ -1,0 +1,36 @@
+Query: SELECT COUNT(*) FROM driverStandings LIMIT 5
+Explaination of the query: check table exists
+Result: [(31578,)]
+Query: SELECT driverId FROM drivers WHERE surname='Hamilton' LIMIT 5
+Explaination of the query: get Hamilton driverId
+Result: [(1,), (708,)]
+Query: SELECT * FROM `drivers` WHERE `surname`='Hamilton' LIMIT 5
+Explaination of the query: show Hamilton rows
+Result: [(1, 'hamilton', 44, 'HAM', 'Lewis', 'Hamilton', '1985-01-07', 'British', 'http://en.wikipedia.org/wiki/Lewis_Hamilton'), (708, 'duncan_hamilton', None, None, 'Duncan', 'Hamilton', '1920-04-30', 'British', 'http://en.wikipedia.org/wiki/Duncan_Hamilton_(racing_driver)')]
+Query: SELECT COUNT(*) FROM `driverStandings` WHERE `driverId`=1
+Explaination of the query: number of driverStandings records for Lewis Hamilton
+Result: [(201,)]
+Query: SELECT COUNT(*) FROM `driverStandings` WHERE `driverId`=1 AND `position`=1 AND `raceId` IN (SELECT `raceId` FROM `races` WHERE `year`>=2010)
+Explaination of the query: How many standings records where Hamilton position 1 since 2010
+Result: [(39,)]
+Query: SELECT CAST(COUNT(CASE WHEN T2.position <> 1 THEN T2.position END) AS REAL) * 100.0 / COUNT(T2.driverStandingsId) FROM races AS T1 INNER JOIN driverStandings AS T2 ON T2.raceId = T1.raceId INNER JOIN drivers AS T3 ON T3.driverId = T2.driverId WHERE T3.surname = 'Hamilton' AND T1.year >= 2010
+Explaination of the query: execute annotated query
+Result: [(74.0,)]
+Query: SELECT COUNT(*) FROM driverStandings ds JOIN races r ON r.raceId=ds.raceId WHERE ds.driverId=1 AND r.year>=2010
+Explaination of the query: count of Hamilton driver standings since 2010
+Result: [(150,)]
+Query: SELECT COUNT(*) FROM `results` res JOIN races r ON r.raceId = res.raceId WHERE res.driverId=1 AND r.year>=2010
+Explaination of the query: number of races Lewis Hamilton participated in since 2010
+Result: [(150,)]
+Query: SELECT COUNT(*) FROM `results` res JOIN `races` r ON r.raceId=res.raceId WHERE res.driverId=1 AND r.year>=2010 AND res.positionOrder=1
+Explaination of the query: Number of races Hamilton finished 1st since 2010
+Result: [(49,)]
+Query: SELECT CAST(SUM(CASE WHEN res.`positionOrder` <> 1 THEN 1 ELSE 0 END) AS REAL) * 100.0 / COUNT(*) FROM `results` res JOIN `races` r ON r.`raceId` = res.`raceId` WHERE res.`driverId`=1 AND r.`year`>=2010
+Explaination of the query: percentage of races since 2010 where Hamilton did not finish first
+Result: [(67.33333333333333,)]
+Query: SELECT r.year,r.name,res.positionOrder,ds.position FROM races r JOIN results res ON res.raceId=r.raceId JOIN driverStandings ds ON ds.raceId=r.raceId AND ds.driverId=res.driverId WHERE res.driverId=1 AND r.year=2017 LIMIT 5
+Explaination of the query: compare for 2017 races positions
+Result: [(2017, 'Australian Grand Prix', 2, 2), (2017, 'Chinese Grand Prix', 1, 2), (2017, 'Bahrain Grand Prix', 2, 2), (2017, 'Russian Grand Prix', 4, 2), (2017, 'Spanish Grand Prix', 1, 2)]
+Query: SELECT COUNT(*) AS total_races, SUM(CASE WHEN res.`positionOrder` = 1 THEN 1 ELSE 0 END) AS wins, SUM(CASE WHEN res.`positionOrder` <> 1 THEN 1 ELSE 0 END) AS not_first FROM `results` res JOIN `races` r ON r.`raceId` = res.`raceId` WHERE res.`driverId`=1 AND r.`year`>=2010
+Explaination of the query: confirm counts for Lewis Hamilton finishing 1st vs not 1st
+Result: [(150, 49, 101)]

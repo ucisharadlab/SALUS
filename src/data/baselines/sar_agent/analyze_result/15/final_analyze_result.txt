@@ -1,0 +1,15 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The annotated query links the `schools` and `satscores` tables, keeps only rows whose status is Active, sorts by `AvgScrRead`, and returns the first district name.  However, `satscores` mixes school–level rows (`rtype='S'`) with district-level rows (`rtype='D'`).  Because the query does not restrict to district rows, the top‐scoring school row (Mission San Jose High, 653) dominates, so the returned district is the one that owns that school, not the district with the highest district-wide average.  In addition, the query performs no aggregation, so multiple schools from the same district could appear, further distorting results.  Therefore it does not correctly answer “Which active district has the highest average score in Reading?”.
+Revised:
+```
+SELECT sch.`District`
+FROM `schools` AS sch
+JOIN `satscores` AS sat
+      ON sch.`CDSCode` = sat.`cds`
+WHERE sch.`StatusType` = 'Active'
+  AND sat.`rtype` = 'D'          -- keep only district-level SAT rows
+  AND sat.`AvgScrRead` IS NOT NULL
+ORDER BY sat.`AvgScrRead` DESC
+LIMIT 1;
+```

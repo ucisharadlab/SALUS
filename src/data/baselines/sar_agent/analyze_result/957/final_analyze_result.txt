@@ -1,0 +1,7 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation: The query counts every result-row (driver-race entry) where an Italian driver’s `time` is NULL. That answers “How many times have Italian drivers failed to finish” (2911 rows), not “How many Italian drivers” who have failed to finish at least once. When we count unique drivers the answer is 98. Because the English question could be interpreted either way (total DNFs vs. number of drivers with at least one DNF), the intent is ambiguous, but the more natural reading is to count distinct drivers, which the annotated query does not do. Therefore the annotated query is incorrect.  
+Revised: SELECT COUNT(DISTINCT r.`driverId`) 
+FROM `results` r 
+JOIN `drivers` d ON r.`driverId` = d.`driverId` 
+WHERE d.`nationality` = 'Italian' AND r.`time` IS NULL;

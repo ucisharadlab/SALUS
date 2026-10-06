@@ -1,0 +1,42 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1011/ce0.sqlite": [
+      "('Pierluigi Stevens',)"
+    ]
+  },
+  {
+    "gold": "WITH lap_times_in_seconds AS (SELECT driverId, (CASE WHEN SUBSTR(time, 1, INSTR(time, ':') - 1) <> '' THEN CAST(SUBSTR(time, 1, INSTR(time, ':') - 1) AS REAL) * 60 ELSE 0 END + CASE WHEN SUBSTR(time, INSTR(time, ':') + 1, INSTR(time, '.') - INSTR(time, ':') - 1) <> '' THEN CAST(SUBSTR(time, INSTR(time, ':') + 1, INSTR(time, '.') - INSTR(time, ':') - 1) AS REAL) ELSE 0 END + CASE WHEN SUBSTR(time, INSTR(time, '.') + 1) <> '' THEN CAST(SUBSTR(time, INSTR(time, '.') + 1) AS REAL) / 1000 ELSE 0 END) AS time_in_seconds FROM lapTimes) SELECT T2.forename, T2.surname, T1.driverId FROM (SELECT driverId, MIN(time_in_seconds) AS min_time_in_seconds FROM lap_times_in_seconds GROUP BY driverId) AS T1 INNER JOIN drivers AS T2 ON T1.driverId = T2.driverId ORDER BY T1.min_time_in_seconds ASC LIMIT 20",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1011/ce0.sqlite": [
+      "('Pierluigi', 'Stevens', 502)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.forename || ' ' || T2.surname AS FullName FROM lapTimes T1 JOIN drivers T2 ON T1.driverId = T2.driverId WHERE T1.time = (SELECT MIN(time) FROM lapTimes) LIMIT 20;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1011/ce0.sqlite": [
+      "('Pierluigi Stevens',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.forename || ' ' || T2.surname AS FullName FROM lapTimes T1 JOIN drivers T2 ON T1.driverId = T2.driverId WHERE T1.time IN (SELECT MIN(time) FROM lapTimes) LIMIT 20;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1011/ce0.sqlite": [
+      "('Pierluigi Stevens',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.forename || ' ' || T2.surname AS FullName FROM lapTimes T1, drivers T2 WHERE T1.driverId = T2.driverId AND T1.time = (SELECT MIN(time) FROM lapTimes) LIMIT 20;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1011/ce0.sqlite": [
+      "('Pierluigi Stevens',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.forename || ' ' || T2.surname AS FullName FROM lapTimes T1 JOIN drivers T2 ON T1.driverId = T2.driverId WHERE T1.time = (SELECT MIN(time) FROM lapTimes WHERE time IS NOT NULL) LIMIT 20;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1011/ce0.sqlite": [
+      "('Pierluigi Stevens',)"
+    ]
+  }
+]

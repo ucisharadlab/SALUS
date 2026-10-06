@@ -1,0 +1,10 @@
+Correctness: No – uses postHistory instead of posts.OwnerUserId so may return posts only edited, not authored, and may duplicate rows.
+Is_ambiguous: No – “post by slashnick” is normally understood as a post he authored.
+Explanation: The intended task is: find the post(s) authored by the user whose DisplayName = 'slashnick', look at their AnswerCount, return the id of the post with the maximum. The annotated query links users→postHistory→posts, therefore selecting posts where slashnick appeared as editor/revisor; this can include posts owned by others and can list the same post many times. Correct approach is to take posts table where OwnerUserId = user id of slashnick, order by AnswerCount DESC, limit 1.
+Revised:
+SELECT p.`Id`
+FROM `posts` AS p
+JOIN `users` AS u ON u.`Id` = p.`OwnerUserId`
+WHERE u.`DisplayName` = 'slashnick'
+ORDER BY p.`AnswerCount` DESC
+LIMIT 1;

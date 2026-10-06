@@ -1,0 +1,24 @@
+Correctness: No – the annotated query fails to exclude sets that also possess a Japanese translation, so it does not satisfy the “…doesn't have Japanese translation” requirement.
+Is_ambiguous: No – the question clearly asks for sets that have Korean translation and lack Japanese translation; only one interpretation is plausible.
+Explanation: 
+1. Required logic: a set must (a) appear in set_translations with language = 'Korean' and (b) NOT appear with language = 'Japanese'.
+2. Annotated query:
+   SELECT name
+   FROM sets
+   WHERE code IN (
+       SELECT setCode
+       FROM set_translations
+       WHERE language = 'Korean' AND language NOT LIKE '%Japanese%')
+   The extra predicate is redundant because a single row’s language cannot be both 'Korean' and 'Japanese'. Thus every set with any Korean row is returned, even when another row for the same set is Japanese. Hence it violates condition (b).
+3. Verification queries show 121 distinct sets have Korean translations and every one of those also has Japanese; therefore the correct answer set is empty, but the annotated query returns 121 rows.
+Revised:
+```
+SELECT s.`name`
+FROM `sets` AS s
+WHERE EXISTS (
+        SELECT 1 FROM `set_translations` st1
+        WHERE st1.`setCode` = s.`code` AND st1.`language` = 'Korean')
+  AND NOT EXISTS (
+        SELECT 1 FROM `set_translations` st2
+        WHERE st2.`setCode` = s.`code` AND st2.`language` = 'Japanese');
+```

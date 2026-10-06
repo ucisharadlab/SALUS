@@ -1,0 +1,82 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  },
+  {
+    "gold": "SELECT T2.A2, COUNT(T1.client_id) FROM client AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id WHERE T1.gender = 'F' GROUP BY T2.district_id, T2.A2 ORDER BY COUNT(T1.client_id) DESC LIMIT 9",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Ceska Lipa', 1)"
+    ]
+  },
+  {
+    "pred": "SELECT T4.A2 FROM (SELECT T3.district_id, COUNT(T3.account_id) AS num_accounts FROM (SELECT T1.account_id, T2.district_id FROM account AS T1 JOIN client AS T2 ON T1.account_id = T2.client_id WHERE T2.gender = 'F') AS T3 GROUP BY T3.district_id ORDER BY num_accounts DESC LIMIT 9) AS T5 JOIN district AS T4 ON T5.district_id = T4.district_id;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT district.A2 FROM district JOIN (SELECT account.district_id, COUNT(*) AS female_count FROM account JOIN disp ON account.account_id = disp.account_id JOIN client ON disp.client_id = client.client_id WHERE client.gender = 'F' GROUP BY account.district_id ORDER BY female_count DESC LIMIT 9) AS subquery ON district.district_id = subquery.district_id;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  },
+  {
+    "pred": "SELECT d.A2 FROM district d INNER JOIN (SELECT a.district_id FROM account a INNER JOIN disp dp ON a.account_id = dp.account_id INNER JOIN client c ON dp.client_id = c.client_id WHERE c.gender = 'F' GROUP BY a.district_id ORDER BY COUNT(*) DESC LIMIT 9) sub ON d.district_id = sub.district_id;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  },
+  {
+    "pred": "SELECT d.A2 FROM district d, (SELECT a.district_id, COUNT(a.account_id) AS count FROM account a, disp dp, client c WHERE a.account_id = dp.account_id AND dp.client_id = c.client_id AND c.gender = 'F' GROUP BY a.district_id ORDER BY count DESC LIMIT 9) as result WHERE d.district_id = result.district_id;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  },
+  {
+    "pred": "SELECT d.A2 FROM district d WHERE d.district_id IN (SELECT a.district_id FROM account a JOIN disp dp ON a.account_id = dp.account_id JOIN client c ON dp.client_id = c.client_id WHERE c.gender = 'F' GROUP BY a.district_id ORDER BY COUNT(dp.account_id) DESC LIMIT 9);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  },
+  {
+    "pred": "SELECT d.A2 FROM district d JOIN (SELECT a.district_id, COUNT(dp.account_id) AS total FROM account a JOIN disp dp ON a.account_id = dp.account_id JOIN client c ON dp.client_id = c.client_id WHERE c.gender = 'F' GROUP BY a.district_id ORDER BY total DESC LIMIT 9) t ON d.district_id = t.district_id;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  },
+  {
+    "pred": "SELECT d.A2 FROM district AS d WHERE EXISTS (SELECT 1 FROM account AS a JOIN disp AS dp ON a.account_id = dp.account_id JOIN client AS c ON dp.client_id = c.client_id WHERE c.gender = 'F' AND a.district_id = d.district_id GROUP BY a.district_id HAVING COUNT(*) ORDER BY COUNT(*) DESC LIMIT 9);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  },
+  {
+    "pred": "SELECT d.A2 FROM district d WHERE d.district_id IN (SELECT a.district_id FROM account a, disp dp, client c WHERE a.account_id = dp.account_id AND dp.client_id = c.client_id AND c.gender = 'F' GROUP BY a.district_id ORDER BY COUNT(a.account_id) DESC LIMIT 9);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  },
+  {
+    "pred": "SELECT d.A2 FROM district d JOIN (SELECT a.district_id FROM account a JOIN disp dp ON a.account_id = dp.account_id JOIN client c ON dp.client_id = c.client_id WHERE c.gender = 'F' GROUP BY a.district_id ORDER BY COUNT(dp.account_id) DESC LIMIT 9) AS top_districts ON d.district_id = top_districts.district_id;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  },
+  {
+    "pred": "SELECT d.A2 FROM district d WHERE d.district_id IN (SELECT a.district_id FROM account a JOIN disp dp ON a.account_id = dp.account_id JOIN client c ON dp.client_id = c.client_id WHERE c.gender = 'F' GROUP BY a.district_id ORDER BY COUNT(*) DESC LIMIT 9)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/128/ce0.sqlite": [
+      "('Zlin',)"
+    ]
+  }
+]

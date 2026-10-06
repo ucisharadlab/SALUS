@@ -1,0 +1,16 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The annotated query 
+SELECT COUNT(T.bond_id) FROM connected AS T WHERE SUBSTR(T.atom_id, -2) = '19'
+only inspects the first atom column, ignores bonds where atom 19 appears in `atom_id2`, and counts every orientation of a bond (each bond is stored twice), thus over-counting. It also matches any atom id that merely ends with 19 (…_119, …_219, etc.), further inflating the result. Verification on the database shows 498 rows returned, while the correct count of distinct bonds that involve an atom whose local number is exactly 19 is 497. Therefore the query is incorrect.
+
+The question itself is under-specified: “atom 19” is not linked to a particular molecule, so it can be interpreted either as “in the whole database, how many bonds involve any atom numbered 19?” or as “within some specific molecule, how many bonds does its atom 19 have?”. Because the molecule is not stated, multiple interpretations are possible.
+
+Revised:
+If the intended meaning is the global count of bonds involving any atom numbered exactly 19 across the whole database, a correct query is:
+
+SELECT COUNT(DISTINCT `bond_id`)
+FROM `connected`
+WHERE (`atom_id`  GLOB '*[_]19' OR `atom_id2` GLOB '*[_]19');
+
+(GLOB '*[_]19' ensures the id ends with “_19”, excluding “_119”, “_219”, etc.)

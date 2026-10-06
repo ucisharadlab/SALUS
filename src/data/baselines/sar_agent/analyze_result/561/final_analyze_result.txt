@@ -1,0 +1,10 @@
+Correctness: Yes  
+Is_ambiguous: No  
+Explanation: The query finds the `PostId` of the comment with the highest `Score` (sub-query with `ORDER BY Score DESC LIMIT 1`) and then returns the `Title` of that post from `posts`.  We verified in the database that the maximum comment score (90) occurs only once (PostId = 7224), so the sub-query yields a single post and the outer query correctly returns its title.  The query follows the schema and directly answers the question.  A minor limitation is that in case of ties across different posts it would return only one title, but the question is phrased in the singular and the current data set has no tie, so the query is acceptable.  
+Revised: (not required, but for tie-safety one could use)
+```
+SELECT DISTINCT p.Title
+FROM posts p
+JOIN comments c ON c.PostId = p.Id
+WHERE c.Score = (SELECT MAX(Score) FROM comments);
+```

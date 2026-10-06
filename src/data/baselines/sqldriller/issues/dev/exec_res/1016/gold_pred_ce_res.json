@@ -1,0 +1,68 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": [
+      "('23.757',)"
+    ]
+  },
+  {
+    "gold": "WITH fastest_lap_times AS ( SELECT T1.raceId, T1.driverId, T1.FastestLapTime, (CAST(SUBSTR(T1.FastestLapTime, 1, INSTR(T1.FastestLapTime, ':') - 1) AS REAL) * 60) + (CAST(SUBSTR(T1.FastestLapTime, INSTR(T1.FastestLapTime, ':') + 1, INSTR(T1.FastestLapTime, '.') - INSTR(T1.FastestLapTime, ':') - 1) AS REAL)) + (CAST(SUBSTR(T1.FastestLapTime, INSTR(T1.FastestLapTime, '.') + 1) AS REAL) / 1000) as time_in_seconds FROM results AS T1 WHERE T1.FastestLapTime IS NOT NULL), lap_record_race AS ( SELECT T1.raceId, T1.driverId FROM results AS T1 INNER JOIN races AS T2 on T1.raceId = T2.raceId INNER JOIN circuits AS T3 on T2.circuitId = T3.circuitId INNER JOIN ( SELECT MIN(fastest_lap_times.time_in_seconds) as min_time_in_seconds FROM fastest_lap_times INNER JOIN races AS T2 on fastest_lap_times.raceId = T2.raceId INNER JOIN circuits AS T3 on T2.circuitId = T3.circuitId WHERE T2.name = 'Austrian Grand Prix') AS T4 ON (CAST(SUBSTR(T1.FastestLapTime, 1, INSTR(T1.FastestLapTime, ':') - 1) AS REAL) * 60) + (CAST(SUBSTR(T1.FastestLapTime, INSTR(T1.FastestLapTime, ':') + 1, INSTR(T1.FastestLapTime, '.') - INSTR(T1.FastestLapTime, ':') - 1) AS REAL)) + (CAST(SUBSTR(T1.FastestLapTime, INSTR(T1.FastestLapTime, '.') + 1) AS REAL) / 1000) = T4.min_time_in_seconds WHERE T2.name = 'Austrian Grand Prix') SELECT T4.duration FROM lap_record_race INNER JOIN pitStops AS T4 on lap_record_race.raceId = T4.raceId AND lap_record_race.driverId = T4.driverId",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT SUM(CAST(replace(T3.duration, 's', '') AS FLOAT)) AS total_pitstop_time FROM races T1 JOIN results T2 ON T1.raceId = T2.raceId JOIN pitStops T3 ON T2.raceId = T3.raceId AND T2.driverId = T3.driverId WHERE T1.name = 'Austrian Grand Prix' AND T2.fastestLapTime = (SELECT MIN(fastestLapTime) FROM results WHERE raceId = T1.raceId AND fastestLapTime IS NOT NULL)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CAST(replace(duration, 's', '') AS FLOAT)) FROM pitStops WHERE raceId IN (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND driverId = (SELECT driverId FROM results WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND fastestLapTime = (SELECT MIN(fastestLapTime) FROM results WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND fastestLapTime IS NOT NULL))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CAST(replace(p.duration, 's', '') AS FLOAT)) FROM races r JOIN results res ON r.raceId = res.raceId JOIN pitStops p ON res.raceId = p.raceId AND res.driverId = p.driverId WHERE r.name = 'Austrian Grand Prix' AND res.fastestLapTime = (SELECT MIN(fastestLapTime) FROM results WHERE raceId = r.raceId AND fastestLapTime IS NOT NULL)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CAST(replace(p.duration, 's', '') AS FLOAT)) FROM pitStops p WHERE p.raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND p.driverId = (SELECT driverId FROM results WHERE raceId = p.raceId AND fastestLapTime = (SELECT MIN(fastestLapTime) FROM results WHERE raceId = p.raceId AND fastestLapTime IS NOT NULL))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CAST(replace(duration, 's', '') AS FLOAT)) FROM pitStops WHERE (raceId, driverId) IN (SELECT raceId, driverId FROM results WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND fastestLapTime = (SELECT MIN(fastestLapTime) FROM results WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND fastestLapTime IS NOT NULL))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CAST(replace(duration, 's', '') AS FLOAT)) FROM pitStops WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND driverId IN (SELECT driverId FROM results WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND fastestLapTime = (SELECT MIN(fastestLapTime) FROM results WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND fastestLapTime IS NOT NULL))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CAST(replace(duration, 's', '') AS FLOAT)) FROM pitStops WHERE EXISTS (SELECT 1 FROM results WHERE results.raceId = pitStops.raceId AND results.driverId = pitStops.driverId AND results.fastestLapTime = (SELECT MIN(fastestLapTime) FROM results WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND fastestLapTime IS NOT NULL) AND pitStops.raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix'))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CAST(replace(duration, 's', '') AS FLOAT)) FROM pitStops WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND driverId = (SELECT driverId FROM results WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND fastestLapTime = (SELECT MIN(fastestLapTime) FROM results WHERE raceId = (SELECT raceId FROM races WHERE name = 'Austrian Grand Prix') AND fastestLapTime IS NOT NULL))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1016/ce0.sqlite": [
+      "(None,)"
+    ]
+  }
+]

@@ -1,0 +1,26 @@
+Query: SELECT * FROM `badges` LIMIT 5
+Explaination of the query: see sample badge names
+Result: [(1, 5, 'Teacher', '2010-07-19 19:39:07.0'), (2, 6, 'Teacher', '2010-07-19 19:39:07.0'), (3, 8, 'Teacher', '2010-07-19 19:39:07.0'), (4, 23, 'Teacher', '2010-07-19 19:39:07.0'), (5, 36, 'Teacher', '2010-07-19 19:39:07.0')]
+Query: SELECT COUNT(DISTINCT `Id`) FROM `users` WHERE `Location` LIKE '%New York%' LIMIT 5
+Explaination of the query: count new york users with substring test
+Result: [(295,)]
+Query: SELECT DISTINCT `Name` FROM `badges` WHERE `Name` IN ('Teacher','Supporter') LIMIT 5
+Explaination of the query: verify badges rows
+Result: [('Teacher',), ('Supporter',)]
+Query: SELECT COUNT(DISTINCT `Id`) FROM `badges` WHERE `Name` IN ('Teacher','Supporter') LIMIT 5
+Explaination of the query: badges count quick
+Result: [(13507,)]
+Query: SELECT DISTINCT `Location` FROM `users` WHERE `Location` LIKE '%New York%' LIMIT 10
+Explaination of the query: examine location values containing New York
+Result: [('New York, NY',), ('New York City, New York',), ('New York',), ('New York, United States',), ('New York City',), ('New York, NY, USA',), ('New York, New York',), ('New York, NY, United States',), ('New York City, New York, United States',), ('Hudson Valley, New York, USA',)]
+Query: SELECT COUNT(*) FROM (
+  SELECT b.UserId
+  FROM `badges` b
+  JOIN `users` u ON u.Id = b.UserId
+  WHERE u.Location LIKE '%New York%'
+    AND b.Name IN ('Teacher','Supporter')
+  GROUP BY b.UserId
+  HAVING COUNT(DISTINCT b.Name)=2
+) t
+Explaination of the query: count users with both Teacher and Supporter badges and located in New York (any substring)
+Result: [(31,)]

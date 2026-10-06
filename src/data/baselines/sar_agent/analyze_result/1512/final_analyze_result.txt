@@ -1,0 +1,10 @@
+Correctness: No – the annotated query uses SUM(Price) instead of the total money paid (SUM(Amount * Price)), so it returns the wrong customer.
+Is_ambiguous: No – “paid the most” on a given date clearly refers to the total amount of money spent and the date is explicit.
+Explanation: The schema note states total price = Amount × Price. Therefore the amount paid by a customer on a day is SUM(Amount*Price). The annotated query groups by CustomerID for 2012-08-25 but orders by SUM(Price), ignoring Amount. Executing the correct aggregation shows customer 7938 paid 554 529.36, whereas the annotated query would return customer 19182 (only 6 287.70 by SUM(Price)). Hence the original query is wrong, although the question itself is precise.
+Revised: 
+SELECT `CustomerID`
+FROM `transactions_1k`
+WHERE `Date` = '2012-08-25'
+GROUP BY `CustomerID`
+ORDER BY SUM(`Amount` * `Price`) DESC
+LIMIT 1;

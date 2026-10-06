@@ -1,0 +1,18 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation:  
+The query is intended to count heroes whose Strength attribute equals the highest Strength value.  
+However, the sub-query `(SELECT MAX(attribute_value) FROM hero_attribute)` searches for the maximum across ALL attributes, not just Strength. The answer is currently correct only because the global maximum (100) matches the maximum Strength value in the present data. If any other attribute exceeded Strength, the query would produce an incorrect count. Thus the logic is flawed even though it happens to return the right number now.  
+Revised:  
+```
+SELECT COUNT(DISTINCT ha.`hero_id`)
+FROM `hero_attribute` AS ha
+JOIN `attribute` AS a ON ha.`attribute_id` = a.`id`
+WHERE a.`attribute_name` = 'Strength'
+  AND ha.`attribute_value` = (
+        SELECT MAX(ha2.`attribute_value`)
+        FROM `hero_attribute` AS ha2
+        JOIN `attribute` AS a2 ON ha2.`attribute_id` = a2.`id`
+        WHERE a2.`attribute_name` = 'Strength'
+      );
+```

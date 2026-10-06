@@ -1,0 +1,9 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The annotated query filters on 1997-08-20 instead of the requested 1998-09-02, therefore it returns an unrelated disposition id (2231).  Even after fixing the date, four different disposition ids (1719, 4474, 4942, 5393) match a 5100-USD transaction on 1998-09-02, so the question does not uniquely specify a single client and is ambiguous.  The joins used (disp ➔ account ➔ trans) are fine, but the wrong filter makes the result incorrect, and DISTINCT should be used to avoid duplicate rows.
+Revised:
+SELECT DISTINCT `disp`.`disp_id`
+FROM `disp`
+JOIN `trans` ON `disp`.`account_id` = `trans`.`account_id`
+WHERE `trans`.`date` = '1998-09-02'
+  AND `trans`.`amount` = 5100;

@@ -1,0 +1,22 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation: The query joins member and income, filters for income.amount > 40, but it returns one row for every qualifying income record. If a student has two (or more) income transactions each exceeding $40 the same name is returned multiple times (we observed 33 rows coming from fewer than 33 students). The question asks “Which student …”, which implies a list of students, each appearing once. Therefore the annotated query is not fully correct because it omits a DISTINCT (or equivalent aggregation).  
+Furthermore, the wording could also be interpreted as asking for students whose total income (sum of all their income records) is more than $40, which would require aggregation over all their transactions. Hence the question itself is ambiguous.  
+Revised:  
+If the intended meaning is “students who have at least one income transaction whose amount is greater than $40”:  
+```
+SELECT DISTINCT m.`first_name`, m.`last_name`
+FROM `member` AS m
+JOIN `income` AS i
+  ON m.`member_id` = i.`link_to_member`
+WHERE i.`amount` > 40;
+```
+
+If the intended meaning is “students whose cumulative income exceeds $40”:  
+```
+SELECT m.`first_name`, m.`last_name`
+FROM `member` AS m
+JOIN `income`  AS i ON m.`member_id` = i.`link_to_member`
+GROUP BY m.`member_id`
+HAVING SUM(i.`amount`) > 40;
+```

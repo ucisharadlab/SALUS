@@ -1,0 +1,49 @@
+Query: SELECT COUNT(*) FROM Team_Attributes
+Explaination of the query: check number rows
+Result: [(1458,)]
+Query: SELECT * FROM Team_Attributes LIMIT 5
+Explaination of the query: see columns
+Result: [(1, 434, 9930, '2010-02-22 00:00:00', 60, 'Balanced', None, 'Little', 50, 'Mixed', 'Organised', 60, 'Normal', 65, 'Normal', 55, 'Normal', 'Organised', 50, 'Medium', 55, 'Press', 45, 'Normal', 'Cover'), (2, 434, 9930, '2014-09-19 00:00:00', 52, 'Balanced', 48, 'Normal', 56, 'Mixed', 'Organised', 54, 'Normal', 63, 'Normal', 64, 'Normal', 'Organised', 47, 'Medium', 44, 'Press', 54, 'Normal', 'Cover'), (3, 434, 9930, '2015-09-10 00:00:00', 47, 'Balanced', 41, 'Normal', 54, 'Mixed', 'Organised', 54, 'Normal', 63, 'Normal', 64, 'Normal', 'Organised', 47, 'Medium', 44, 'Press', 54, 'Normal', 'Cover'), (4, 77, 8485, '2010-02-22 00:00:00', 70, 'Fast', None, 'Little', 70, 'Long', 'Organised', 70, 'Risky', 70, 'Lots', 70, 'Lots', 'Organised', 60, 'Medium', 70, 'Double', 70, 'Wide', 'Cover'), (5, 77, 8485, '2011-02-22 00:00:00', 47, 'Balanced', None, 'Little', 52, 'Mixed', 'Organised', 53, 'Normal', 48, 'Normal', 52, 'Normal', 'Organised', 47, 'Medium', 47, 'Press', 52, 'Normal', 'Cover')]
+Query: SELECT `team_api_id`, count(*) FROM `Team_Attributes` WHERE SUBSTR(`date`,1,4)='2014' GROUP BY `team_api_id` HAVING count(*)>1 LIMIT 5
+Explaination of the query: check duplicates for 2014
+Result: []
+Query: SELECT COUNT(*) FROM (SELECT `team_api_id`, COUNT(*) c FROM `Team_Attributes` WHERE SUBSTR(`date`,1,4)='2014' GROUP BY `team_api_id` HAVING c>1)
+Explaination of the query: count teams with multiple 2014 records
+Result: [(0,)]
+Query: SELECT COUNT(*) FROM `Team_Attributes` WHERE SUBSTR(`date`,1,4)='2014' AND `buildUpPlayDribblingClass`='Normal'
+Explaination of the query: count attribute rows in 2014 with normal dribbling
+Result: [(215,)]
+Query: SELECT COUNT(*) FROM Team_Attributes WHERE buildUpPlayDribblingClass='Normal' AND SUBSTR(`date`,1,4)='2014'
+Explaination of the query: count attribute rows 2014 normal
+Result: [(215,)]
+Query: SELECT t3.team_long_name, t4.date, t4.chanceCreationPassing
+FROM Team AS t3
+JOIN Team_Attributes AS t4 ON t3.team_api_id = t4.team_api_id
+WHERE t4.buildUpPlayDribblingClass = 'Normal'
+  AND t4.chanceCreationPassing < (
+     SELECT CAST(SUM(t2.chanceCreationPassing) AS REAL) / COUNT(t1.id)
+     FROM Team AS t1
+     INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id
+     WHERE t2.buildUpPlayDribblingClass = 'Normal' AND SUBSTR(t2.`date`,1,4)='2014'
+  )
+ORDER BY t4.chanceCreationPassing DESC
+LIMIT 5
+Explaination of the query: run annotated query with extra columns to inspect
+Result: [('Athletic Club de Bilbao', '2014-09-19 00:00:00', 52), ('Cardiff City', '2015-09-10 00:00:00', 52), ('KSV Cercle Brugge', '2014-09-19 00:00:00', 52), ('KSV Cercle Brugge', '2015-09-10 00:00:00', 52), ('Chievo Verona', '2014-09-19 00:00:00', 52)]
+Query: SELECT DISTINCT t3.team_long_name, t4.chanceCreationPassing
+FROM Team AS t3
+JOIN Team_Attributes AS t4 ON t3.team_api_id = t4.team_api_id
+WHERE t4.buildUpPlayDribblingClass='Normal'
+  AND SUBSTR(t4.date,1,4)='2014'
+  AND t4.chanceCreationPassing < (
+       SELECT AVG(t2.chanceCreationPassing)
+       FROM Team_Attributes t2
+       WHERE t2.buildUpPlayDribblingClass='Normal'
+         AND SUBSTR(t2.date,1,4)='2014')
+ORDER BY t4.chanceCreationPassing DESC
+LIMIT 5
+Explaination of the query: run corrected query to preview
+Result: [('Athletic Club de Bilbao', 52), ('KSV Cercle Brugge', 52), ('Chievo Verona', 52), ('Dundee United', 52), ('FC Energie Cottbus', 52)]
+Query: SELECT MAX(cnt) FROM (SELECT `team_api_id`, COUNT(*) cnt FROM Team_Attributes WHERE SUBSTR(`date`,1,4)='2014' GROUP BY `team_api_id`)
+Explaination of the query: max count of attribute rows per team in 2014
+Result: [(1,)]

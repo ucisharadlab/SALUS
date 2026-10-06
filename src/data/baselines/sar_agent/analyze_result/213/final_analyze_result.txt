@@ -1,0 +1,13 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation:  
+The query joins `bond` with `connected` and filters for the atom pair in either orientation, so it fetches the correct bond_id and the correct bond_type.  However the `connected` table stores the same bond twice (once for each direction).  Because the query lacks `DISTINCT` (or any other duplicate-removal device) the join returns two identical rows ("-", "-").  The question asks for the single bond type; returning duplicate rows fails the one-row/one-value expectation and is regarded as logically incomplete per the task instructions that stress duplicate handling.  
+
+Revised:  
+```
+SELECT DISTINCT T1.bond_type
+FROM bond AS T1
+JOIN connected AS T2 ON T1.bond_id = T2.bond_id
+WHERE (T2.atom_id = 'TR004_8' AND T2.atom_id2 = 'TR004_20')
+   OR (T2.atom_id = 'TR004_20' AND T2.atom_id2 = 'TR004_8');
+```

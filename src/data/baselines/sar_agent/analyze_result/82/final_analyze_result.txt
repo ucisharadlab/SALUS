@@ -1,0 +1,19 @@
+Correctness: No – the query returns two rows: one value (’K-8’) and one NULL because there is a dummy row that shares the same longitude.  The question expects a single definite grade span, so the extra NULL makes the answer incorrect.
+Is_ambiguous: No – the note explicitly defines “highest longitude” as the maximum absolute longitude, so the intent is clear.
+Explanation: 
+1. Sub-query MAX(ABS(`Longitude`)) correctly finds 124.28481.
+2. Outer query selects every record whose |longitude| equals that value.
+3. In the data there are two such records: the real school (Mattole Union Elementary, GSoffered = ‘K-8’) and another record with all NULL fields except longitude.
+4. Because SELECT `GSoffered` returns both rows, the result set contains ‘K-8’ and NULL, so the query does not deliver a unique, correct answer.
+5. Adding a filter to remove NULL grade spans (or limiting to one row) fixes the issue.
+Revised:
+```
+SELECT `GSoffered`
+FROM `schools`
+WHERE `GSoffered` IS NOT NULL
+  AND ABS(`Longitude`) = (
+        SELECT MAX(ABS(`Longitude`))
+        FROM `schools`
+        WHERE `GSoffered` IS NOT NULL)
+LIMIT 1;
+```

@@ -1,0 +1,59 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": [
+      "('2012',)"
+    ]
+  },
+  {
+    "gold": "SELECT SUBSTRING(T2.Date, 1, 4) FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'EUR' GROUP BY SUBSTRING(T2.Date, 1, 4) ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": [
+      "('2012',)"
+    ]
+  },
+  {
+    "pred": "SELECT strftime('%Y', T1.Date) AS Year FROM transactions_1k T1 JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' GROUP BY Year ORDER BY SUM(T1.Amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT Year FROM (SELECT strftime('%Y', Date) AS Year, SUM(Amount) AS TotalAmount FROM transactions_1k WHERE CustomerID IN (SELECT CustomerID FROM customers WHERE Currency = 'EUR') GROUP BY Year) ORDER BY TotalAmount DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH EURTransactions AS (SELECT Date, Amount FROM transactions_1k WHERE CustomerID IN (SELECT CustomerID FROM customers WHERE Currency = 'EUR')) SELECT strftime('%Y', Date) AS Year FROM EURTransactions GROUP BY Year ORDER BY SUM(Amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT Year FROM (SELECT strftime('%Y', T1.Date) AS Year, SUM(T1.Amount) AS Total FROM transactions_1k T1 INNER JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' GROUP BY Year) AS YearlyTotals ORDER BY Total DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT strftime('%Y', Date) AS Year FROM transactions_1k JOIN customers ON transactions_1k.CustomerID = customers.CustomerID WHERE customers.Currency = 'EUR' GROUP BY Year ORDER BY SUM(transactions_1k.Amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT Year FROM (SELECT strftime('%Y', Date) AS Year, SUM(Amount) AS TotalAmount FROM transactions_1k JOIN customers ON transactions_1k.CustomerID = customers.CustomerID WHERE customers.Currency = 'EUR' GROUP BY Year ORDER BY TotalAmount DESC) AS Result LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH FilteredData AS (SELECT Date, Amount FROM transactions_1k WHERE CustomerID IN (SELECT CustomerID FROM customers WHERE Currency = 'EUR')) SELECT strftime('%Y', Date) AS Year FROM FilteredData GROUP BY Year ORDER BY SUM(Amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT Year FROM (SELECT strftime('%Y', T1.Date) AS Year, SUM(T1.Amount) AS TotalAmount FROM transactions_1k T1 INNER JOIN customers T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Currency = 'EUR' GROUP BY Year ORDER BY TotalAmount DESC) AS YearlySums LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT strftime('%Y', Date) AS Year FROM transactions_1k WHERE CustomerID IN (SELECT CustomerID FROM customers WHERE Currency = 'EUR') GROUP BY Year ORDER BY SUM(Amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1477/ce0.sqlite": []
+  }
+]

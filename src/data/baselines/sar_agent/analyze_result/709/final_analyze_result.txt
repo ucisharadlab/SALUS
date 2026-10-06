@@ -1,0 +1,20 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The question asks for the number of posts that (a) have at least one comment whose Score = 0 and (b) have ViewCount < 5. Therefore we must:
+1. Filter comments by Score = 0.
+2. Join to posts on PostId → Id.
+3. Filter posts by ViewCount < 5.
+4. Count DISTINCT post ids to avoid double-counting when a post has multiple zero-score comments.
+
+The annotated query is wrong because:
+• It filters on T2.Score = 0 (post score), not comments.Score.
+• It counts comment rows (T1.Id) not posts, and lacks DISTINCT, so duplicates inflate the result.
+
+Empirical check: annotated query returns 3, while correct logic returns 2 distinct posts, confirming the error.
+
+Revised:
+SELECT COUNT(DISTINCT `posts`.`Id`)
+FROM `comments`
+JOIN `posts` ON `comments`.`PostId` = `posts`.`Id`
+WHERE `comments`.`Score` = 0
+  AND `posts`.`ViewCount` < 5;

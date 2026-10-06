@@ -1,0 +1,8 @@
+Correctness: No – the query returns duplicate display names, so it does not give each user only once.
+Is_ambiguous: No – the question unambiguously asks for the unique list of users who own at least one well-finished post.
+Explanation: The filtering on ClosedDate IS NOT NULL is correct for “well-finished” posts and the join to users is proper, but because the SELECT clause lacks DISTINCT (or GROUP BY), the result contains one row per qualifying post. Users owning multiple closed posts appear multiple times; our check showed 1 560 rows but only 1 335 distinct names. Hence the annotated query is logically incomplete.
+Revised:
+SELECT DISTINCT u.DisplayName
+FROM posts AS p
+JOIN users AS u ON p.OwnerUserId = u.Id
+WHERE p.ClosedDate IS NOT NULL;

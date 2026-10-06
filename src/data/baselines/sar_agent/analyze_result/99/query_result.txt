@@ -1,0 +1,18 @@
+Query: SELECT COUNT(*) FROM loan
+Explaination of the query: count loans
+Result: [(682,)]
+Query: SELECT T1.account_id, T1.amount, T1.duration, STRFTIME('%Y', T2.date) as acc_year FROM loan T1 JOIN account T2 ON T1.account_id=T2.account_id WHERE T1.duration>12 AND acc_year='1993' ORDER BY T1.amount DESC LIMIT 5
+Explaination of the query: Check top 5 high approved amounts for loans with duration>12 and account date 1993
+Result: [(10451, 482940, 60, '1993'), (6034, 464520, 60, '1993'), (8377, 417060, 60, '1993'), (6226, 398640, 60, '1993'), (2245, 347952, 48, '1993')]
+Query: SELECT T1.account_id, T1.amount FROM loan T1 JOIN account T2 ON T1.account_id=T2.account_id WHERE T1.duration>12 AND STRFTIME('%Y', T2.date)='1993' AND T1.amount=(SELECT MAX(amount) FROM loan L JOIN account A ON L.account_id=A.account_id WHERE L.duration>12 AND STRFTIME('%Y', A.date)='1993')
+Explaination of the query: Find all accounts with max amount satisfying conditions
+Result: [(10451, 482940)]
+Query: SELECT amount, COUNT(*) as cnt FROM loan L JOIN account A ON L.account_id=A.account_id WHERE L.duration>12 AND STRFTIME('%Y', A.date)='1993' GROUP BY amount HAVING cnt>1 ORDER BY amount DESC LIMIT 5
+Explaination of the query: Check if there are tied amounts
+Result: [(174744, 2), (87216, 2), (80952, 2)]
+Query: SELECT COUNT(*) FROM (SELECT L.account_id FROM loan L JOIN account A ON L.account_id=A.account_id WHERE L.duration>12 AND STRFTIME('%Y',A.date)='1993' AND L.amount=(SELECT MAX(amount) FROM loan L2 JOIN account A2 ON L2.account_id=A2.account_id WHERE L2.duration>12 AND STRFTIME('%Y',A2.date)='1993'))
+Explaination of the query: count how many accounts at max amount
+Result: [(1,)]
+Query: SELECT `date` FROM account LIMIT 5
+Explaination of the query: Check format of date
+Result: [('1995-03-24',), ('1993-02-26',), ('1997-07-07',), ('1996-02-21',), ('1997-05-30',)]

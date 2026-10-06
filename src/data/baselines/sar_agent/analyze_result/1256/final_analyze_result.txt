@@ -1,0 +1,8 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The query counts all joined rows, but Laboratory contains multiple tests per patient (13,908 rows vs 302 distinct patients). Without DISTINCT, patients with more than one abnormal CRP entry are counted multiple times. Verification showed 208 rows vs 25 distinct patients for the condition, so the annotated query returns 208, not the required 25 patients. All other filters and joins are appropriate.  
+Revised: SELECT COUNT(DISTINCT `T1`.`ID`)
+FROM `Patient` AS `T1`
+JOIN `Laboratory` AS `T2` ON `T1`.`ID` = `T2`.`ID`
+WHERE `T2`.`CRP` = '+'
+  AND `T1`.`Description` IS NULL;

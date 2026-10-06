@@ -1,0 +1,39 @@
+Query: SELECT DISTINCT `alignment` FROM `alignment` LIMIT 5;
+Explaination of the query: Check alignment values
+Result: [('Good',), ('Bad',), ('Neutral',), ('N/A',)]
+Query: SELECT COUNT(*) FROM `superhero` WHERE `alignment_id` IN (SELECT id FROM `alignment` WHERE `alignment`='Neutral');
+Explaination of the query: Count neutral superheroes
+Result: [(28,)]
+Query: SELECT (CAST(COUNT(*) AS REAL) * 100.0 / (SELECT COUNT(*) FROM `superhero`)) AS perc_bad,
+       SUM(CASE WHEN T2.`publisher_name` = 'Marvel Comics' THEN 1 ELSE 0 END) AS marvel_bad
+FROM `superhero` AS T1
+JOIN `publisher` AS T2 ON T1.`publisher_id` = T2.`id`
+JOIN `alignment` AS T3 ON T3.`id` = T1.`alignment_id`
+WHERE T3.`alignment` = 'Bad'
+LIMIT 5;
+Explaination of the query: Execute annotated query to see results
+Result: [(28.266666666666666, 118)]
+Query: SELECT COUNT(*) FROM `superhero`;
+Explaination of the query: Total superheroes
+Result: [(750,)]
+Query: SELECT COUNT(*) FROM `superhero` WHERE `alignment_id` IN (SELECT `id` FROM `alignment` WHERE `alignment`='Neutral');
+Explaination of the query: Count of neutral superheroes
+Result: [(28,)]
+Query: SELECT COUNT(*) FROM `superhero` WHERE `alignment_id` IN (SELECT id FROM `alignment` WHERE `alignment`='Neutral');
+Explaination of the query: Count of neutral superheroes
+Result: [(28,)]
+Query: SELECT `superhero_name` FROM `superhero` WHERE `alignment_id` IN (SELECT `id` FROM `alignment` WHERE `alignment`='Neutral') LIMIT 5;
+Explaination of the query: See examples of Neutral heroes
+Result: [('Ares',), ('Bizarro',), ('Black Flash',), ('Brundlefly',), ('Captain Cold',)]
+Query: SELECT COUNT(*) FROM `superhero` AS sh JOIN `alignment` AS al ON al.`id` = sh.`alignment_id` WHERE al.`alignment`='Neutral' AND sh.`publisher_id` IN (SELECT `id` FROM `publisher` WHERE `publisher_name`='Marvel Comics');
+Explaination of the query: Count Neutral heroes with Marvel publisher
+Result: [(10,)]
+Query: SELECT COUNT(*) FROM `superhero` AS sh JOIN `alignment` AS al ON al.`id` = sh.`alignment_id` WHERE al.`alignment`='Neutral';
+Explaination of the query: total number of Neutral heroes
+Result: [(28,)]
+Query: SELECT (CAST(COUNT(*) AS REAL) * 100.0 / (SELECT COUNT(*) FROM `superhero`)) AS perc_neutral, SUM(CASE WHEN p.`publisher_name` = 'Marvel Comics' THEN 1 ELSE 0 END) AS marvel_neutral FROM `superhero` s JOIN `alignment` a ON a.`id` = s.`alignment_id` LEFT JOIN `publisher` p ON p.`id` = s.`publisher_id` WHERE a.`alignment` = 'Neutral';
+Explaination of the query: Compute desired metrics for Neutral alignment
+Result: [(3.7333333333333334, 10)]
+Query: SELECT COUNT(*) FROM `superhero` AS s JOIN `alignment` a ON a.`id`=s.`alignment_id` WHERE a.`alignment`='Bad';
+Explaination of the query: Count bad heroes
+Result: [(212,)]

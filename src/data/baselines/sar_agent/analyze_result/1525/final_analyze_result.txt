@@ -1,0 +1,9 @@
+Correctness: No – the annotated query divides by transaction count, therefore measures the share of EUR-transactions, not the share of customers requested.
+Is_ambiguous: Yes – “percentage of the customers” could mean (a) among all customers in the database or (b) among customers who made transactions on 2012-08-25.
+Explanation: The query filters `transactions_1k` to 2012-08-25, joins to `customers`, then computes SUM(IIF(Currency='EUR',1,0))/COUNT(CustomerID). COUNT on `transactions_1k` counts 425 transaction rows, not the 259 distinct customers that purchased that day, so customers with multiple transactions are over-weighted. Correct numbers: distinct customers that day = 259; EUR customers = 7; correct percentage (interpretation b) ≈ 2.70 %. Annotated query returns ≈ 1.65 %. If interpretation a were intended, correct percentage ≈ 0.02 %. Thus the SQL is incorrect and the question’s scope is ambiguous.
+Revised:
+SELECT 100.0 * COUNT(DISTINCT CASE WHEN c.`Currency` = 'EUR' THEN t.`CustomerID` END)
+           / COUNT(DISTINCT t.`CustomerID`) AS percentage_eur_customers
+FROM   `transactions_1k` t
+JOIN   `customers` c ON c.`CustomerID` = t.`CustomerID`
+WHERE  t.`Date` = '2012-08-25';

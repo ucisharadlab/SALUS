@@ -1,0 +1,52 @@
+Query: SELECT name, COUNT(*) as cnt FROM circuits c JOIN races r ON r.circuitId=c.circuitId WHERE r.year BETWEEN 1990 AND 2000 GROUP BY c.circuitId HAVING cnt=4 LIMIT 5;
+Explaination of the query: count races per circuit between 1990 and 2000 inclusive to see if any with 4
+Error: ambiguous column name: name
+Query: SELECT name FROM PRAGMA_TABLE_INFO('races') LIMIT 5;
+Explaination of the query: check columns of races
+Result: [('raceId',), ('year',), ('round',), ('circuitId',), ('name',)]
+Query: SELECT COUNT(*) FROM races WHERE date IS NOT NULL LIMIT 5;
+Explaination of the query: Check if date column populated
+Result: [(976,)]
+Query: SELECT DISTINCT T1.name FROM circuits AS T1 INNER JOIN races AS T2 ON T2.circuitId = T1.circuitId WHERE STRFTIME('%Y', T2.date) BETWEEN '1990' AND '2000' GROUP BY T1.name HAVING COUNT(T2.raceId) = 4 LIMIT 5;
+Explaination of the query: Execute annotated query to see results
+Result: [('A1-Ring',), ('Autódromo Juan y Oscar Gálvez',)]
+Query: SELECT COUNT(*) FROM races WHERE year BETWEEN 1990 AND 2000;
+Explaination of the query: count races by year between 1990 and 2000
+Result: [(179,)]
+Query: SELECT c.name, COUNT(*) AS cnt
+FROM circuits c
+JOIN races r ON r.circuitId = c.circuitId
+WHERE r.year BETWEEN 1990 AND 2000
+GROUP BY c.circuitId
+HAVING cnt = 4
+LIMIT 5;
+Explaination of the query: calculate circuits with exactly 4 races between 1990 and 2000 inclusive using year column
+Result: [('A1-Ring', 4), ('Autódromo Juan y Oscar Gálvez', 4)]
+Query: SELECT c.circuitId, c.name, COUNT(*) AS cnt
+FROM circuits c JOIN races r ON r.circuitId = c.circuitId
+WHERE r.year BETWEEN 1990 AND 2000
+GROUP BY c.circuitId
+HAVING cnt = 4;
+
+Explaination of the query: Find circuits with exactly 4 races using year column
+Result: [(23, 'A1-Ring', 4), (25, 'Autódromo Juan y Oscar Gálvez', 4)]
+Query: SELECT COUNT(*) FROM races WHERE year BETWEEN 1990 AND 2000 AND date IS NULL;
+Explaination of the query: check if any races have NULL date in time range 1990-2000
+Result: [(0,)]
+Query: SELECT c.name, COUNT(*) AS cnt
+FROM circuits c
+JOIN races r ON r.circuitId = c.circuitId
+WHERE r.year BETWEEN 1990 AND 2000
+GROUP BY c.circuitId
+HAVING cnt = 4
+ORDER BY c.name LIMIT 20;
+Explaination of the query: Compute circuits with exactly 4 races 1990-2000 inclusive
+Result: [('A1-Ring', 4), ('Autódromo Juan y Oscar Gálvez', 4)]
+Query: SELECT T1.circuitId, T1.name, COUNT(*) as cnt
+FROM circuits T1
+JOIN races T2 ON T2.circuitId = T1.circuitId
+WHERE T2.year BETWEEN 1990 AND 2000
+GROUP BY T1.circuitId
+HAVING cnt = 4 LIMIT 20;
+Explaination of the query: Group by circuitId for duplicates check
+Result: [(23, 'A1-Ring', 4), (25, 'Autódromo Juan y Oscar Gálvez', 4)]

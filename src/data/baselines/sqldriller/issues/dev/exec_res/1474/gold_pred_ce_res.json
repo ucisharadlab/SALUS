@@ -1,0 +1,104 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(96,)",
+      "(40740,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": [
+      "(51869,)"
+    ]
+  },
+  {
+    "gold": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND T2.Date BETWEEN 201101 AND 201112 GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(40740,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": [
+      "(51869,)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.CustomerID FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND T2.Date BETWEEN '201101' AND '201112' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(40740,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": [
+      "(51869,)"
+    ]
+  },
+  {
+    "pred": "SELECT CustomerID FROM (SELECT T1.CustomerID, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 INNER JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND T2.Date >= '201101' AND T2.Date <= '201112' GROUP BY T1.CustomerID) ORDER BY TotalConsumption DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(96,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": [
+      "(51869,)"
+    ]
+  },
+  {
+    "pred": "WITH CZKConsumers AS (SELECT T1.CustomerID, SUM(T2.Consumption) AS TotalConsumption FROM customers T1 JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND T2.Date BETWEEN '201101' AND '201112' GROUP BY T1.CustomerID) SELECT CustomerID FROM CZKConsumers ORDER BY TotalConsumption DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(96,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": [
+      "(51869,)"
+    ]
+  },
+  {
+    "pred": "SELECT CustomerID FROM customers WHERE CustomerID IN (SELECT T2.CustomerID FROM yearmonth T2 WHERE T2.Date BETWEEN '201101' AND '201112' GROUP BY T2.CustomerID HAVING SUM(T2.Consumption) = (SELECT MAX(TotalConsumption) FROM (SELECT SUM(T2.Consumption) AS TotalConsumption FROM yearmonth T2 WHERE T2.Date BETWEEN '201101' AND '201112' GROUP BY T2.CustomerID) TempTable)) AND Currency = 'CZK';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(96,)",
+      "(40740,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT CustomerID FROM customers WHERE Currency = 'CZK' AND CustomerID = (SELECT T2.CustomerID FROM yearmonth T2 WHERE T2.Date BETWEEN '201101' AND '201112' GROUP BY T2.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(40740,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT T1.CustomerID FROM customers T1 JOIN (SELECT CustomerID, SUM(Consumption) AS TotalConsumption FROM yearmonth WHERE Date BETWEEN '201101' AND '201112' GROUP BY CustomerID) T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' ORDER BY T2.TotalConsumption DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(96,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": [
+      "(51869,)"
+    ]
+  },
+  {
+    "pred": "SELECT CustomerID FROM (SELECT T1.CustomerID FROM customers T1 INNER JOIN yearmonth T2 ON T1.CustomerID = T2.CustomerID WHERE T1.Currency = 'CZK' AND T2.Date BETWEEN '201101' AND '201112' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1) AS MaxConsumer;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(40740,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": [
+      "(51869,)"
+    ]
+  },
+  {
+    "pred": "SELECT CustomerID FROM customers WHERE Currency = 'CZK' AND CustomerID IN (SELECT CustomerID FROM yearmonth WHERE Date BETWEEN '201101' AND '201112' GROUP BY CustomerID ORDER BY SUM(Consumption) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(40740,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT T1.CustomerID FROM customers T1 WHERE T1.Currency = 'CZK' AND T1.CustomerID = (SELECT T2.CustomerID FROM yearmonth T2 WHERE T2.Date BETWEEN '201101' AND '201112' GROUP BY T2.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce0.sqlite": [
+      "(40740,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1474/ce1.sqlite": []
+  }
+]

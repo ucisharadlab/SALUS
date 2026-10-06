@@ -1,0 +1,84 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "('2147483648',)"
+    ]
+  },
+  {
+    "gold": "SELECT t3.team_long_name FROM Match AS t1 INNER JOIN Team AS t3 ON t1.home_team_api_id = t3.team_api_id WHERE t1.season = '2015/2016' AND t1.home_team_goal - t1.away_team_goal < 0 GROUP BY t1.home_team_api_id HAVING COUNT(*) = (SELECT MIN(lost_matches_count) FROM (SELECT home_team_api_id, COUNT(*) AS lost_matches_count FROM Match WHERE season = '2015/2016' AND home_team_goal - away_team_goal < 0 GROUP BY home_team_api_id))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "('2147483648',)"
+    ]
+  },
+  {
+    "pred": "SELECT T.team_api_id FROM Team T JOIN Match M ON T.team_api_id = M.home_team_api_id WHERE M.season = '2015/2016' AND M.home_team_goal < M.away_team_goal GROUP BY T.team_api_id ORDER BY COUNT(*) ASC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT team_api_id FROM (SELECT home_team_api_id AS team_api_id, COUNT(*) AS losses FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id) AS LossCount ORDER BY losses ASC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(T.team_api_id) FROM Team T INNER JOIN (SELECT home_team_api_id FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id ORDER BY COUNT(*) ASC LIMIT 1) AS MinLosses ON T.team_api_id = MinLosses.home_team_api_id;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "WITH Losses AS (SELECT home_team_api_id, COUNT(*) AS loss_count FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id) SELECT team_api_id FROM Team JOIN Losses ON Team.team_api_id = Losses.home_team_api_id ORDER BY loss_count ASC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT team_api_id FROM Team WHERE team_api_id IN (SELECT home_team_api_id FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id HAVING COUNT(*) = (SELECT MIN(loss_count) FROM (SELECT home_team_api_id, COUNT(*) AS loss_count FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id) AS Losses));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T.team_api_id FROM Team T WHERE EXISTS (SELECT 1 FROM Match M WHERE M.home_team_api_id = T.team_api_id AND M.season = '2015/2016' AND M.home_team_goal < M.away_team_goal GROUP BY M.home_team_api_id HAVING COUNT(*) = (SELECT MIN(loss_count) FROM (SELECT home_team_api_id, COUNT(*) AS loss_count FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id) AS Losses));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT team_api_id FROM Team WHERE team_api_id = (SELECT home_team_api_id FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id ORDER BY COUNT(*) ASC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT team_api_id FROM (SELECT home_team_api_id AS team_api_id FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id ORDER BY COUNT(*) ASC LIMIT 1) AS LeastLosses;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T.team_api_id FROM Team T JOIN (SELECT home_team_api_id, COUNT(*) AS loss_count FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id) AS Losses ON T.team_api_id = Losses.home_team_api_id ORDER BY Losses.loss_count ASC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT team_api_id FROM Team WHERE team_api_id = (SELECT home_team_api_id FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id HAVING COUNT(*) = (SELECT MIN(loss_count) FROM (SELECT home_team_api_id, COUNT(*) AS loss_count FROM Match WHERE season = '2015/2016' AND home_team_goal < away_team_goal GROUP BY home_team_api_id) AS Losses));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1026/ce0.sqlite": [
+      "(1,)"
+    ]
+  }
+]

@@ -1,0 +1,132 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483650',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('user1234310',)",
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "gold": "SELECT T1.DisplayName FROM users AS T1 INNER JOIN badges AS T2 ON T1.Id = T2.UserId GROUP BY T1.DisplayName ORDER BY COUNT(T1.Id) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483650',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.DisplayName FROM (SELECT UserId, COUNT(*) as BadgeCount FROM badges GROUP BY UserId) as T1 JOIN users as T2 ON T1.UserId = T2.Id WHERE T1.BadgeCount = (SELECT MAX(BadgeCount) FROM (SELECT UserId, COUNT(*) as BadgeCount FROM badges GROUP BY UserId) as T3)",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483650',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('user1234310',)",
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "pred": "WITH BadgeCounts AS (SELECT UserId, COUNT(*) AS TotalBadges FROM badges GROUP BY UserId) SELECT DisplayName FROM users WHERE Id = (SELECT UserId FROM BadgeCounts WHERE TotalBadges = (SELECT MAX(TotalBadges) FROM BadgeCounts))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483650',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('user1234310',)"
+    ]
+  },
+  {
+    "pred": "SELECT DisplayName FROM users WHERE Id IN (SELECT UserId FROM badges GROUP BY UserId HAVING COUNT(*) = (SELECT MAX(BadgeCount) FROM (SELECT COUNT(*) AS BadgeCount FROM badges GROUP BY UserId) as SubQuery))",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483650',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('user1234310',)",
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "pred": "SELECT u.DisplayName FROM users u JOIN (SELECT UserId, COUNT(*) as BadgeCount FROM badges GROUP BY UserId) b ON u.Id = b.UserId WHERE b.BadgeCount = (SELECT MAX(BadgeCount) FROM (SELECT COUNT(*) as BadgeCount FROM badges GROUP BY UserId) as SubQuery)",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483650',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('user1234310',)",
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "pred": "SELECT DisplayName FROM users WHERE Id = (SELECT UserId FROM (SELECT UserId, COUNT(*) as BadgeCount FROM badges GROUP BY UserId ORDER BY BadgeCount DESC LIMIT 1) as MaxBadges)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "pred": "WITH UserBadgeCounts AS (SELECT UserId, COUNT(*) AS BadgeCount FROM badges GROUP BY UserId), MaxBadgeCount AS (SELECT MAX(BadgeCount) AS MaxCount FROM UserBadgeCounts) SELECT DisplayName FROM users WHERE Id IN (SELECT UserId FROM UserBadgeCounts WHERE BadgeCount = (SELECT MaxCount FROM MaxBadgeCount))",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483650',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('user1234310',)",
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "pred": "SELECT u.DisplayName FROM users u WHERE u.Id = (SELECT b.UserId FROM badges b GROUP BY b.UserId ORDER BY COUNT(*) DESC LIMIT 1)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "pred": "SELECT DisplayName FROM users WHERE Id = (SELECT UserId FROM badges GROUP BY UserId ORDER BY COUNT(*) DESC LIMIT 1)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "pred": "WITH Counts AS (SELECT UserId, COUNT(*) AS NumBadges FROM badges GROUP BY UserId), MaxCount AS (SELECT MAX(NumBadges) AS MaxBadges FROM Counts) SELECT u.DisplayName FROM users u JOIN Counts c ON u.Id = c.UserId WHERE c.NumBadges = (SELECT MaxBadges FROM MaxCount)",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483650',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('user1234310',)",
+      "('yalnahdi',)"
+    ]
+  },
+  {
+    "pred": "SELECT DisplayName FROM users WHERE Id = (SELECT UserId FROM (SELECT UserId, COUNT(Name) AS BadgeCount FROM badges GROUP BY UserId HAVING BadgeCount = (SELECT MAX(BadgeCount) FROM (SELECT COUNT(Name) AS BadgeCount FROM badges GROUP BY UserId) Sub)) Sub2)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce0.sqlite": [
+      "('2147483650',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/668/ce1.sqlite": [
+      "('user1234310',)"
+    ]
+  }
+]

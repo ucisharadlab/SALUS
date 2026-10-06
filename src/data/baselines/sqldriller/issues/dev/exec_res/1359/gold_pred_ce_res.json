@@ -1,0 +1,54 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1359/ce0.sqlite": []
+  },
+  {
+    "gold": "SELECT CAST(SUM(CASE WHEN T2.event_name = 'Yearly Kickoff' THEN T1.amount ELSE 0 END) AS REAL) / SUM(CASE WHEN T2.event_name = 'October Meeting' THEN T1.amount ELSE 0 END) FROM budget AS T1 INNER JOIN event AS T2 ON T1.link_to_event = T2.event_id WHERE T1.category = 'Advertisement' AND T2.type = 'Meeting'",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1359/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(*) FROM (SELECT SUM(CASE WHEN T2.event_name = 'Yearly Kickoff' THEN T1.amount ELSE 0 END) AS YearlyKickoffSum, SUM(CASE WHEN T2.event_name = 'October Meeting' THEN T1.amount ELSE 0 END) AS OctoberMeetingSum FROM budget T1 JOIN event T2 ON T1.link_to_event = T2.event_id WHERE T1.category = 'Advertisement' GROUP BY T1.category HAVING YearlyKickoffSum > OctoberMeetingSum);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1359/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(*) FROM (SELECT SUM(amount) FILTER (WHERE T2.event_name = 'Yearly Kickoff') AS YearlyKickoffSum, SUM(amount) FILTER (WHERE T2.event_name = 'October Meeting') AS OctoberMeetingSum FROM budget T1 JOIN event T2 ON T1.link_to_event = T2.event_id WHERE T1.category = 'Advertisement' GROUP BY T1.category HAVING YearlyKickoffSum > OctoberMeetingSum);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1359/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(*) FROM (SELECT SUM(CASE WHEN event_name = 'Yearly Kickoff' THEN amount ELSE 0 END) AS YearlyKickoffSum, SUM(CASE WHEN event_name = 'October Meeting' THEN amount ELSE 0 END) AS OctoberMeetingSum FROM budget JOIN event ON link_to_event = event_id WHERE category = 'Advertisement' GROUP BY category HAVING YearlyKickoffSum > OctoberMeetingSum);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1359/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(*) FROM (SELECT SUM(amount) AS YearlyKickoffSum, SUM(amount) AS OctoberMeetingSum FROM budget JOIN event ON link_to_event = event_id WHERE category = 'Advertisement' AND (event_name = 'Yearly Kickoff' OR event_name = 'October Meeting') GROUP BY event_name ORDER BY event_name DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1359/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(*) FROM (SELECT SUM(amount) AS YearlyKickoffSum FROM budget WHERE category = 'Advertisement' AND link_to_event IN (SELECT event_id FROM event WHERE event_name = 'Yearly Kickoff')), (SELECT SUM(amount) AS OctoberMeetingSum FROM budget WHERE category = 'Advertisement' AND link_to_event IN (SELECT event_id FROM event WHERE event_name = 'October Meeting')) WHERE YearlyKickoffSum > OctoberMeetingSum;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1359/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(*) FROM (SELECT SUM(amount) AS YearlyKickoffSum, SUM(amount) AS OctoberMeetingSum FROM budget JOIN event ON link_to_event = event_id WHERE category = 'Advertisement' AND event_name IN ('Yearly Kickoff', 'October Meeting') GROUP BY event_name HAVING YearlyKickoffSum > OctoberMeetingSum);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1359/ce0.sqlite": [
+      "(0,)"
+    ]
+  }
+]

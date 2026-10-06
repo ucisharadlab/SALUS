@@ -1,0 +1,13 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The query counts rows where `originalType = 'Summon - Angel'` and the **entire** `subtypes` string is not exactly 'Angel'.  It returns 3 records whose `subtypes` values are 'Angel,Spirit' or 'Angel,Warrior'.  However the question can also be read to mean cards whose subtype list does *not include* the subtype Angel at all.  In that interpretation the correct answer is 0 (`subtypes NOT LIKE '%Angel%'`).  Because the wording “subtype other than "Angel"” does not make clear whether having additional subtypes (but still including Angel) should be excluded or included, the intent is ambiguous.  If the intended meaning is “subtype not equal to exactly Angel”, the query is correct; if the intended meaning is “doesn’t contain Angel at all”, the query is wrong.  Hence the pair cannot be judged unequivocally correct.
+Revised: Depending on intended meaning:
+-- If “not exactly Angel” (current logic)
+SELECT COUNT(*)
+FROM `cards`
+WHERE `originalType` = 'Summon - Angel' AND `subtypes` <> 'Angel';
+
+-- If “does not contain Angel at all”
+SELECT COUNT(*)
+FROM `cards`
+WHERE `originalType` = 'Summon - Angel' AND `subtypes` NOT LIKE '%Angel%';

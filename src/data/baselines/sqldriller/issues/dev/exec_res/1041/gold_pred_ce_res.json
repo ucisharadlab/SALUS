@@ -1,0 +1,62 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "gold": "SELECT t3.team_long_name FROM Team AS t3 INNER JOIN Team_Attributes AS t4 ON t3.team_api_id = t4.team_api_id WHERE t4.buildUpPlayDribblingClass = 'Normal' AND t4.chanceCreationPassing < ( SELECT CAST(SUM(t2.chanceCreationPassing) AS REAL) / COUNT(t1.id) FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.buildUpPlayDribblingClass = 'Normal' AND SUBSTR(t2.`date`, 1, 4) = '2014') ORDER BY t4.chanceCreationPassing DESC",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": [
+      "('FC Schalke 04',)"
+    ]
+  },
+  {
+    "pred": "SELECT T.team_long_name FROM Team T JOIN Team_Attributes TA ON T.team_api_id = TA.team_api_id WHERE TA.buildUpPlayDribblingClass = 'Normal' AND TA.date >= '2014-01-01' AND TA.date <= '2014-01-31' AND TA.chanceCreationPassing < (SELECT AVG(chanceCreationPassing) FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date >= '2014-01-01' AND date <= '2014-01-31') ORDER BY TA.chanceCreationPassing DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT team_long_name FROM Team WHERE team_api_id IN (SELECT team_api_id FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date BETWEEN '2014-01-01' AND '2014-01-31' AND chanceCreationPassing < (SELECT AVG(chanceCreationPassing) FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date BETWEEN '2014-01-01' AND '2014-01-31')) ORDER BY (SELECT chanceCreationPassing FROM Team_Attributes WHERE team_api_id = Team.team_api_id) DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH FilteredAttributes AS (SELECT team_api_id, chanceCreationPassing FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date >= '2014-01-01' AND date <= '2014-01-31'), AveragePassing AS (SELECT AVG(chanceCreationPassing) AS AvgPassing FROM FilteredAttributes) SELECT T.team_long_name FROM Team T JOIN FilteredAttributes FA ON T.team_api_id = FA.team_api_id WHERE FA.chanceCreationPassing < (SELECT AvgPassing FROM AveragePassing) ORDER BY FA.chanceCreationPassing DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T.team_long_name FROM Team T INNER JOIN Team_Attributes TA ON T.team_api_id = TA.team_api_id WHERE TA.buildUpPlayDribblingClass = 'Normal' AND strftime('%Y', TA.date) = '2014' AND TA.chanceCreationPassing < (SELECT AVG(chanceCreationPassing) FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND strftime('%Y', date) = '2014') ORDER BY TA.chanceCreationPassing DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T.team_long_name FROM Team T, Team_Attributes TA WHERE T.team_api_id = TA.team_api_id AND TA.buildUpPlayDribblingClass = 'Normal' AND TA.date LIKE '2014-01%' AND TA.chanceCreationPassing < (SELECT AVG(chanceCreationPassing) FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date LIKE '2014-01%') ORDER BY TA.chanceCreationPassing DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT team_long_name FROM Team WHERE team_api_id IN (SELECT team_api_id FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND strftime('%Y-%m', date) = '2014-01' AND chanceCreationPassing < (SELECT AVG(chanceCreationPassing) FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND strftime('%Y-%m', date) = '2014-01')) ORDER BY (SELECT chanceCreationPassing FROM Team_Attributes WHERE team_api_id = Team.team_api_id) DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH NormalTeams AS (SELECT team_api_id, chanceCreationPassing FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date >= '2014-01-01' AND date <= '2014-01-31'), AvgPass AS (SELECT AVG(chanceCreationPassing) AS AvgPass FROM NormalTeams) SELECT T.team_long_name FROM Team T JOIN NormalTeams NT ON T.team_api_id = NT.team_api_id WHERE NT.chanceCreationPassing < (SELECT AvgPass FROM AvgPass) ORDER BY NT.chanceCreationPassing DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T.team_long_name FROM Team T JOIN (SELECT team_api_id, chanceCreationPassing FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date >= '2014-01-01' AND date <= '2014-01-31') TA ON T.team_api_id = TA.team_api_id WHERE TA.chanceCreationPassing < (SELECT AVG(chanceCreationPassing) FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date >= '2014-01-01' AND date <= '2014-01-31') ORDER BY TA.chanceCreationPassing DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT team_long_name FROM Team WHERE team_api_id IN (SELECT team_api_id FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date LIKE '2014-01%' AND chanceCreationPassing < (SELECT AVG(chanceCreationPassing) FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date LIKE '2014-01%')) ORDER BY (SELECT chanceCreationPassing FROM Team_Attributes WHERE team_api_id = Team.team_api_id) DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH NormalAttributes AS (SELECT team_api_id, chanceCreationPassing FROM Team_Attributes WHERE buildUpPlayDribblingClass = 'Normal' AND date BETWEEN '2014-01-01' AND '2014-01-31'), AvgPassing AS (SELECT AVG(chanceCreationPassing) AS AvgPass FROM NormalAttributes) SELECT T.team_long_name FROM Team T JOIN NormalAttributes NA ON T.team_api_id = NA.team_api_id WHERE NA.chanceCreationPassing < (SELECT AvgPass FROM AvgPassing) ORDER BY NA.chanceCreationPassing DESC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1041/ce0.sqlite": []
+  }
+]

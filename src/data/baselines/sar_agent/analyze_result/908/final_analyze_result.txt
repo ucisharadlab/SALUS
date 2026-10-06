@@ -1,0 +1,18 @@
+Correctness: No – the annotated query looks at lapTimes (finding 78) instead of results (where the real maximum is 200), so it returns wrong races and duplicates.
+Is_ambiguous: No – the question clearly asks for the race(s) with the highest total laps, with race name, year and circuit location.
+Explanation: The lapTimes table stores individual lap entries; its MAX(lap)=78 just shows the highest lap number recorded. Race length must be derived from results.laps. Aggregating MAX(laps) per race then finding the overall MAX gives 200 laps. Those races are the Indianapolis 500 (1951-1960 etc.). The annotated query therefore gives Monaco GPs and is incorrect, and it also lacks DISTINCT causing duplicates.
+Revised:
+WITH race_laps AS (
+  SELECT `raceId`, MAX(`laps`) AS laps
+  FROM `results`
+  GROUP BY `raceId`
+),
+max_val AS (
+  SELECT MAX(laps) AS max_laps
+  FROM race_laps
+)
+SELECT r.`name`, r.`year`, c.`location`
+FROM race_laps rl
+JOIN max_val mv ON rl.laps = mv.max_laps
+JOIN `races` r ON r.`raceId` = rl.`raceId`
+JOIN `circuits` c ON c.`circuitId` = r.`circuitId`;

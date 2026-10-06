@@ -1,0 +1,70 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Shadow_Racing_Cars',)"
+    ]
+  },
+  {
+    "gold": "SELECT T1.url FROM constructors AS T1 INNER JOIN constructorStandings AS T2 on T1.constructorId = T2.constructorId ORDER BY T2.wins DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Virgin_Racing',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.url FROM constructors T2 JOIN constructorStandings T1 ON T2.constructorId = T1.constructorId GROUP BY T1.constructorId ORDER BY SUM(T1.wins) DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Shadow_Racing_Cars',)"
+    ]
+  },
+  {
+    "pred": "SELECT url FROM constructors WHERE constructorId = (SELECT constructorId FROM constructorStandings GROUP BY constructorId ORDER BY SUM(wins) DESC LIMIT 1);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Shadow_Racing_Cars',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.url FROM constructors T2 WHERE T2.constructorId IN (SELECT T1.constructorId FROM constructorStandings T1 GROUP BY T1.constructorId ORDER BY SUM(T1.wins) DESC LIMIT 1);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Shadow_Racing_Cars',)"
+    ]
+  },
+  {
+    "pred": "SELECT url FROM constructors WHERE constructorId = (SELECT constructorId FROM constructorStandings GROUP BY constructorId HAVING SUM(wins) = (SELECT MAX(total_wins) FROM (SELECT SUM(wins) AS total_wins FROM constructorStandings GROUP BY constructorId)));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Shadow_Racing_Cars',)"
+    ]
+  },
+  {
+    "pred": "WITH RankedConstructors AS (SELECT constructorId, SUM(wins) AS TotalWins FROM constructorStandings GROUP BY constructorId ORDER BY TotalWins DESC LIMIT 1) SELECT url FROM constructors WHERE constructorId IN (SELECT constructorId FROM RankedConstructors);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Shadow_Racing_Cars',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.url FROM constructors T2 INNER JOIN (SELECT constructorId, SUM(wins) AS TotalWins FROM constructorStandings GROUP BY constructorId) T1 ON T2.constructorId = T1.constructorId ORDER BY T1.TotalWins DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Shadow_Racing_Cars',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.url FROM constructors T2, constructorStandings T1 WHERE T2.constructorId = T1.constructorId GROUP BY T1.constructorId ORDER BY SUM(T1.wins) DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Shadow_Racing_Cars',)"
+    ]
+  },
+  {
+    "pred": "WITH TotalWins AS (SELECT constructorId, SUM(wins) AS wins FROM constructorStandings GROUP BY constructorId) SELECT url FROM constructors WHERE constructorId = (SELECT constructorId FROM TotalWins ORDER BY wins DESC LIMIT 1);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/984/ce0.sqlite": [
+      "('http://en.wikipedia.org/wiki/Shadow_Racing_Cars',)"
+    ]
+  }
+]

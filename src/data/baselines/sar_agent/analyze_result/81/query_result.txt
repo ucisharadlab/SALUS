@@ -1,0 +1,24 @@
+Query: SELECT `School`, `City`, `State`, `Latitude`, `CDSCode` FROM schools WHERE State='CA' AND Latitude IS NOT NULL ORDER BY Latitude ASC LIMIT 5
+Explaination of the query: Find the 5 southernmost California schools
+Result: [('Willow Elementary', 'San Ysidro', 'CA', 32.547737, '37683790123000'), ('Beyer Elementary', 'San Ysidro', 'CA', 32.556438, '37683796040414'), ('Sunset Elementary', 'San Ysidro', 'CA', 32.5582, '37683796093264'), ('San Ysidro Adult Education Center', 'San Ysidro', 'CA', 32.558871, '37684113731106'), ('Smythe Elementary', 'San Ysidro', 'CA', 32.562092, '37683796085146')]
+Query: SELECT `CDSCode`, `School Name`, `Low Grade`, `High Grade` FROM frpm WHERE `School Name`='Willow Elementary' AND `CDSCode`='37683790123000' LIMIT 5
+Explaination of the query: Check if Willow Elementary exists in frpm
+Result: [('37683790123000', 'Willow Elementary', 'K', '8')]
+Query: SELECT MIN(`Latitude`) FROM `schools` WHERE `State`='CA' AND `Latitude` IS NOT NULL
+Explaination of the query: Get minimum latitude among CA schools
+Result: [(32.547737,)]
+Query: SELECT T2.City, T1.`Low Grade`, T1.`School Name` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.State = 'CA' AND T2.Latitude IS NOT NULL AND T2.Latitude = (SELECT MIN(Latitude) FROM schools WHERE State = 'CA' AND Latitude IS NOT NULL) LIMIT 5
+Explaination of the query: Run annotated query to see output
+Result: [('San Ysidro', 'K', 'Willow Elementary')]
+Query: SELECT count(*) FROM frpm WHERE `CDSCode`='37683790123000'
+Explaination of the query: How many frpm rows for Willow Elementary
+Result: [(1,)]
+Query: SELECT COUNT(*) FROM frpm WHERE `School Name`='Willow Elementary'
+Explaination of the query: Count frpm rows for Willow Elementary
+Result: [(5,)]
+Query: SELECT `School`, `City`, `Latitude`, `CDSCode` FROM `schools` WHERE `State`='CA' AND `Latitude`=32.547737 LIMIT 5
+Explaination of the query: check duplicates at min latitude
+Result: [('Willow Elementary', 'San Ysidro', 32.547737, '37683790123000')]
+Query: SELECT COUNT(*) FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.State = 'CA' AND T2.Latitude = 32.547737
+Explaination of the query: How many joined rows for the school at minimum latitude
+Result: [(1,)]

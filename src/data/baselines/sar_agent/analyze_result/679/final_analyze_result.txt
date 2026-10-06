@@ -1,0 +1,8 @@
+Correctness: No – returns owner user id, not post id; unnecessary join could omit highest-scoring post with NULL owner.
+Is_ambiguous: No – question clearly wants the post (row in posts) with maximum Score and its Id & Title.
+Explanation: The target fields are posts.Id and posts.Title where Score is highest. Annotated query joins users to posts, then selects users.Id (T1.Id), producing a user identifier rather than the post identifier. The INNER JOIN also enforces that OwnerUserId must exist, so if the top-scoring post lacks an owner it would be excluded. Therefore the query does not meet the requirement.
+Revised:
+SELECT `Id`, `Title`
+FROM `posts`
+ORDER BY `Score` DESC
+LIMIT 1;

@@ -1,0 +1,21 @@
+Query: SELECT COUNT(*) FROM races
+Explaination of the query: check races size
+Result: [(976,)]
+Query: SELECT T1.forename, T1.surname, T1.url FROM drivers AS T1 INNER JOIN results AS T2 ON T1.driverId = T2.driverId INNER JOIN races AS T3 ON T3.raceId = T2.raceId WHERE T3.name = 'Australian Grand Prix' AND T3.year = 2008 AND T2.time LIKE '_:%:__.___' LIMIT 5
+Explaination of the query: Run annotated query to see output
+Result: [('Lewis', 'Hamilton', 'http://en.wikipedia.org/wiki/Lewis_Hamilton')]
+Query: SELECT T2.time FROM results T2 JOIN races T3 ON T2.raceId=T3.raceId WHERE T3.name='Australian Grand Prix' AND T3.year=2008 ORDER BY T2.positionOrder LIMIT 20
+Explaination of the query: see time field pattern for 2008 Australian GP
+Result: [('1:34:50.616',), ('+5.478',), ('+8.163',), ('+17.181',), ('+18.014',), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,), (None,)]
+Query: SELECT '1:34:50.616' LIKE '_:%:__.___'
+Explaination of the query: test pattern
+Result: [(1,)]
+Query: SELECT T1.forename, T1.surname, T1.url FROM drivers T1 JOIN results T2 ON T1.driverId=T2.driverId JOIN races T3 ON T3.raceId=T2.raceId WHERE T3.name='Australian Grand Prix' AND T3.year=2008 AND T2.positionOrder=1 LIMIT 5
+Explaination of the query: Compare result using positionOrder=1
+Result: [('Lewis', 'Hamilton', 'http://en.wikipedia.org/wiki/Lewis_Hamilton')]
+Query: SELECT positionOrder, position, driverId, time FROM results WHERE raceId IN (SELECT raceId FROM races WHERE year=2008 AND name='Australian Grand Prix') ORDER BY positionOrder LIMIT 10
+Explaination of the query: Check champion row details
+Result: [(1, 1, 1, '1:34:50.616'), (2, 2, 2, '+5.478'), (3, 3, 3, '+8.163'), (4, 4, 4, '+17.181'), (5, 5, 5, '+18.014'), (6, 6, 6, None), (7, 7, 7, None), (8, 8, 8, None), (9, None, 9, None), (10, None, 10, None)]
+Query: SELECT time FROM results WHERE raceId = (select raceId from races where year=2008 and name='Australian Grand Prix') AND time LIKE '_:%:__.___'
+Explaination of the query: Identify how many rows match champion pattern
+Result: [('1:34:50.616',)]

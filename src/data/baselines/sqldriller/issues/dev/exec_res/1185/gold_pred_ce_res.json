@@ -1,0 +1,84 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "gold": "SELECT CAST((SUM(CASE WHEN T2.Date LIKE '1981-11-%' THEN T2.`T-CHO` ELSE 0 END) - SUM(CASE WHEN T2.Date LIKE '1981-12-%' THEN T2.`T-CHO` ELSE 0 END)) AS REAL) / SUM(CASE WHEN T2.Date LIKE '1981-12-%' THEN T2.`T-CHO` ELSE 0 END) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T1.Birthday = '1959-02-18'",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(`T-CHO`) FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date LIKE '1981-11-%' AND `T-CHO` IS NOT NULL) - (SELECT SUM(`T-CHO`) FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date LIKE '1981-12-%' AND `T-CHO` IS NOT NULL) AS DecreaseRate;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "WITH November_Cho AS (SELECT SUM(`T-CHO`) AS Nov_Cho FROM Laboratory WHERE ID IN (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date LIKE '1981-11-%' AND `T-CHO` IS NOT NULL), December_Cho AS (SELECT SUM(`T-CHO`) AS Dec_Cho FROM Laboratory WHERE ID IN (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date LIKE '1981-12-%' AND `T-CHO` IS NOT NULL) SELECT Nov_Cho - Dec_Cho AS DecreaseRate FROM November_Cho, December_Cho;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SUM(CASE WHEN Date LIKE '1981-11-%' THEN `T-CHO` ELSE 0 END) - SUM(CASE WHEN Date LIKE '1981-12-%' THEN `T-CHO` ELSE 0 END)) AS DecreaseRate FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND `T-CHO` IS NOT NULL;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (N.Sum_Cholesterol - D.Sum_Cholesterol) AS DecreaseRate FROM (SELECT SUM(`T-CHO`) AS Sum_Cholesterol FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date BETWEEN '1981-11-01' AND '1981-11-30' AND `T-CHO` IS NOT NULL) N, (SELECT SUM(`T-CHO`) AS Sum_Cholesterol FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date BETWEEN '1981-12-01' AND '1981-12-31' AND `T-CHO` IS NOT NULL) D;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(`T-CHO`) FROM Laboratory JOIN Patient ON Laboratory.ID = Patient.ID WHERE Patient.Birthday = '1959-02-18' AND Laboratory.Date LIKE '1981-11-%' AND Laboratory.`T-CHO` IS NOT NULL) - (SELECT SUM(`T-CHO`) FROM Laboratory JOIN Patient ON Laboratory.ID = Patient.ID WHERE Patient.Birthday = '1959-02-18' AND Laboratory.Date LIKE '1981-12-%' AND Laboratory.`T-CHO` IS NOT NULL) AS DecreaseRate;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(`T-CHO`) FILTER (WHERE Date LIKE '1981-11-%') - SUM(`T-CHO`) FILTER (WHERE Date LIKE '1981-12-%') AS DecreaseRate FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND `T-CHO` IS NOT NULL;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "WITH Cholesterol AS (SELECT Date, SUM(`T-CHO`) AS Total_Cho FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND `T-CHO` IS NOT NULL GROUP BY Date) SELECT (SELECT Total_Cho FROM Cholesterol WHERE Date LIKE '1981-11-%') - (SELECT Total_Cho FROM Cholesterol WHERE Date LIKE '1981-12-%') AS DecreaseRate;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (NOV.Total - DEC.Total) AS DecreaseRate FROM (SELECT SUM(`T-CHO`) AS Total FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date LIKE '1981-11-%' AND `T-CHO` IS NOT NULL) NOV, (SELECT SUM(`T-CHO`) AS Total FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date LIKE '1981-12-%' AND `T-CHO` IS NOT NULL) DEC;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (NOVEMBER.TotalCholesterol - DECEMBER.TotalCholesterol) AS DecreaseRate FROM (SELECT SUM(`T-CHO`) AS TotalCholesterol FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date LIKE '1981-11-%' AND `T-CHO` IS NOT NULL) NOVEMBER, (SELECT SUM(`T-CHO`) AS TotalCholesterol FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date LIKE '1981-12-%' AND `T-CHO` IS NOT NULL) DECEMBER;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(`T-CHO`) FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date GLOB '1981-11-*' AND `T-CHO` IS NOT NULL) - (SELECT SUM(`T-CHO`) FROM Laboratory WHERE ID = (SELECT ID FROM Patient WHERE Birthday = '1959-02-18') AND Date GLOB '1981-12-*' AND `T-CHO` IS NOT NULL) AS DecreaseRate;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1185/ce0.sqlite": [
+      "(None,)"
+    ]
+  }
+]

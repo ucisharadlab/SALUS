@@ -1,0 +1,24 @@
+Query: SELECT COUNT(*) FROM Player LIMIT 5;
+Explaination of the query: sample
+Result: [(11060,)]
+Query: SELECT `player_api_id`, COUNT(*) as cnt FROM `Player_Attributes` GROUP BY `player_api_id` HAVING cnt > 1 LIMIT 5;
+Explaination of the query: Check duplicates in Player_Attributes for players
+Result: [(2625, 14), (2752, 21), (2768, 21), (2770, 15), (2790, 5)]
+Query: SELECT CAST(COUNT(CASE WHEN t2.preferred_foot = 'left' THEN t1.id END) AS REAL) * 100.0 / COUNT(t1.id) AS pct FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.`player_api_id` = t2.`player_api_id` WHERE SUBSTR(t1.`birthday`,1,4) BETWEEN '1987' AND '1992' LIMIT 5;
+Explaination of the query: Run annotated query expression (with limit) to compute percentage, but we include limit 5 though aggregated returns 1 row
+Result: [(24.56690504416995,)]
+Query: WITH latest AS (
+  SELECT pa.player_api_id, pa.preferred_foot
+  FROM Player_Attributes pa
+  JOIN (
+    SELECT player_api_id, MAX(date) AS max_date
+    FROM Player_Attributes
+    GROUP BY player_api_id
+  ) md ON pa.player_api_id = md.player_api_id AND pa.date = md.max_date
+)
+SELECT AVG(CASE WHEN l.preferred_foot = 'left' THEN 1.0 ELSE 0 END) * 100 AS pct
+FROM Player p
+LEFT JOIN latest l ON p.player_api_id = l.player_api_id
+WHERE SUBSTR(p.birthday,1,4) BETWEEN '1987' AND '1992' LIMIT 5;
+Explaination of the query: Compute accurate percentage using latest attributes per player
+Result: [(24.585957546069512,)]

@@ -1,0 +1,28 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation:  
+The question asks for the number of patients whose Immunoglobulin-G (Ig G) level is above the normal upper limit.  In the schema the Ig G value is stored only in `Laboratory.IGG`, and external knowledge defines “higher than normal” as IGG ≥ 2000.
+
+The annotated query
+```
+SELECT COUNT(DISTINCT T1.ID)
+FROM Patient AS T1
+INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID
+INNER JOIN Examination AS T3 ON T3.ID = T2.ID
+WHERE T2.IGG >= 2000
+``` 
+adds INNER JOINs to `Patient` and, more critically, to `Examination`.  The INNER JOIN with `Examination` keeps only patients who possess at least one row in the Examination table.  Any patient who has a high Ig G result but no Examination record is therefore omitted, so the count is too low.
+
+Verification on the database shows:
+• 803 laboratory rows have IGG ≥ 2000.
+• 136 distinct patients have at least one such row.
+• The annotated query returns only 9 patients, confirming the under-count.
+
+A correct solution only needs the Laboratory table and DISTINCT on `ID` to avoid counting multiple lab dates for the same patient.
+
+Revised:  
+```
+SELECT COUNT(DISTINCT `ID`)
+FROM `Laboratory`
+WHERE `IGG` >= 2000;
+```

@@ -1,0 +1,78 @@
+Query: SELECT name FROM sqlite_master LIMIT 5
+Explaination of the query: list tables
+Result: [('account',), ('card',), ('client',), ('disp',), ('district',)]
+Query: SELECT COUNT(*) FROM client
+Explaination of the query: check table exists
+Result: [(5369,)]
+Query: SELECT COUNT(*) FROM account
+Explaination of the query: count
+Result: [(4500,)]
+Query: SELECT COUNT(*) FROM client WHERE gender='F'
+Explaination of the query: number of female clients
+Result: [(2645,)]
+Query: SELECT * FROM disp LIMIT 5
+Explaination of the query: preview disp
+Result: [(1, 1, 1, 'OWNER'), (2, 2, 2, 'OWNER'), (3, 3, 2, 'DISPONENT'), (4, 4, 3, 'OWNER'), (5, 5, 3, 'DISPONENT')]
+Query: SELECT MIN(`birth_date`) FROM `client` WHERE `gender`='F'
+Explaination of the query: find oldest female's birth date
+Result: [('1914-03-01',)]
+Query: SELECT `client_id` FROM `client` WHERE `gender`='F' AND `birth_date`=(SELECT MIN(`birth_date`) FROM `client` WHERE `gender`='F') LIMIT 5
+Explaination of the query: oldest female clients
+Result: [(2115,)]
+Query: SELECT MIN(`A11`) FROM `client` AS c JOIN `district` AS d ON c.`district_id`=d.`district_id` WHERE c.`gender`='F'
+Explaination of the query: global minimum average salary among female clients
+Result: [(8110,)]
+Query: SELECT MIN(`birth_date`) oldest_date FROM `client` WHERE `gender`='F'
+Explaination of the query: Find oldest female birth date
+Result: [('1914-03-01',)]
+Query: SELECT `client_id`, `district_id`, `birth_date` FROM `client` WHERE `gender`='F' AND `birth_date`='1914-03-01' LIMIT 5
+Explaination of the query: list oldest female clients
+Result: [(2115, 51, '1914-03-01')]
+Query: SELECT T3.`account_id` 
+FROM `client` AS T1 
+JOIN `district` AS T2 ON T1.`district_id` = T2.`district_id` 
+JOIN `account` AS T3 ON T2.`district_id` = T3.`district_id` 
+WHERE T1.`gender`='F' 
+AND T1.`birth_date` = (SELECT MIN(`birth_date`) FROM `client` WHERE `gender` = 'F') 
+AND T2.`A11` = (
+   SELECT MIN(T22.`A11`) 
+   FROM `client` AS T11 
+   JOIN `district` AS T22 ON T11.`district_id` = T22.`district_id` 
+   WHERE T11.`gender` = 'F' 
+   AND T11.`birth_date` = (SELECT MIN(`birth_date`) FROM `client` WHERE `gender` = 'F')
+) 
+LIMIT 5
+Explaination of the query: run annotated query
+Result: [(6,), (142,), (361,), (463,), (646,)]
+Query: SELECT `district_id` FROM `account` WHERE `account_id` IN (6,142,361,463,646)
+Explaination of the query: verify districts of returned accounts
+Result: [(51,), (51,), (51,), (51,), (51,)]
+Query: SELECT `A11` FROM `district` WHERE `district_id`=51 LIMIT 5
+Explaination of the query: A11 for district 51
+Result: [(8541,)]
+Query: SELECT a.`account_id` FROM `disp` d JOIN `account` a ON d.`account_id`=a.`account_id` WHERE d.`client_id` = 2115 LIMIT 5
+Explaination of the query: accounts for oldest female client
+Result: [(1743,)]
+Query: WITH oldest_female AS (
+    SELECT c.`client_id`, c.`district_id`
+    FROM `client` c
+    WHERE c.`gender`='F' AND c.`birth_date` = (SELECT MIN(`birth_date`) FROM `client` WHERE `gender`='F')
+),
+min_salary AS (
+    SELECT MIN(d.`A11`) AS min_sal
+    FROM oldest_female ofe
+    JOIN `district` d ON d.`district_id` = ofe.`district_id`
+),
+ target_clients AS (
+    SELECT ofe.`client_id`
+    FROM oldest_female ofe
+    JOIN `district` d ON d.`district_id` = ofe.`district_id`
+    JOIN min_salary ms ON d.`A11` = ms.min_sal
+)
+SELECT DISTINCT a.`account_id`
+FROM `disp` dp
+JOIN target_clients tc ON dp.`client_id` = tc.`client_id`
+JOIN `account` a ON a.`account_id` = dp.`account_id`
+LIMIT 5;
+Explaination of the query: Correct query candidate
+Result: [(1743,)]

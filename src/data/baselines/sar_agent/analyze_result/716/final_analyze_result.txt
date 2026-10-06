@@ -1,0 +1,12 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The question asks for the percentage of USERS (unique users) who have 0 up-votes among those who have written comments with scores between 5 and 10. The annotated query joins users and comments and counts every joined row, so users who wrote several comments are counted multiple times. Therefore both numerator and denominator are comment-level, not user-level, which under-states the percentage. A DISTINCT (or a preliminary selection of distinct `UserId`s) is required. Running the proper calculation shows 15 such users out of 308 (≈4.87%), whereas the annotated query returns ≈1.33%, proving it is incorrect.
+Revised: WITH user_set AS ( 
+  SELECT DISTINCT `UserId`
+  FROM `comments`
+  WHERE `Score` BETWEEN 5 AND 10
+        AND `UserId` IS NOT NULL
+)
+SELECT CAST(SUM(CASE WHEN `u`.`UpVotes` = 0 THEN 1 ELSE 0 END) AS REAL) * 100.0 / COUNT(*) AS percentage_zero_upvotes
+FROM user_set us
+JOIN `users` u ON u.`Id` = us.`UserId`;

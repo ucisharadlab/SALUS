@@ -1,0 +1,52 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce1.sqlite": [
+      "('Baseball game',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce2.sqlite": [
+      "('Officers meeting - March',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 INNER JOIN budget T1 ON T2.event_id = T1.link_to_event WHERE T1.category = 'Advertisement' AND T1.spent = (SELECT MAX(spent) FROM budget WHERE category = 'Advertisement');",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce1.sqlite": [
+      "('Baseball game',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce2.sqlite": [
+      "('Officers meeting - March',)",
+      "('Officers meeting - March',)"
+    ]
+  },
+  {
+    "pred": "SELECT event_name FROM event WHERE event_id IN (SELECT link_to_event FROM budget WHERE category = 'Advertisement' GROUP BY link_to_event HAVING spent = MAX(spent));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce1.sqlite": [
+      "('September Speaker',)",
+      "('Baseball game',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce2.sqlite": [
+      "('Officers meeting - March',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2, (SELECT link_to_event, MAX(spent) AS max_spent FROM budget WHERE category = 'Advertisement' GROUP BY link_to_event) T1 WHERE T2.event_id = T1.link_to_event AND T1.max_spent = (SELECT MAX(spent) FROM budget WHERE category = 'Advertisement');",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce1.sqlite": [
+      "('Baseball game',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce2.sqlite": [
+      "('Officers meeting - March',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.event_name FROM event T2 INNER JOIN (SELECT link_to_event, MAX(spent) AS max_spent FROM budget WHERE category = 'Advertisement' GROUP BY link_to_event HAVING max_spent = (SELECT MAX(spent) FROM budget WHERE category = 'Advertisement')) T1 ON T2.event_id = T1.link_to_event;",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce1.sqlite": [
+      "('Baseball game',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1398/ce2.sqlite": [
+      "('Officers meeting - March',)"
+    ]
+  }
+]

@@ -1,0 +1,44 @@
+Query: SELECT `fastestLapTime` FROM `results` WHERE `fastestLapTime` IS NOT NULL LIMIT 5;
+Explaination of the query: Check format
+Result: [('1:27.452',), ('1:27.739',), ('1:28.090',), ('1:28.603',), ('1:27.418',)]
+Query: SELECT `circuitId`, `name` FROM `circuits` WHERE `name` LIKE '%Austria%' LIMIT 5;
+Explaination of the query: Check circuit names containing Austria
+Result: []
+Query: WITH fastest_lap_times AS (
+    SELECT `raceId`, `fastestLapTime` FROM `results`
+    WHERE `fastestLapTime` IS NOT NULL
+)
+SELECT MIN(fastest_lap_times.`fastestLapTime`) as lap_record
+FROM fastest_lap_times
+INNER JOIN `races` ON fastest_lap_times.`raceId` = `races`.`raceId`
+WHERE `races`.`name` = 'Austrian Grand Prix'
+LIMIT 5;
+Explaination of the query: Run annotated main query to check output
+Result: [('1:07.411',)]
+Query: SELECT `circuitId`, `name` FROM `circuits` WHERE `country`='Austria' LIMIT 20;
+Explaination of the query: Find circuits in Austria
+Result: [(23, 'A1-Ring'), (57, 'Zeltweg'), (70, 'Red Bull Ring')]
+Query: SELECT `raceId`, `year`, `circuitId` FROM `races` WHERE `name`='Austrian Grand Prix' LIMIT 20;
+Explaination of the query: Get races rows to see circuit ids
+Result: [(113, 2003, 23), (129, 2002, 23), (146, 2001, 23), (167, 2000, 23), (183, 1999, 23), (200, 1998, 23), (220, 1997, 23), (397, 1987, 23), (415, 1986, 23), (429, 1985, 23), (447, 1984, 23), (462, 1983, 23), (479, 1982, 23), (493, 1981, 23), (507, 1980, 23), (522, 1979, 23), (538, 1978, 23), (554, 1977, 23), (570, 1976, 23), (587, 1975, 23)]
+Query: SELECT `raceId`,`year`,`name` FROM `races` WHERE `circuitId` IN (SELECT `circuitId` FROM `circuits` WHERE `country`='Austria') LIMIT 30;
+Explaination of the query: See races at Austrian circuits
+Result: [(113, 2003, 'Austrian Grand Prix'), (129, 2002, 'Austrian Grand Prix'), (146, 2001, 'Austrian Grand Prix'), (167, 2000, 'Austrian Grand Prix'), (183, 1999, 'Austrian Grand Prix'), (200, 1998, 'Austrian Grand Prix'), (220, 1997, 'Austrian Grand Prix'), (397, 1987, 'Austrian Grand Prix'), (415, 1986, 'Austrian Grand Prix'), (429, 1985, 'Austrian Grand Prix'), (447, 1984, 'Austrian Grand Prix'), (462, 1983, 'Austrian Grand Prix'), (479, 1982, 'Austrian Grand Prix'), (493, 1981, 'Austrian Grand Prix'), (507, 1980, 'Austrian Grand Prix'), (522, 1979, 'Austrian Grand Prix'), (538, 1978, 'Austrian Grand Prix'), (554, 1977, 'Austrian Grand Prix'), (570, 1976, 'Austrian Grand Prix'), (587, 1975, 'Austrian Grand Prix'), (601, 1974, 'Austrian Grand Prix'), (616, 1973, 'Austrian Grand Prix'), (628, 1972, 'Austrian Grand Prix'), (639, 1971, 'Austrian Grand Prix'), (651, 1970, 'Austrian Grand Prix'), (715, 1964, 'Austrian Grand Prix'), (907, 2014, 'Austrian Grand Prix'), (933, 2015, 'Austrian Grand Prix'), (956, 2016, 'Austrian Grand Prix'), (977, 2017, 'Austrian Grand Prix')]
+Query: SELECT `fastestLapTime` FROM `results` WHERE `raceId` IN (SELECT `raceId` FROM `races` WHERE `name`='Austrian Grand Prix') AND `fastestLapTime` IS NOT NULL ORDER BY `fastestLapTime` ASC LIMIT 20;
+Explaination of the query: List fastestLapTime string ascending to see if MIN string corresponds to numeric fastest
+Result: [('1:07.411',), ('1:07.442',), ('1:07.486',), ('1:07.496',), ('1:07.847',), ('1:08.061',), ('1:08.411',), ('1:08.419',), ('1:08.422',), ('1:08.470',), ('1:08.491',), ('1:08.590',), ('1:08.652',), ('1:08.659',), ('1:08.770',), ('1:08.777',), ('1:08.876',), ('1:09.043',), ('1:09.150',), ('1:09.241',)]
+Query: SELECT `raceId`, `circuitId`, `year` FROM `races` WHERE `raceId` IN (907,933,956,977) LIMIT 10;
+Explaination of the query: check circuitId of modern Austrian GPs
+Result: [(907, 70, 2014), (933, 70, 2015), (956, 70, 2016), (977, 70, 2017)]
+Query: SELECT MIN(`milliseconds`) FROM `lapTimes` WHERE `raceId` IN (SELECT `raceId` FROM `races` WHERE `name`='Austrian Grand Prix');
+Explaination of the query: Find fastest lap in lapTimes across Austrian GP
+Result: [(67411,)]
+Query: SELECT MIN(`milliseconds`) FROM `lapTimes` WHERE `raceId` IN (SELECT `raceId` FROM `races` WHERE `circuitId` IN (23,57,70));
+Explaination of the query: Minimum lap time across all races at Austrian circuits
+Result: [(67411,)]
+Query: SELECT `raceId`, `year` FROM `races` WHERE `name` LIKE '%Styrian Grand Prix%' LIMIT 10;
+Explaination of the query: Check for Styrian GP races
+Result: []
+Query: SELECT DISTINCT `name` FROM `races` WHERE `circuitId` IN (23,70,57) AND `name` NOT LIKE '%Austrian Grand Prix%' LIMIT 20;
+Explaination of the query: Check other race names at Austrian circuits
+Result: []

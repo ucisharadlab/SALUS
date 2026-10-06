@@ -1,0 +1,27 @@
+Query: SELECT MAX(`Latitude`) FROM `schools`
+Explaination of the query: Find maximum latitude
+Result: [(44.219305,)]
+Query: SELECT s.`CDSCode`, s.`School`, s.`Latitude` FROM `schools` s ORDER BY s.`Latitude` DESC LIMIT 5
+Explaination of the query: Top latitudes with cds code
+Result: [('23752182332724', 'Leggett Valley High', 44.219305), ('23752186025118', 'Leggett Valley Elementary', 44.219305), ('39685773930252', 'Linden Adult', 42.817231), ('25735856025886', 'State Line Elementary', 41.9893), ('08100820106666', 'Bar-O', 41.982874)]
+Query: SELECT T1.`School Type`, T1.`School Name`, T2.Latitude 
+FROM frpm AS T1 
+INNER JOIN schools AS T2 ON T1.`CDSCode` = T2.`CDSCode` 
+WHERE T2.`Latitude` = (SELECT MAX(`Latitude`) FROM schools) LIMIT 5;
+Explaination of the query: Test annotated query
+Result: [('High Schools (Public)', 'Leggett Valley High', 44.219305), ('Elementary Schools (Public)', 'Leggett Valley Elementary', 44.219305)]
+Query: SELECT COUNT(*) FROM frpm WHERE `CDSCode` = '23752182332724';
+Explaination of the query: count records for Leggett Valley high
+Result: [(1,)]
+Query: SELECT COUNT(*) FROM frpm WHERE `CDSCode` = '23752186025118';
+Explaination of the query: Count records for Leggett Valley Elementary
+Result: [(1,)]
+Query: SELECT s.`CDSCode`, s.`School`, s.`Latitude` FROM `schools` s WHERE s.`Latitude` = (SELECT MAX(`Latitude`) FROM `schools`) LIMIT 5
+Explaination of the query: all max latitude schools
+Result: [('23752182332724', 'Leggett Valley High', 44.219305), ('23752186025118', 'Leggett Valley Elementary', 44.219305)]
+Query: SELECT COUNT(*) FROM frpm WHERE `CDSCode` IN ('23752182332724','23752186025118')
+Explaination of the query: Check duplicates/multiple years for these schools
+Result: [(2,)]
+Query: SELECT `CDSCode`, COUNT(*) as cnt FROM frpm WHERE `CDSCode` IN ('23752182332724','23752186025118') GROUP BY `CDSCode`
+Explaination of the query: check duplicates rows for those two schools across all academic years
+Result: [('23752182332724', 1), ('23752186025118', 1)]

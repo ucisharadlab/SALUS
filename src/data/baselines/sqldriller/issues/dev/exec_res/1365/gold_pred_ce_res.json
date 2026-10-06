@@ -1,0 +1,80 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "gold": "SELECT T2.expense_description FROM budget AS T1 INNER JOIN expense AS T2 ON T1.budget_id = T2.link_to_budget WHERE T1.remaining = (SELECT MIN(remaining) FROM budget)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.expense_description FROM budget T1 JOIN expense T2 ON T1.budget_id = T2.link_to_budget WHERE T1.remaining = (SELECT MIN(remaining) FROM budget WHERE remaining IS NOT NULL);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT expense_description FROM expense WHERE link_to_budget IN (SELECT budget_id FROM budget WHERE remaining = (SELECT MIN(remaining) FROM budget WHERE remaining IS NOT NULL));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "WITH LowestBudget AS (SELECT budget_id FROM budget WHERE remaining = (SELECT MIN(remaining) FROM budget WHERE remaining IS NOT NULL)) SELECT expense_description FROM expense WHERE link_to_budget IN (SELECT budget_id FROM LowestBudget);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT expense_description FROM expense JOIN (SELECT budget_id FROM budget WHERE remaining = (SELECT MIN(remaining) FROM budget WHERE remaining IS NOT NULL)) AS LowestRemaining ON expense.link_to_budget = LowestRemaining.budget_id;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.expense_description FROM (SELECT * FROM budget WHERE remaining = (SELECT MIN(remaining) FROM budget WHERE remaining IS NOT NULL)) T1 INNER JOIN expense T2 ON T1.budget_id = T2.link_to_budget;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT expense_description FROM expense WHERE link_to_budget = (SELECT budget_id FROM budget ORDER BY remaining ASC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH MinRemaining AS (SELECT MIN(remaining) AS MinRem FROM budget WHERE remaining IS NOT NULL) SELECT expense_description FROM expense WHERE link_to_budget IN (SELECT budget_id FROM budget, MinRemaining WHERE budget.remaining = MinRemaining.MinRem);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.expense_description FROM budget T1, expense T2 WHERE T1.budget_id = T2.link_to_budget AND T1.remaining = (SELECT MIN(T1.remaining) FROM budget T1 WHERE T1.remaining IS NOT NULL);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  },
+  {
+    "pred": "SELECT expense_description FROM expense WHERE link_to_budget = (SELECT budget_id FROM budget WHERE remaining = (SELECT MIN(remaining) FROM budget) LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH MinBudget AS (SELECT budget_id FROM budget WHERE remaining = (SELECT MIN(remaining) FROM budget WHERE remaining IS NOT NULL)) SELECT expense_description FROM expense, MinBudget WHERE expense.link_to_budget = MinBudget.budget_id;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1365/ce0.sqlite": [
+      "('2147483649',)"
+    ]
+  }
+]

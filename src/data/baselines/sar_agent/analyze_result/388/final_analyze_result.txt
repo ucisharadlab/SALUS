@@ -1,0 +1,17 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The annotated query pulls from `set_translations`, a table that only stores translations of the set name, and tries to match its `id` column to the `id` column of `cards`.  Those columns are unrelated, and the query therefore cannot return the requested card/language pairs.  Moreover, the sub-query could return multiple rows but is compared with “=”, and the filter for set 10E is applied to `set_translations`, not to the cards.  Hence the query does not answer the question.  
+
+The question itself is clear: list each card in set 10E with converted mana cost = 5 that has at least one foreign-language printing, and show the corresponding languages.  That information is stored in `cards` (card facts) and `foreign_data` (one row per foreign printing, joined by `uuid`).  
+
+Revised:
+```
+SELECT DISTINCT
+       c.`name`,
+       f.`language`
+FROM   `cards`         AS c
+JOIN   `foreign_data`  AS f  ON c.`uuid` = f.`uuid`
+WHERE  c.`setCode` = '10E'
+  AND  c.`convertedManaCost` = 5
+ORDER  BY c.`name`, f.`language`;
+```

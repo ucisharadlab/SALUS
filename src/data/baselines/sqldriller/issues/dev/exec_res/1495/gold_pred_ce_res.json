@@ -1,0 +1,65 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1495/ce0.sqlite": [
+      "(4827,)",
+      "(42070,)"
+    ]
+  },
+  {
+    "gold": "SELECT T1.CustomerID FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201309' GROUP BY T1.CustomerID ORDER BY SUM(T2.Consumption) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1495/ce0.sqlite": [
+      "(42070,)"
+    ]
+  },
+  {
+    "pred": "SELECT CustomerID FROM yearmonth WHERE Date = '201309' GROUP BY CustomerID ORDER BY SUM(Consumption) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1495/ce0.sqlite": [
+      "(4827,)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.CustomerID FROM (SELECT CustomerID, SUM(Consumption) AS TotalConsumption FROM yearmonth WHERE Date = '201309' GROUP BY CustomerID) T1 ORDER BY T1.TotalConsumption DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1495/ce0.sqlite": [
+      "(4827,)"
+    ]
+  },
+  {
+    "pred": "WITH MonthlyConsumption AS (SELECT CustomerID, SUM(Consumption) AS TotalConsumption FROM yearmonth WHERE Date = '201309' GROUP BY CustomerID) SELECT CustomerID FROM MonthlyConsumption ORDER BY TotalConsumption DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1495/ce0.sqlite": [
+      "(4827,)"
+    ]
+  },
+  {
+    "pred": "SELECT CustomerID FROM yearmonth WHERE Date = '201309' GROUP BY CustomerID HAVING SUM(Consumption) = (SELECT MAX(TotalConsumption) FROM (SELECT SUM(Consumption) AS TotalConsumption FROM yearmonth WHERE Date = '201309' GROUP BY CustomerID) T1);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1495/ce0.sqlite": [
+      "(4827,)",
+      "(42070,)"
+    ]
+  },
+  {
+    "pred": "SELECT CustomerID, MAX(TotalConsumption) FROM (SELECT CustomerID, SUM(Consumption) AS TotalConsumption FROM yearmonth WHERE Date = '201309' GROUP BY CustomerID) T1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1495/ce0.sqlite": [
+      "(4827, 21682.32)"
+    ]
+  },
+  {
+    "pred": "SELECT CustomerID, SUM(Consumption) AS TotalConsumption FROM yearmonth WHERE Date = '201309' GROUP BY CustomerID ORDER BY TotalConsumption DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1495/ce0.sqlite": [
+      "(4827, 21682.32)"
+    ]
+  },
+  {
+    "pred": "WITH CTE AS (SELECT CustomerID, SUM(Consumption) AS TotalConsumption FROM yearmonth WHERE Date = '201309' GROUP BY CustomerID) SELECT CustomerID FROM CTE ORDER BY TotalConsumption DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1495/ce0.sqlite": [
+      "(4827,)"
+    ]
+  }
+]

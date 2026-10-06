@@ -1,0 +1,22 @@
+Correctness: No – the annotated query projects the English card names (cards.name) instead of the required Italian names (foreign_data.name).
+Is_ambiguous: No – the question is clear: return the Italian names of those Coldsnap cards whose converted mana cost is the highest in the set.
+Explanation:
+• The Italian name for a card is stored in foreign_data.name where language = 'Italian'.
+• The annotated query correctly joins cards, foreign_data and sets and finds the maximum convertedManaCost, but in the SELECT list it outputs T2.name, which is cards.name (English). Hence it returns Sunscour, Commandeer … instead of Devastazione Solare, Requisire …
+• Apart from the wrong column in SELECT, the rest of the logic is sound.  Adding DISTINCT (to avoid duplicates) is also advisable.
+Revised:
+```
+SELECT DISTINCT fd.`name`
+FROM `foreign_data` AS fd
+JOIN `cards`  AS c ON c.`uuid` = fd.`uuid`
+JOIN `sets`   AS s ON s.`code` = c.`setCode`
+WHERE s.`name` = 'Coldsnap'
+  AND fd.`language` = 'Italian'
+  AND c.`convertedManaCost` = (
+        SELECT MAX(c2.`convertedManaCost`)
+        FROM `foreign_data` fd2
+        JOIN `cards`  c2 ON c2.`uuid` = fd2.`uuid`
+        JOIN `sets`   s2 ON s2.`code` = c2.`setCode`
+        WHERE s2.`name` = 'Coldsnap' AND fd2.`language` = 'Italian'
+      );
+```

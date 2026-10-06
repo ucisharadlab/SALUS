@@ -1,0 +1,17 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/955/ce0.sqlite": []
+  },
+  {
+    "gold": "WITH time_in_seconds AS ( SELECT T2.year, T2.raceId, T1.positionOrder, CASE WHEN T1.positionOrder = 1 THEN (CAST(SUBSTR(T1.time, 1, 1) AS REAL) * 3600) + (CAST(SUBSTR(T1.time, 3, 2) AS REAL) * 60) + CAST(SUBSTR(T1.time, 6,2) AS REAL )   + CAST(SUBSTR(T1.time, 9) AS REAL)/1000 ELSE 0 END AS time_seconds FROM results AS T1 INNER JOIN races AS T2 ON T1.raceId = T2.raceId WHERE T1.time IS NOT NULL ), champion_time AS ( SELECT year, raceId, time_seconds FROM time_in_seconds WHERE positionOrder = 1 ) SELECT year, AVG(time_seconds) FROM champion_time WHERE year < 1975 GROUP BY year HAVING AVG(time_seconds) IS NOT NULL",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/955/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T1.year, AVG((strftime('%H', T2.time) * 3600) + (strftime('%M', T2.time) * 60) + strftime('%S', T2.time)) AS avg_time_seconds FROM races T1 JOIN results T2 ON T1.raceId = T2.raceId WHERE T1.year < 1975 AND T2.time IS NOT NULL GROUP BY T1.year",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/955/ce0.sqlite": [
+      "(1971, 4665.0)"
+    ]
+  }
+]

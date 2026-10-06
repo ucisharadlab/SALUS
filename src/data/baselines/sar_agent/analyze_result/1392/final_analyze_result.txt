@@ -1,0 +1,10 @@
+Correctness: No – the query only sorts the source names alphabetically (DESC) and never uses the `amount` column, so it does not identify the source with the highest dollar value.
+Is_ambiguous: Yes – “top source … based on their amount” could be interpreted as the single largest payment record or the source whose total receipts are greatest; wording allows both.
+Explanation: The task requires (1) filtering `income` rows to dates between 2019-09-01 and 2019-09-30 and (2) ranking sources by dollars received.  The annotated query performs the date filter but then orders by `source`, ignoring `amount`, and has no aggregation, so multiple rows per source are not combined.  It therefore returns an arbitrary source (alphabetically last) rather than the highest-funded one.
+Revised:
+SELECT `source`
+FROM `income`
+WHERE `date_received` BETWEEN '2019-09-01' AND '2019-09-30'
+GROUP BY `source`
+ORDER BY SUM(`amount`) DESC
+LIMIT 1;

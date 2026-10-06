@@ -1,0 +1,22 @@
+Correctness: No – the annotated query returns only one league, yet three leagues are tied for the maximum number of matches. Because the inner SELECT projects league_id together with MAX(cnt) without a GROUP BY, the league_id chosen is arbitrary and non-deterministic, so the output is incomplete/unstable.
+Is_ambiguous: Yes – the question asks for “the league with the highest matches” (singular), but multiple leagues share that highest total, so it is unclear whether all of them or an arbitrary single one should be returned.
+Explanation:  
+1. The first subquery counts matches per league correctly.  
+2. The next layer does `SELECT league_id, MAX(cnt)` without grouping. In SQLite, this keeps an unaggregated column whose value is undefined when more than one row satisfies the MAX condition.  
+3. Checking the data shows league_ids 1729 (England Premier League), 4769 (France Ligue 1), and 21518 (Spain LIGA BBVA) each have 3040 matches – the global maximum.  
+4. The annotated query therefore returns whichever of these three SQLite happens to pick; the result can change between executions and omits the other tied leagues. Hence it does not fully answer the question.
+Revised:  
+```
+WITH league_match_count AS (
+    SELECT league_id, COUNT(*) AS match_cnt
+    FROM `Match`
+    GROUP BY league_id
+), max_cnt AS (
+    SELECT MAX(match_cnt) AS max_match_cnt
+    FROM league_match_count
+)
+SELECT l.`name`, lm.match_cnt
+FROM league_match_count lm
+JOIN max_cnt mc ON lm.match_cnt = mc.max_match_cnt
+JOIN `League` l ON l.id = lm.league_id;
+```

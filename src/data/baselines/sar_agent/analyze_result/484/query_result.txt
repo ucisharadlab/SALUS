@@ -1,0 +1,54 @@
+Query: SELECT T2.name AS eng, T1.name AS it, T2.convertedManaCost FROM foreign_data T1 JOIN cards T2 ON T2.uuid=T1.uuid JOIN sets T3 ON T3.code=T2.setCode WHERE T3.name='Coldsnap' AND T1.language='Italian' LIMIT 5
+Explaination of the query: Look at sample Italian translations for Coldsnap
+Result: [('Adarkar Valkyrie', "Valchiria dell'Adarkar", 6.0), ('Boreal Griffin', 'Grifone di Borealia', 5.0), ('Cover of Winter', "Favore dell'Inverno", 3.0), ('Darien, King of Kjeldor', 'Darien, Re di Kjeldor', 6.0), ('Field Marshal', 'Maresciallo di Campo', 3.0)]
+Query: SELECT MAX(`convertedManaCost`) FROM `cards` WHERE `setCode` = (SELECT `code` FROM `sets` WHERE `name`='Coldsnap');
+Explaination of the query: Find maximum convertedManaCost among Coldsnap cards overall
+Result: [(7.0,)]
+Query: SELECT DISTINCT T1.name, T2.convertedManaCost FROM foreign_data AS T1
+JOIN cards AS T2 ON T2.uuid = T1.uuid
+JOIN sets AS T3 ON T3.code = T2.setCode
+WHERE T3.name = 'Coldsnap' AND T1.language = 'Italian'
+ORDER BY T2.convertedManaCost DESC LIMIT 5;
+Explaination of the query: Browse Italian names and costs for Coldsnap
+Result: [('Devastazione Solare', 7.0), ('Requisire', 7.0), ('Jokulmorder', 7.0), ('Gufo Gelopiuma', 7.0), ('Araldo di Leshrac', 7.0)]
+Query: SELECT T2.name
+FROM foreign_data AS T1
+INNER JOIN cards AS T2 ON T2.uuid = T1.uuid
+INNER JOIN sets AS T3 ON T3.code = T2.setCode
+WHERE T3.name = 'Coldsnap'
+  AND T1.language = 'Italian'
+  AND T2.convertedManaCost = (
+    SELECT MAX(convertedManaCost)
+    FROM foreign_data AS T1
+    INNER JOIN cards AS T2 ON T2.uuid = T1.uuid
+    INNER JOIN sets AS T3 ON T3.code = T2.setCode
+    WHERE T3.name = 'Coldsnap' AND T1.language = 'Italian'
+) LIMIT 5;
+Explaination of the query: Test annotated query outputs
+Result: [('Sunscour',), ('Commandeer',), ('Jokulmorder',), ('Rimefeather Owl',), ('Herald of Leshrac',)]
+Query: SELECT DISTINCT `name` FROM `foreign_data` AS fd
+JOIN `cards` AS c ON c.uuid = fd.uuid
+JOIN `sets` AS s ON s.code = c.setCode
+WHERE s.name='Coldsnap' AND fd.language='Italian'
+  AND c.convertedManaCost = (
+    SELECT MAX(`convertedManaCost`) FROM `cards` c2
+    JOIN `sets` s2 ON s2.code=c2.setCode
+    WHERE s2.name='Coldsnap'
+  )
+LIMIT 10;
+Explaination of the query: Fetch Italian names for Coldsnap cards whose convertedManaCost equals the maximum for Coldsnap
+Error: ambiguous column name: name
+Query: SELECT DISTINCT fd.name
+FROM foreign_data fd
+JOIN cards c ON c.uuid = fd.uuid
+JOIN sets s ON s.code = c.setCode
+WHERE fd.language = 'Italian' AND s.name = 'Coldsnap'
+  AND c.convertedManaCost = (
+    SELECT MAX(c2.convertedManaCost)
+    FROM cards c2
+    JOIN sets s2 ON s2.code = c2.setCode
+    WHERE s2.name = 'Coldsnap'
+  )
+LIMIT 10;
+Explaination of the query: Italian names of highest CMC Coldsnap cards
+Result: [('Devastazione Solare',), ('Requisire',), ('Jokulmorder',), ('Gufo Gelopiuma',), ('Araldo di Leshrac',), ('Inchioda Anima',), ('Cavalcacieli di Tresserhorn',), ("Furia dell'Orda",), ('Drago Geloscaglia',), ('Cavalca Allosauro',)]

@@ -1,0 +1,81 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('Mccauley Balentine',)"
+    ]
+  },
+  {
+    "gold": "SELECT T2.member_id FROM expense AS T1 INNER JOIN member AS T2 ON T1.link_to_member = T2.member_id INNER JOIN budget AS T3 ON T1.link_to_budget = T3.budget_id INNER JOIN event AS T4 ON T3.link_to_event = T4.event_id GROUP BY T2.member_id HAVING COUNT(DISTINCT T4.event_id) > 1 ORDER BY SUM(T1.cost) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('recWh2lJVOT6HjChK',)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.link_to_member FROM (SELECT E.link_to_member, SUM(E.cost) AS total_cost FROM expense E JOIN budget B ON E.link_to_budget = B.budget_id JOIN event EV ON B.link_to_event = EV.event_id GROUP BY E.link_to_member HAVING COUNT(DISTINCT EV.event_id) > 1) T1 ORDER BY T1.total_cost DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('rec75vvFxgYtHmqxY',)"
+    ]
+  },
+  {
+    "pred": "SELECT link_to_member FROM (SELECT link_to_member, SUM(cost) AS total_cost FROM expense JOIN budget ON expense.link_to_budget = budget.budget_id JOIN event ON budget.link_to_event = event.event_id GROUP BY link_to_member HAVING COUNT(DISTINCT event.event_id) > 1) GROUPED WHERE total_cost = (SELECT MAX(total_cost) FROM (SELECT SUM(cost) AS total_cost FROM expense JOIN budget ON link_to_budget = budget_id JOIN event ON link_to_event = event_id GROUP BY link_to_member HAVING COUNT(DISTINCT event_id) > 1));",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('rec75vvFxgYtHmqxY',)",
+      "('recWh2lJVOT6HjChK',)"
+    ]
+  },
+  {
+    "pred": "WITH MemberExpenses AS (SELECT link_to_member, SUM(cost) AS total_cost FROM expense JOIN budget ON link_to_budget = budget.budget_id JOIN event ON link_to_event = event.event_id GROUP BY link_to_member HAVING COUNT(DISTINCT event.event_id) > 1) SELECT link_to_member FROM MemberExpenses WHERE total_cost = (SELECT MAX(total_cost) FROM MemberExpenses);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('rec75vvFxgYtHmqxY',)",
+      "('recWh2lJVOT6HjChK',)"
+    ]
+  },
+  {
+    "pred": "SELECT link_to_member FROM (SELECT link_to_member, SUM(cost) total_cost FROM expense INNER JOIN budget ON expense.link_to_budget = budget.budget_id INNER JOIN event ON budget.link_to_event = event.event_id GROUP BY link_to_member HAVING COUNT(DISTINCT event.event_id) > 1 ORDER BY SUM(cost) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('recWh2lJVOT6HjChK',)"
+    ]
+  },
+  {
+    "pred": "SELECT link_to_member FROM (SELECT link_to_member, SUM(cost) AS total_cost FROM expense JOIN budget ON link_to_budget = budget.budget_id JOIN event ON link_to_event = event.event_id GROUP BY link_to_member HAVING COUNT(DISTINCT event.event_id) > 1) AS SubQuery ORDER BY total_cost DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('rec75vvFxgYtHmqxY',)"
+    ]
+  },
+  {
+    "pred": "WITH ExpenseSummary AS (SELECT link_to_member, SUM(cost) AS total_cost FROM expense JOIN budget ON link_to_budget = budget.budget_id JOIN event ON link_to_event = event.event_id GROUP BY link_to_member HAVING COUNT(DISTINCT event.event_id) > 1) SELECT link_to_member FROM ExpenseSummary WHERE total_cost = (SELECT MAX(total_cost) FROM ExpenseSummary);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('rec75vvFxgYtHmqxY',)",
+      "('recWh2lJVOT6HjChK',)"
+    ]
+  },
+  {
+    "pred": "SELECT link_to_member FROM (SELECT link_to_member, SUM(cost) AS total_cost FROM expense JOIN budget ON link_to_budget = budget.budget_id JOIN event ON link_to_event = event.event_id GROUP BY link_to_member HAVING COUNT(DISTINCT event.event_id) > 1) ORDER BY total_cost DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('rec75vvFxgYtHmqxY',)"
+    ]
+  },
+  {
+    "pred": "SELECT link_to_member FROM (SELECT link_to_member, SUM(cost) AS total_cost, COUNT(DISTINCT event.event_id) AS event_count FROM expense JOIN budget ON link_to_budget = budget.budget_id JOIN event ON link_to_event = event.event_id GROUP BY link_to_member HAVING event_count > 1 ORDER BY total_cost DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('recWh2lJVOT6HjChK',)"
+    ]
+  },
+  {
+    "pred": "WITH TotalExpenses AS (SELECT link_to_member, SUM(cost) AS total_cost FROM expense JOIN budget ON link_to_budget = budget.budget_id JOIN event ON link_to_event = event.event_id GROUP BY link_to_member HAVING COUNT(DISTINCT event.event_id) > 1) SELECT link_to_member FROM TotalExpenses WHERE total_cost = (SELECT MAX(total_cost) FROM TotalExpenses);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1451/ce0.sqlite": [
+      "('rec75vvFxgYtHmqxY',)",
+      "('recWh2lJVOT6HjChK',)"
+    ]
+  }
+]

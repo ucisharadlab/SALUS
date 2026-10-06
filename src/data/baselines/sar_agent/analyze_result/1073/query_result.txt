@@ -1,0 +1,9 @@
+Query: SELECT COUNT(t2.`id`) FROM `League` AS t1 INNER JOIN `Match` AS t2 ON t1.`id` = t2.`league_id` WHERE t1.`name` = 'Germany 1. Bundesliga' AND SUBSTR(t2.`date`, 1, 7) BETWEEN '2008-08' AND '2008-10';
+Explaination of the query: Check result of annotated query
+Result: [(91,)]
+Query: SELECT COUNT(*) FROM `Match` WHERE `league_id` = (SELECT `id` FROM `League` WHERE `name`='Germany 1. Bundesliga') AND `date` BETWEEN '2008-08-01' AND '2008-10-31 23:59:59';
+Explaination of the query: Recalculate count using explicit date range to verify annotated query (should match 91)
+Result: [(91,)]
+Query: SELECT SUBSTR(`date`,1,7) as ym, COUNT(*) FROM `Match` WHERE `league_id` = (SELECT `id` FROM `League` WHERE `name`='Germany 1. Bundesliga') AND ym BETWEEN '2008-08' AND '2008-10' GROUP BY ym ORDER BY ym LIMIT 5;
+Explaination of the query: See distribution per month
+Result: [('2008-08', 27), ('2008-09', 26), ('2008-10', 38)]

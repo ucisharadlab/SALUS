@@ -1,0 +1,84 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(0, 0)"
+    ]
+  },
+  {
+    "gold": "SELECT COUNT(T2.Id) FROM users AS T1 INNER JOIN posts AS T2 ON T1.Id = T2.OwnerUserId INNER JOIN comments AS T3 ON T3.PostId = T2.Id ORDER BY T1.CreationDate DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(DISTINCT P.Id) AS NumberOfPosts, COUNT(DISTINCT C.Id) AS NumberOfComments FROM users U JOIN posts P ON U.Id = P.OwnerUserId JOIN comments C ON U.Id = C.UserId WHERE U.CreationDate = (SELECT MAX(CreationDate) FROM users)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(0, 0)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT COUNT(*) FROM posts WHERE OwnerUserId = U.Id) AS NumberOfPosts, (SELECT COUNT(*) FROM comments WHERE UserId = U.Id) AS NumberOfComments FROM users U WHERE U.CreationDate = (SELECT MAX(CreationDate) FROM users)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(1, 0)"
+    ]
+  },
+  {
+    "pred": "WITH LatestUser AS (SELECT Id FROM users WHERE CreationDate = (SELECT MAX(CreationDate) FROM users)) SELECT COUNT(P.Id) AS NumberOfPosts, COUNT(C.Id) AS NumberOfComments FROM LatestUser LU LEFT JOIN posts P ON LU.Id = P.OwnerUserId LEFT JOIN comments C ON LU.Id = C.UserId",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(1, 0)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(P.Id), COUNT(C.Id) FROM users U LEFT JOIN posts P ON U.Id = P.OwnerUserId LEFT JOIN comments C ON U.Id = C.UserId WHERE U.CreationDate = (SELECT MAX(CreationDate) FROM users)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(1, 0)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT COUNT(*) FROM posts P WHERE P.OwnerUserId = (SELECT Id FROM users WHERE CreationDate = (SELECT MAX(CreationDate) FROM users))) AS NumberOfPosts, (SELECT COUNT(*) FROM comments C WHERE C.UserId = (SELECT Id FROM users WHERE CreationDate = (SELECT MAX(CreationDate) FROM users))) AS NumberOfComments",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(1, 0)"
+    ]
+  },
+  {
+    "pred": "WITH MaxDateUser AS (SELECT Id FROM users WHERE CreationDate = (SELECT MAX(CreationDate) FROM users)) SELECT COUNT(posts.Id) AS NumberOfPosts, COUNT(comments.Id) AS NumberOfComments FROM MaxDateUser JOIN posts ON MaxDateUser.Id = posts.OwnerUserId JOIN comments ON MaxDateUser.Id = comments.UserId",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(0, 0)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(posts.Id) AS NumberOfPosts, COUNT(comments.Id) AS NumberOfComments FROM users JOIN posts ON users.Id = posts.OwnerUserId JOIN comments ON users.Id = comments.UserId WHERE users.CreationDate = (SELECT MAX(CreationDate) FROM users)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(0, 0)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT COUNT(*) FROM posts WHERE OwnerUserId = (SELECT Id FROM users ORDER BY CreationDate DESC LIMIT 1)) AS NumberOfPosts, (SELECT COUNT(*) FROM comments WHERE UserId = (SELECT Id FROM users ORDER BY CreationDate DESC LIMIT 1)) AS NumberOfComments",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(1, 0)"
+    ]
+  },
+  {
+    "pred": "WITH RecentUser AS (SELECT Id FROM users WHERE CreationDate = (SELECT MAX(CreationDate) FROM users)) SELECT (SELECT COUNT(*) FROM posts WHERE OwnerUserId IN (SELECT Id FROM RecentUser)) AS NumberOfPosts, (SELECT COUNT(*) FROM comments WHERE UserId IN (SELECT Id FROM RecentUser)) AS NumberOfComments",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(1, 0)"
+    ]
+  },
+  {
+    "pred": "SELECT COUNT(P.Id) AS NumberOfPosts, COUNT(C.Id) AS NumberOfComments FROM (SELECT Id FROM users WHERE CreationDate = (SELECT MAX(CreationDate) FROM users)) AS LatestUser JOIN posts P ON LatestUser.Id = P.OwnerUserId JOIN comments C ON LatestUser.Id = C.UserId",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/693/ce0.sqlite": [
+      "(0, 0)"
+    ]
+  }
+]

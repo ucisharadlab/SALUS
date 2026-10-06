@@ -1,0 +1,20 @@
+Correctness: No – the query gets the right set of hero-ids (all with max strength) but it does not de-duplicate identical full names, so the result contains many repeated rows (e.g. “-” appears 28 times).  Returning duplicates means the query does not cleanly answer “What is the hero’s full name …”.  Using DISTINCT (or GROUP BY) is required.
+Is_ambiguous: Yes – the question speaks of “the hero” in singular, yet dozens of heroes tie for the highest strength value, so it is unclear whether all ties or just one name is expected.
+Explanation:  
+• The sub-query correctly computes the maximum strength value.  
+• The main query matches every hero record with that value, but because several different hero_ids share an identical `full_name`, those names are listed multiple times.  
+• Sample execution shows 63 rows returned; 28 of them are the placeholder name “-”.  
+• A proper answer should list each hero name once.  
+• Moreover, the natural language question is ambiguous when multiple heroes tie.
+Revised:  
+SELECT DISTINCT T1.`full_name`
+FROM `superhero`  AS T1
+JOIN `hero_attribute` AS T2 ON T1.`id` = T2.`hero_id`
+JOIN `attribute`      AS T3 ON T2.`attribute_id` = T3.`id`
+WHERE T3.`attribute_name` = 'Strength'
+  AND T2.`attribute_value` = (
+        SELECT MAX(T4.`attribute_value`)
+        FROM   `hero_attribute` AS T4
+        JOIN   `attribute`      AS T5 ON T4.`attribute_id` = T5.`id`
+        WHERE  T5.`attribute_name` = 'Strength'
+      );

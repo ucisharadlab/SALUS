@@ -1,0 +1,10 @@
+Correctness: No – the query forces every recipient to have matching rows in `attendance` (and therefore `event`). This requirement is not stated in the question and can incorrectly exclude students who did not attend any recorded event but still received funds. The extra joins are logically unnecessary.
+Is_ambiguous: No – the question clearly asks for student full names and amounts for funds received on 2019-09-09.
+Explanation: The needed data are in `income` (date_received, amount, link_to_member) and `member` (first_name, last_name, member_id). Inner-joining to `attendance` / `event` restricts results and may drop valid rows. `DISTINCT` is also unneeded once the superfluous joins are removed. Correct query:
+SELECT m.first_name,
+       m.last_name,
+       i.amount
+FROM income AS i
+JOIN member AS m ON m.member_id = i.link_to_member
+WHERE i.date_received = '2019-09-09';
+Revised: SELECT m.first_name, m.last_name, i.amount FROM income AS i JOIN member AS m ON m.member_id = i.link_to_member WHERE i.date_received = '2019-09-09';

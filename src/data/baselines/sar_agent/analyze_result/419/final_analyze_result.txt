@@ -1,0 +1,19 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation:  
+• The query correctly applies the conditions for “no borders” (`borderColor = 'borderless'`) and for a rank higher (numerically larger) than 12000 (`edhrecRank > 12000`).  
+• The question, however, explicitly asks for **colour cards** (i.e., non-colourless cards).  The SQL does not check the `colors` (or `colorIdentity`) field, so any borderless, colourless card with `edhrecRank > 12000` would also be counted.  This violates the literal reading of the question, meaning the query is logically incomplete.  
+• In the current snapshot of the data all seven such borderless cards happen to be coloured, so the numeric result is presently correct by coincidence; nevertheless the query itself is not guaranteed to satisfy the requirement.  
+• The wording “colour cards” is itself ambiguous: it could be interpreted as “cards that possess at least one colour” (most likely) or simply “cards” in general.  Because of this dual reading, the question leaves room for multiple correct SQL formulations.  
+
+Revised:  
+If the intended meaning is to exclude colourless cards the query should explicitly filter out empty/NULL colour values, e.g.
+
+```
+SELECT COUNT(id)
+FROM cards
+WHERE borderColor = 'borderless'
+  AND edhrecRank  > 12000
+  AND TRIM(COALESCE(colors, '')) <> ''   -- ensures the card has at least one colour
+  AND UPPER(colors) NOT IN ('C','COLORLESS');
+```

@@ -1,0 +1,30 @@
+Query: SELECT SUM(`Consumption`) / 12 AS MonthlyConsumption FROM `yearmonth` LIMIT 5;
+Explaination of the query: See structure
+Result: [(284623343.81083333,)]
+Query: SELECT * FROM `yearmonth` LIMIT 5;
+Explaination of the query: Preview yearmonth
+Result: [(5, '201207', 528.3), (5, '201302', 1598.28), (5, '201303', 1931.36), (5, '201304', 1497.14), (6, '201203', 51.06)]
+Query: SELECT COUNT(*) FROM `customers` WHERE `Currency` = 'EUR';
+Explaination of the query: Count euro customers
+Result: [(2002,)]
+Query: SELECT `CustomerID`, COUNT(*) as cnt FROM `yearmonth` GROUP BY `CustomerID` HAVING cnt <> 12 LIMIT 5;
+Explaination of the query: Find customers not having exactly 12 months
+Result: [(5, 4), (6, 13), (7, 17), (9, 4), (20, 15)]
+Query: SELECT `T1`.`CustomerID`, SUM(`T2`.`Consumption`)/12 AS avg_month FROM `customers` AS T1 JOIN `yearmonth` AS T2 ON T1.`CustomerID` = T2.`CustomerID` WHERE T1.`Currency` = 'EUR' GROUP BY T1.`CustomerID` ORDER BY avg_month DESC LIMIT 5;
+Explaination of the query: Compute avg month consumption like annotated.
+Result: [(45554, 85002.47333333333), (952, 57565.394166666665), (47124, 50918.80416666667), (465, 49055.28166666667), (2361, 32620.38)]
+Query: SELECT SUM(`T2`.`Consumption`) / 12 AS MonthlyConsumption
+FROM `customers` AS T1
+INNER JOIN `yearmonth` AS T2 ON T1.`CustomerID` = T2.`CustomerID`
+WHERE T1.`Currency` = 'EUR'
+GROUP BY T1.`CustomerID`
+ORDER BY MonthlyConsumption DESC
+LIMIT 5;
+Explaination of the query: Compute top 5 as earlier
+Result: [(85002.47333333333,), (57565.394166666665,), (50918.80416666667,), (49055.28166666667,), (32620.38,)]
+Query: SELECT MAX(`y`.`Consumption`) FROM `yearmonth` AS y JOIN `customers` AS c ON y.`CustomerID` = c.`CustomerID` WHERE c.`Currency` = 'EUR';
+Explaination of the query: max monthly consumption among euro customers
+Result: [(227434.61,)]
+Query: SELECT `y`.`CustomerID`, SUM(`y`.`Consumption`)/COUNT(*) AS avg_per_month, COUNT(*) as months FROM `yearmonth` as y JOIN `customers` as c ON y.`CustomerID`=c.`CustomerID` WHERE c.`Currency`='EUR' GROUP BY y.`CustomerID` ORDER BY avg_per_month DESC LIMIT 5;
+Explaination of the query: Compute average monthly consumption per number of months for euro customers
+Result: [(45554, 51001.484, 20), (952, 36357.09105263158, 19), (465, 34627.257647058825, 17), (47124, 33945.86944444445, 18), (2361, 27960.325714285715, 14)]

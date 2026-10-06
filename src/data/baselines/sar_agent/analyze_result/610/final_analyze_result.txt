@@ -1,0 +1,10 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The original query identifies the user(s) who hold the maximum reputation correctly, but it lists every individual badge record for that user. Because a user can earn the same badge many times, the result set can contain many duplicate badge names (e.g. 205 rows of “Nice Answer”).  The question asks for “the name of badge … obtained”, which implies the unique badge names, so duplicates must be eliminated.  Adding DISTINCT (or grouping) over the badge `Name` column fixes the issue; all other joins and filters are appropriate.  
+Revised:
+```
+SELECT DISTINCT b.`Name`
+FROM `users` AS u
+JOIN `badges` AS b ON u.`Id` = b.`UserId`
+WHERE u.`Reputation` = (SELECT MAX(`Reputation`) FROM `users`);
+```

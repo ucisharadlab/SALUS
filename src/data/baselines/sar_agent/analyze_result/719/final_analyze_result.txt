@@ -1,0 +1,9 @@
+Correctness: No – the query may over-count if a hero appears multiple times in `hero_power` for the same power; the task asks for the number of distinct superheroes, not rows in the join. 
+Is_ambiguous: No – the question clearly requests the count of superheroes who both possess “Super Strength” and are taller than 200 cm.
+Explanation: The join between `superhero`, `hero_power`, and `superpower` is appropriate to identify heroes with the desired power, and the `height_cm > 200` filter matches the “over 200 cm” criterion.  However, `COUNT(T1.id)` counts every joined row.  If a hero is linked to the same power more than once (or linked to several other powers and those rows remain after the filter), the hero would be counted multiple times, inflating the result.  The correct measure is the number of distinct heroes, which requires `COUNT(DISTINCT T1.id)` (or an aggregation after `GROUP BY T1.id`).  Because the possibility of duplicates exists by design, the supplied query is not guaranteed to return the right answer in all cases.
+Revised: SELECT COUNT(DISTINCT T1.id)
+       FROM `superhero`  AS T1
+       JOIN `hero_power` AS T2 ON T1.id = T2.hero_id
+       JOIN `superpower` AS T3 ON T2.power_id = T3.id
+      WHERE T3.power_name = 'Super Strength'
+        AND T1.height_cm > 200;

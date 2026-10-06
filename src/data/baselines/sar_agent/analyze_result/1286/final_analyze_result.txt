@@ -1,0 +1,14 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The question asks for the number of patients (unique people) who have an abnormal ALP level (≥300) and who are admitted to the hospital (Admission = '+').  In the Laboratory table each patient can appear many times; therefore we must count distinct patient IDs.  The annotator’s query
+
+SELECT COUNT(T1.ID) …
+
+counts every Laboratory row that meets the condition, not every patient.  Our check showed it returns 299, whereas counting DISTINCT IDs returns 24, proving the original result is inflated by duplicates.  The schema usage and conditions are otherwise correct.
+
+Revised: 
+SELECT COUNT(DISTINCT T1.ID)
+FROM Patient AS T1
+JOIN Laboratory AS T2 ON T1.ID = T2.ID
+WHERE T2.ALP >= 300
+  AND T1.Admission = '+';

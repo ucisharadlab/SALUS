@@ -1,0 +1,63 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/640/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "gold": "SELECT SUM(IIF(T1.DisplayName = 'Mornington', T3.ViewCount, 0)) - SUM(IIF(T1.DisplayName = 'Amos', T3.ViewCount, 0)) AS diff FROM users AS T1 INNER JOIN postHistory AS T2 ON T1.Id = T2.UserId INNER JOIN posts AS T3 ON T3.Id = T2.PostId",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/640/ce0.sqlite": [
+      "(0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(p.ViewCount) FROM posts p JOIN users u ON p.OwnerUserId = u.Id WHERE u.DisplayName = 'Mornington' AND p.ViewCount IS NOT NULL) - (SELECT SUM(p.ViewCount) FROM posts p JOIN users u ON p.OwnerUserId = u.Id WHERE u.DisplayName = 'Amos' AND p.ViewCount IS NOT NULL) AS ViewCountDifference;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/640/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CASE WHEN u.DisplayName = 'Mornington' THEN p.ViewCount ELSE 0 END) - SUM(CASE WHEN u.DisplayName = 'Amos' THEN p.ViewCount ELSE 0 END) AS ViewCountDifference FROM posts p JOIN users u ON p.OwnerUserId = u.Id WHERE p.ViewCount IS NOT NULL AND (u.DisplayName = 'Mornington' OR u.DisplayName = 'Amos');",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/640/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "WITH MorningtonViews AS (SELECT SUM(ViewCount) AS TotalViews FROM posts JOIN users ON posts.OwnerUserId = users.Id WHERE DisplayName = 'Mornington' AND ViewCount IS NOT NULL), AmosViews AS (SELECT SUM(ViewCount) AS TotalViews FROM posts JOIN users ON posts.OwnerUserId = users.Id WHERE DisplayName = 'Amos' AND ViewCount IS NOT NULL) SELECT (SELECT TotalViews FROM MorningtonViews) - (SELECT TotalViews FROM AmosViews) AS ViewCountDifference;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/640/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(p.ViewCount * (CASE WHEN u.DisplayName = 'Mornington' THEN 1 ELSE -1 END)) AS ViewCountDifference FROM posts p JOIN users u ON p.OwnerUserId = u.Id WHERE u.DisplayName IN ('Mornington', 'Amos') AND p.ViewCount IS NOT NULL;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/640/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(p.ViewCount) FILTER (WHERE u.DisplayName = 'Mornington') - SUM(p.ViewCount) FILTER (WHERE u.DisplayName = 'Amos') AS ViewCountDifference FROM posts p JOIN users u ON p.OwnerUserId = u.Id WHERE p.ViewCount IS NOT NULL;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/640/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SELECT SUM(ViewCount) FROM posts p JOIN users u ON p.OwnerUserId = u.Id WHERE u.DisplayName = 'Mornington' AND p.ViewCount IS NOT NULL) - (SELECT SUM(ViewCount) FROM posts p JOIN users u ON p.OwnerUserId = u.Id WHERE u.DisplayName = 'Amos' AND p.ViewCount IS NOT NULL) AS ViewCountDifference;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/640/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT SUM(CASE WHEN u.DisplayName = 'Mornington' THEN p.ViewCount ELSE -p.ViewCount END) AS ViewCountDifference FROM posts p JOIN users u ON p.OwnerUserId = u.Id WHERE u.DisplayName IN ('Mornington', 'Amos') AND p.ViewCount IS NOT NULL;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/640/ce0.sqlite": [
+      "(None,)"
+    ]
+  }
+]

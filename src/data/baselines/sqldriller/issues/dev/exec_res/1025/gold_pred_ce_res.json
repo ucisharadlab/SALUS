@@ -1,0 +1,104 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483648',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Netherlands Eredivisie',)",
+      "('Italy Serie A',)"
+    ]
+  },
+  {
+    "gold": "SELECT t2.name FROM Match AS t1 INNER JOIN League AS t2 ON t1.league_id = t2.id WHERE t1.season = '2015/2016' GROUP BY t2.name ORDER BY SUM(t1.home_team_goal + t1.away_team_goal) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Netherlands Eredivisie',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.name FROM League T2 JOIN (SELECT league_id, SUM(home_team_goal + away_team_goal) AS total_goals FROM Match WHERE season = '2015/2016' GROUP BY league_id) T1 ON T2.id = T1.league_id ORDER BY T1.total_goals DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483648',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Netherlands Eredivisie',)"
+    ]
+  },
+  {
+    "pred": "SELECT name FROM League WHERE id = (SELECT league_id FROM Match WHERE season = '2015/2016' GROUP BY league_id ORDER BY SUM(home_team_goal + away_team_goal) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Italy Serie A',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.name FROM League T2 WHERE T2.id = (SELECT league_id FROM Match WHERE season = '2015/2016' GROUP BY league_id ORDER BY SUM(home_team_goal + away_team_goal) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Italy Serie A',)"
+    ]
+  },
+  {
+    "pred": "SELECT name FROM League WHERE id IN (SELECT league_id FROM Match WHERE season = '2015/2016' GROUP BY league_id HAVING SUM(home_team_goal + away_team_goal) = (SELECT MAX(total_goals) FROM (SELECT SUM(home_team_goal + away_team_goal) AS total_goals FROM Match WHERE season = '2015/2016' GROUP BY league_id)));",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483648',)",
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Netherlands Eredivisie',)",
+      "('Italy Serie A',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.name FROM (SELECT league_id, SUM(home_team_goal + away_team_goal) AS total_goals FROM Match WHERE season = '2015/2016' GROUP BY league_id) AS T1 JOIN League T2 ON T1.league_id = T2.id ORDER BY T1.total_goals DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483648',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Netherlands Eredivisie',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.name FROM League T2 INNER JOIN (SELECT league_id, SUM(home_team_goal + away_team_goal) AS total_goals FROM Match WHERE season = '2015/2016' GROUP BY league_id) T1 ON T2.id = T1.league_id ORDER BY T1.total_goals DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483648',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Netherlands Eredivisie',)"
+    ]
+  },
+  {
+    "pred": "SELECT T2.name FROM League T2, (SELECT league_id, SUM(home_team_goal + away_team_goal) AS total_goals FROM Match WHERE season = '2015/2016' GROUP BY league_id) T1 WHERE T2.id = T1.league_id ORDER BY T1.total_goals DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483648',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Netherlands Eredivisie',)"
+    ]
+  },
+  {
+    "pred": "SELECT name FROM League WHERE id = (SELECT league_id FROM Match GROUP BY league_id HAVING season = '2015/2016' ORDER BY SUM(home_team_goal + away_team_goal) DESC LIMIT 1);",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce0.sqlite": [
+      "('2147483649',)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1025/ce1.sqlite": [
+      "('Italy Serie A',)"
+    ]
+  }
+]

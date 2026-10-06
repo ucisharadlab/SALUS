@@ -1,0 +1,59 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1392/ce1.sqlite": [
+      "('Sponsorship',)",
+      "('School Appropration',)"
+    ]
+  },
+  {
+    "pred": "SELECT source FROM income WHERE date_received BETWEEN '2019-09-01' AND '2019-09-30' GROUP BY source ORDER BY SUM(amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1392/ce1.sqlite": [
+      "('Sponsorship',)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.source FROM (SELECT source, SUM(amount) AS total_amount FROM income WHERE date_received >= '2019-09-01' AND date_received <= '2019-09-30' GROUP BY source) T1 ORDER BY T1.total_amount DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1392/ce1.sqlite": [
+      "('School Appropration',)"
+    ]
+  },
+  {
+    "pred": "SELECT source FROM income WHERE date_received BETWEEN '2019-09-01' AND '2019-09-30' GROUP BY source HAVING SUM(amount) = (SELECT MAX(total_amount) FROM (SELECT SUM(amount) AS total_amount FROM income WHERE date_received BETWEEN '2019-09-01' AND '2019-09-30' GROUP BY source) T2);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1392/ce1.sqlite": [
+      "('School Appropration',)",
+      "('Sponsorship',)"
+    ]
+  },
+  {
+    "pred": "WITH RankedSources AS (SELECT source, RANK() OVER (ORDER BY SUM(amount) DESC) AS rank FROM income WHERE date_received BETWEEN '2019-09-01' AND '2019-09-30' GROUP BY source) SELECT source FROM RankedSources WHERE rank = 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1392/ce1.sqlite": [
+      "('Sponsorship',)",
+      "('School Appropration',)"
+    ]
+  },
+  {
+    "pred": "SELECT source FROM income WHERE strftime('%Y-%m', date_received) = '2019-09' GROUP BY source ORDER BY SUM(amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1392/ce1.sqlite": [
+      "('Sponsorship',)"
+    ]
+  },
+  {
+    "pred": "SELECT source FROM income WHERE substr(date_received, 1, 7) = '2019-09' GROUP BY source ORDER BY SUM(amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1392/ce1.sqlite": [
+      "('Sponsorship',)"
+    ]
+  },
+  {
+    "pred": "SELECT source FROM income WHERE date_received LIKE '2019-09%' GROUP BY source ORDER BY SUM(amount) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1392/ce1.sqlite": [
+      "('Sponsorship',)"
+    ]
+  }
+]

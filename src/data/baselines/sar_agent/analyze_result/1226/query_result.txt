@@ -1,0 +1,24 @@
+Query: SELECT COUNT(*) FROM `Laboratory` LIMIT 5;
+Explaination of the query: see if we can run queries
+Result: [(13908,)]
+Query: SELECT * FROM `Laboratory` LIMIT 5;
+Explaination of the query: preview Laboratory
+Result: [(27654, '1991-09-11', 34, 36, 567, 166, 4.5, 3.3, 3.8, 29, 0.8, 0.3, 165, None, 9, None, 5.0, 2.6, 6.4, 20.3, 227, None, None, None, None, None, None, None, 339, 145, 46, '0.6', None, None, None, None, None, None, None, None, None, None, None, None), (27654, '1991-09-17', 29, 31, 579, 154, 5.1, 3.4, 4.2, 36, 0.8, None, None, None, None, None, 10.4, 2.9, 6.7, 21.6, 242, None, None, None, None, None, None, None, 771, 188, 132, '0.6', None, None, None, None, None, None, None, None, None, None, None, None), (27654, '1991-09-19', 26, 22, 684, 138, 5.5, 3.6, 4.9, 34, 0.9, None, None, None, None, 88, 10.5, 3.4, 7.9, 24.7, 233, None, None, None, None, None, None, None, None, None, None, '2.7', None, None, None, None, None, None, None, None, None, None, None, None), (27654, '1991-09-20', 23, 18, 552, 131, 4.2, 2.9, 4.8, 22, 0.7, 0.2, 134, None, 10, None, 10.3, 2.6, 6.1, 19.3, 201, None, None, None, None, None, None, None, 430, 118, 56, '1.2', None, None, None, None, None, None, None, None, None, None, None, None), (27654, '1991-09-21', None, None, None, None, None, None, None, None, None, None, None, None, None, None, 14.3, 3.2, 7.2, 23.4, 215, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None)]
+Query: WITH max_cho_per_patient AS (
+  SELECT `ID`, MAX(`T-CHO`) AS max_cho
+  FROM `Laboratory`
+  GROUP BY `ID`
+)
+SELECT p.`ID`, m.max_cho, p.`Birthday`
+FROM max_cho_per_patient m
+JOIN `Patient` p ON p.`ID` = m.`ID`
+ORDER BY m.max_cho DESC, p.`Birthday` ASC
+LIMIT 5;
+Explaination of the query: Compute patient-level max cholesterol and sort to see if top row matches annotated query.
+Result: [(1185720, 568, '1953-10-12'), (1923445, 551, '1959-01-10'), (2933261, 478, '1967-08-26'), (2343945, 470, '1952-09-10'), (3380563, 443, '1956-04-10')]
+Query: SELECT T1.`ID`, T2.`T-CHO`, T1.`Birthday`, T2.`Date` FROM `Patient` T1 INNER JOIN `Laboratory` T2 ON T1.`ID` = T2.`ID` ORDER BY T2.`T-CHO` DESC, T1.`Birthday` ASC LIMIT 5;
+Explaination of the query: Run annotated query to see the top records
+Result: [(1185720, 568, '1953-10-12', '1981-05-06'), (1923445, 551, '1959-01-10', '1982-05-18'), (1923445, 509, '1959-01-10', '1982-05-11'), (1923445, 503, '1959-01-10', '1982-05-25'), (1923445, 492, '1959-01-10', '1982-07-20')]
+Query: SELECT `ID`, COUNT(*) FROM `Laboratory` WHERE `T-CHO` = (SELECT MAX(`T-CHO`) FROM `Laboratory`) GROUP BY `ID` LIMIT 5;
+Explaination of the query: Find how many patients share the maximum T-CHO
+Result: [(1185720, 1)]

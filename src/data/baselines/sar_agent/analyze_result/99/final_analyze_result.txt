@@ -1,0 +1,19 @@
+Correctness: Yes  
+Is_ambiguous: No  
+Explanation: The query joins `loan` and `account`, filters to loans whose `duration` (validity) is greater than 12 months and whose account opening year (derived from `account.date`) is 1993, then orders the remaining rows by the approved `amount` in descending order and keeps the top one.  
+This exactly isolates the account(s) with the maximum approved amount among loans that satisfy the required conditions.  In the supplied data there is only one such maximum (amount = 482 940 for account 10451), so returning a single row is sufficient and the query’s result is correct.  
+The only potential weakness is that, if two or more accounts shared the same highest amount, the LIMIT 1 would arbitrarily drop the rest.  That situation does not occur in the data set, therefore the answer is still right for this database.  
+Revised:  (not necessary, but to be mathematically robust and keep all tied accounts one could replace the ORDER/LIMIT with a MAX-sub-query:)  
+```
+SELECT L.account_id
+FROM loan L
+JOIN account A ON A.account_id = L.account_id
+WHERE L.duration > 12
+  AND STRFTIME('%Y', A.date) = '1993'
+  AND L.amount = (
+        SELECT MAX(amount)
+        FROM loan L2
+        JOIN account A2 ON A2.account_id = L2.account_id
+        WHERE L2.duration > 12
+          AND STRFTIME('%Y', A2.date) = '1993')
+```  

@@ -1,0 +1,27 @@
+Query: SELECT COUNT(*) FROM cards WHERE setCode = (SELECT code FROM sets WHERE name='Coldsnap') LIMIT 5;
+Explaination of the query: count Coldsnap cards
+Result: [(155,)]
+Query: SELECT T1.name, T1.convertedManaCost FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap' ORDER BY convertedManaCost DESC LIMIT 5;
+Explaination of the query: top 5 CMC for Coldsnap
+Result: [('Sunscour', 7.0), ('Commandeer', 7.0), ('Jokulmorder', 7.0), ('Rimefeather Owl', 7.0), ('Herald of Leshrac', 7.0)]
+Query: SELECT T1.name, COUNT(*) as cnt FROM cards as T1 INNER JOIN sets as T2 ON T2.code=T1.setCode WHERE T2.name='Coldsnap' AND T1.convertedManaCost = (SELECT MAX(convertedManaCost) FROM cards as c1 INNER JOIN sets as s1 ON s1.code=c1.setCode WHERE s1.name='Coldsnap') GROUP BY T1.name ORDER BY cnt DESC LIMIT 5;
+Explaination of the query: Check duplicates among highest CMC cards
+Result: [('Tresserhorn Skyknight', 1), ('Sunscour', 1), ('Soul Spike', 1), ('Rimescale Dragon', 1), ('Rimefeather Owl', 1)]
+Query: SELECT T1.name FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap' AND T1.convertedManaCost = (SELECT MAX(convertedManaCost) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap') LIMIT 5;
+Explaination of the query: execute annotated query limit 5
+Result: [('Sunscour',), ('Commandeer',), ('Jokulmorder',), ('Rimefeather Owl',), ('Herald of Leshrac',)]
+Query: SELECT MAX(`convertedManaCost`) FROM `cards` AS c INNER JOIN `sets` AS s ON s.code=c.setCode WHERE s.name='Coldsnap' LIMIT 5;
+Explaination of the query: get max CMC
+Result: [(7.0,)]
+Query: SELECT T1.name, COUNT(*) as cnt FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code=T1.setCode WHERE T2.name='Coldsnap' AND T1.convertedManaCost=(SELECT MAX(c1.convertedManaCost) FROM cards c1 INNER JOIN sets s1 ON s1.code=c1.setCode WHERE s1.name='Coldsnap') GROUP BY T1.name HAVING cnt>1 LIMIT 5;
+Explaination of the query: Check duplicates for highest CMC cards
+Result: []
+Query: SELECT `name`, `convertedManaCost` FROM `cards` c INNER JOIN `sets` s ON s.code=c.setCode WHERE s.name='Coldsnap' AND `convertedManaCost`= (SELECT MAX(c1.convertedManaCost) FROM cards c1 INNER JOIN sets s1 ON s1.code=c1.setCode WHERE s1.name='Coldsnap') ORDER BY name LIMIT 50;
+Explaination of the query: list all cards in Coldsnap with max CMC
+Error: ambiguous column name: name
+Query: SELECT c.name, c.convertedManaCost FROM cards c INNER JOIN sets s ON s.code=c.setCode WHERE s.name='Coldsnap' AND c.convertedManaCost = (SELECT MAX(c1.convertedManaCost) FROM cards c1 INNER JOIN sets s1 ON s1.code=c1.setCode WHERE s1.name='Coldsnap') ORDER BY c.name LIMIT 50;
+Explaination of the query: list all cards in Coldsnap with max converted mana cost
+Result: [('Allosaurus Rider', 7.0), ('Commandeer', 7.0), ('Fury of the Horde', 7.0), ('Garza Zol, Plague Queen', 7.0), ('Herald of Leshrac', 7.0), ('Jokulmorder', 7.0), ('Panglacial Wurm', 7.0), ('Rimefeather Owl', 7.0), ('Rimescale Dragon', 7.0), ('Soul Spike', 7.0), ('Sunscour', 7.0), ('Tresserhorn Skyknight', 7.0)]
+Query: SELECT T1.name FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap' AND T1.convertedManaCost = (SELECT MAX(convertedManaCost) FROM cards AS T1 INNER JOIN sets AS T2 ON T2.code = T1.setCode WHERE T2.name = 'Coldsnap') ORDER BY T1.name;
+Explaination of the query: run annotated query no limit, order
+Result: [('Allosaurus Rider',), ('Commandeer',), ('Fury of the Horde',), ('Garza Zol, Plague Queen',), ('Herald of Leshrac',), ('Jokulmorder',), ('Panglacial Wurm',), ('Rimefeather Owl',), ('Rimescale Dragon',), ('Soul Spike',), ('Sunscour',), ('Tresserhorn Skyknight',)]

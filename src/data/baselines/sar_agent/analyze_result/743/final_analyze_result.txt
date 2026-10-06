@@ -1,0 +1,18 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation:  
+The descriptive text under the schema defines the targeted behaviour (“act in their own self-interest or make decisions based on their own moral code”) as alignment = 'Neutral'.  The supplied SQL, however, filters on alignment = 'Bad', so it is computing the percentage and Marvel count for the wrong group (212 heroes, 28.27 % of total, 118 Marvel) instead of the correct figures (28 heroes, 3.73 %, 10 Marvel).  Apart from the mis-chosen alignment value the joins and percentage calculation are syntactically fine.  
+
+Because the task also includes an “External Knowledge” bullet that maps the same phrasing to alignment = 'Bad', the question has two contradictory interpretations; therefore the question itself is ambiguous.  
+
+Revised:  
+If the intended group is the definition-based one (alignment = 'Neutral') the query should be:
+```
+SELECT
+       CAST(COUNT(*) AS REAL) * 100.0 / (SELECT COUNT(*) FROM `superhero`) AS percent_neutral,
+       SUM(CASE WHEN p.`publisher_name` = 'Marvel Comics' THEN 1 ELSE 0 END) AS marvel_neutral
+FROM   `superhero`  s
+JOIN   `alignment`  a ON a.`id` = s.`alignment_id`
+JOIN   `publisher`  p ON p.`id` = s.`publisher_id`
+WHERE  a.`alignment` = 'Neutral';
+```

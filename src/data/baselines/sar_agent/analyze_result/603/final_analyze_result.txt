@@ -1,0 +1,18 @@
+Correctness: No  
+Is_ambiguous: Mildly, but overall No  
+Explanation: The question asks for the total favourites the user (Id = 686) received in 2011. In the schema the only place to get a favourite counter is the `FavoriteCount` column of the user’s posts. Therefore we must look at posts where the author (`OwnerUserId`) is 686 and the post’s creation year is 2011, then sum their `FavoriteCount` values.
+
+The annotated query instead:
+1. Looks at the `postHistory` table, not the `posts` table, to decide which posts belong to the user. `postHistory.UserId` is the editor of a revision, not necessarily the post owner, so it can include posts that are not the user’s.
+2. Filters revisions made by that user in 2011, not posts created in 2011.
+3. Uses `SUM(DISTINCT FavoriteCount)` to compensate for multiple revisions of the same post, which further distorts the total.
+
+Running both queries shows the difference: the correct query returns 2, while the annotated one returns 6 – proving the annotated query produces an incorrect result.
+
+Revised:  
+```
+SELECT SUM(`FavoriteCount`) AS total_favourite_count
+FROM `posts`
+WHERE `OwnerUserId` = 686
+  AND STRFTIME('%Y', `CreaionDate`) = '2011';
+```

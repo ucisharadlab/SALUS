@@ -1,0 +1,50 @@
+Query: SELECT COUNT(*) FROM `molecule`
+Explaination of the query: Number of molecules
+Result: [(343,)]
+Query: SELECT T2.element, COUNT(DISTINCT T2.molecule_id) as cnt
+FROM `molecule` AS T1 JOIN `atom` AS T2 ON T1.`molecule_id` = T2.`molecule_id`
+WHERE T1.`label` = '+'
+GROUP BY T2.element
+ORDER BY cnt
+LIMIT 5
+Explaination of the query: Checking least common elements
+Result: [('cu', 1), ('f', 1), ('y', 1), ('zn', 1), ('na', 6)]
+Query: SELECT T.element FROM ( SELECT T2.element, COUNT(DISTINCT T2.molecule_id) FROM `molecule` AS T1 INNER JOIN `atom` AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.label = '+' GROUP BY T2.element ORDER BY COUNT(DISTINCT T2.molecule_id) LIMIT 1 ) t
+Explaination of the query: execute annotated query
+Result: [('cu',)]
+Query: SELECT COUNT(*) FROM `molecule` WHERE `label` = '+'
+Explaination of the query: count of carcinogenic molecules
+Result: [(152,)]
+Query: SELECT T2.element, COUNT(*) as atom_cnt
+FROM `molecule` AS T1 JOIN `atom` AS T2 ON T1.`molecule_id` = T2.`molecule_id`
+WHERE T1.`label` = '+'
+GROUP BY T2.element
+ORDER BY atom_cnt ASC
+LIMIT 5
+Explaination of the query: least common by atom count
+Result: [('y', 1), ('zn', 1), ('cu', 2), ('f', 4), ('p', 9)]
+Query: SELECT T2.element, COUNT(DISTINCT T2.molecule_id) as cnt
+FROM `molecule` T1 JOIN `atom` T2 ON T1.`molecule_id` = T2.`molecule_id`
+WHERE T1.label = '+'
+GROUP BY T2.element
+ORDER BY cnt ASC, T2.element ASC
+LIMIT 10
+Explaination of the query: Get counts ascending with tie ordering
+Result: [('cu', 1), ('f', 1), ('y', 1), ('zn', 1), ('na', 6), ('p', 9), ('br', 14), ('s', 16), ('cl', 44), ('n', 81)]
+Query: SELECT T2.element, COUNT(DISTINCT T2.molecule_id) as cnt
+FROM `molecule` T1 JOIN `atom` T2 ON T1.`molecule_id`=T2.`molecule_id`
+WHERE T1.`label` = '+'
+GROUP BY T2.element
+ORDER BY cnt, T2.element
+LIMIT 20
+Explaination of the query: list ascending counts of distinct molecules per element
+Result: [('cu', 1), ('f', 1), ('y', 1), ('zn', 1), ('na', 6), ('p', 9), ('br', 14), ('s', 16), ('cl', 44), ('n', 81), ('o', 94), ('h', 144), ('c', 151)]
+Query: SELECT T2.element, COUNT(DISTINCT T2.molecule_id) as cnt
+FROM `molecule` T1 JOIN `atom` T2 ON T1.`molecule_id` = T2.`molecule_id`
+WHERE T1.`label` = '+'
+GROUP BY T2.element
+HAVING cnt = 1
+ORDER BY T2.element
+LIMIT 5
+Explaination of the query: List elements that occur in exactly one carcinogenic molecule
+Result: [('cu', 1), ('f', 1), ('y', 1), ('zn', 1)]

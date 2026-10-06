@@ -1,0 +1,26 @@
+Correctness: No – the annotated query selects the customer using an unrelated table (`yearmonth`) and calculates the average price incorrectly with SUM(Price/Amount), so it does not answer the question.
+Is_ambiguous: No – the question clearly requests the customer with the highest total spend, that customer’s average unit price, and the currency.
+Explanation: 
+1. Top-spending customer must be found by total spend = Σ(Amount × Price) per customer in `transactions_1k`. Control query shows customer 13665 is the highest, while the annotated query chooses customer 12459 from the `yearmonth` table.
+2. The average price per single item needs the weighted formula Σ(Amount × Price) / Σ(Amount). The annotated query uses SUM(Price/Amount), which is mathematically wrong.
+3. Currency is joined correctly but corresponds to the wrong customer because of 1.
+
+Revised:
+WITH cust_totals AS (
+    SELECT  t.`CustomerID`,
+            SUM(t.`Amount` * t.`Price`)                         AS total_spent,
+            SUM(t.`Amount` * t.`Price`)*1.0 / SUM(t.`Amount`)   AS avg_price_per_item
+    FROM    `transactions_1k` t
+    GROUP BY t.`CustomerID`
+),
+ top_cust AS (
+    SELECT `CustomerID`, avg_price_per_item
+    FROM cust_totals
+    ORDER BY total_spent DESC
+    LIMIT 1
+)
+SELECT tc.`CustomerID`,
+       tc.`avg_price_per_item`,
+       c.`Currency`
+FROM   top_cust tc
+JOIN   `customers` c ON c.`CustomerID` = tc.`CustomerID`;

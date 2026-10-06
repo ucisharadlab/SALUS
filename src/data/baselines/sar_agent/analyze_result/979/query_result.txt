@@ -1,0 +1,19 @@
+Query: SELECT raceId, COUNT(*) as total_rows, SUM(time IS NOT NULL) as sum_expr, COUNT(time) as count_time FROM results GROUP BY raceId ORDER BY raceId LIMIT 5
+Explaination of the query: Check behavior of SUM boolean vs COUNT for time
+Result: [(1, 20, 11, 11), (2, 20, 10, 10), (3, 20, 13, 13), (4, 20, 13, 13), (5, 20, 8, 8)]
+Query: SELECT raceId, COUNT(time IS NOT NULL) as cnt_expr, COUNT(time) as cnt_time, SUM(time IS NOT NULL) as sum_expr, COUNT(*) AS total_rows FROM results GROUP BY raceId ORDER BY raceId LIMIT 5
+Explaination of the query: Compare counts on expression vs COUNT(time) vs sum to ensure understanding
+Result: [(1, 20, 11, 11, 20), (2, 20, 10, 10, 20), (3, 20, 13, 13, 20), (4, 20, 13, 13, 20), (5, 20, 8, 8, 20)]
+Query: SELECT raceId, COUNT(*) as total_rows, COUNT(time) as finishers FROM results GROUP BY raceId ORDER BY total_rows DESC, raceId LIMIT 10
+Explaination of the query: Find race(s) with maximum total rows and show finishers
+Result: [(800, 55, 17), (809, 47, 11), (357, 39, 2), (359, 39, 5), (360, 39, 3), (361, 39, 4), (362, 39, 4), (363, 39, 4), (365, 39, 7), (366, 39, 6)]
+Query: SELECT raceId, COUNT(time) AS finishers
+FROM results
+GROUP BY raceId
+ORDER BY finishers DESC, raceId
+LIMIT 10
+Explaination of the query: Find race(s) with most finishers by counting non-null time:
+Result: [(855, 19), (887, 18), (9, 17), (800, 17), (862, 17), (877, 17), (894, 17), (27, 16), (345, 16), (355, 16)]
+Query: SELECT MAX(COUNT(time)) OVER () AS max_finishers FROM results GROUP BY raceId LIMIT 5
+Explaination of the query: Compute maximum COUNT(time) value across races
+Result: [(19,), (19,), (19,), (19,), (19,)]

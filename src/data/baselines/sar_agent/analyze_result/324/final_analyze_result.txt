@@ -1,0 +1,14 @@
+Correctness: No – the query calculates the percentage of single bonds, not the percentage of atoms that have a single bond.
+Is_ambiguous: Yes – “atoms with single bond” could mean atoms that have at least one single bond or atoms that have only single bonds; the common reading is the former but the wording allows both.
+Explanation: The annotated query works only on the bond table, dividing the number of single-bond rows by all bond rows. It ignores atoms entirely, whereas the task requires the share of atoms that participate in at least one single ( “–” ) bond. Using the connected table joined to bond we find 11 854 distinct atoms with ≥1 single bond out of 12 333 total atoms, i.e. ≈96.12 %. Hence the provided query is incorrect.
+Revised:
+```
+WITH single_atoms AS (
+    SELECT DISTINCT c.`atom_id`
+    FROM `connected` c
+    JOIN `bond` b ON b.`bond_id` = c.`bond_id`
+    WHERE b.`bond_type` = '-'
+)
+SELECT 100.0 * (SELECT COUNT(*) FROM single_atoms)
+       / (SELECT COUNT(DISTINCT `atom_id`) FROM `atom`) AS percentage_single_bond_atoms;
+```

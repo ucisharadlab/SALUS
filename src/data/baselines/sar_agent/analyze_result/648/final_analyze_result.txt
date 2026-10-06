@@ -1,0 +1,20 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: 
+The query joins users and posts and filters posts whose FavoriteCount > 150, so it returns the owners’ display names and website URL.  However:
+1. The question says “available website URLs”.  That normally means only URLs that actually exist; rows where `WebsiteUrl` is NULL or empty should therefore be excluded.  The annotated query does not apply such a filter, so users with a missing URL (e.g. *claws*) are included.
+2. If a single user owns several qualifying posts the query will output one row per post.  The wording sounds like we need a list of users, i.e. duplicates should be removed (via DISTINCT or GROUP BY).  The annotated query does not do this.
+Because of these issues the query does not fully satisfy the requirement.
+
+Ambiguity: 
+The phrase “available website URLs” can be read two ways (include NULLs vs. exclude them), and “of the post” could be interpreted as one row per post or one row per user.  Thus the question itself is ambiguous.
+
+Revised:
+Assuming “available” means the URL must be present and we want one row per user:
+```
+SELECT DISTINCT u.`DisplayName`, u.`WebsiteUrl`
+FROM `users` AS u
+JOIN `posts` AS p ON u.`Id` = p.`OwnerUserId`
+WHERE p.`FavoriteCount` > 150
+  AND u.`WebsiteUrl` IS NOT NULL;
+```

@@ -1,0 +1,19 @@
+Correctness: No – the annotated query joins the comments table to itself (T2.PostId = T2.Id) instead of joining comments to posts, and it filters on posts.Score, not on comments.Score, so it fails to retrieve “posts with positive comments” and the corresponding commenter names.
+Is_ambiguous: No – the request is clear: list post titles that have positive (Score > 60) comments together with the display names of the users who made those comments.
+Explanation: The intended logic is:
+1. Identify positive comments (comments.Score > 60).
+2. Join those comments to the related posts (posts.Id = comments.PostId).
+3. Return the post title and the commenter’s display name.
+
+The annotated query instead:
+• Uses ON T2.PostId = T2.Id, comparing two columns in the comments table and never linking to posts.
+• Applies WHERE T1.Score > 60 on the post score, not the comment score.
+• Consequently returns unrelated or NULL data, proven by test execution.
+
+Revised:
+SELECT p.`Title`,
+       c.`UserDisplayName`
+FROM `posts` p
+JOIN `comments` c
+  ON p.`Id` = c.`PostId`
+WHERE c.`Score` > 60;

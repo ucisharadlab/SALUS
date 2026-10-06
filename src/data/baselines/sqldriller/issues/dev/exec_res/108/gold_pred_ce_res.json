@@ -1,0 +1,103 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [
+      "(1,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "gold": "SELECT T3.amount FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id ORDER BY T1.amount DESC, T3.date ASC LIMIT 1",
+    "score": 2,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [
+      "(1,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(T4.amount) FROM loan T1 JOIN account T2 ON T1.account_id = T2.account_id JOIN disp T3 ON T2.account_id = T3.account_id JOIN trans T4 ON T2.account_id = T4.account_id WHERE T1.amount = (SELECT MAX(amount) FROM loan) AND T4.date > T2.date",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(amount) FROM trans WHERE account_id = (SELECT account_id FROM loan WHERE amount = (SELECT MAX(amount) FROM loan)) AND date > (SELECT date FROM account WHERE account_id = (SELECT account_id FROM loan WHERE amount = (SELECT MAX(amount) FROM loan)))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(T4.amount) FROM (SELECT * FROM loan ORDER BY amount DESC LIMIT 1) T1 INNER JOIN account T2 ON T1.account_id = T2.account_id INNER JOIN trans T4 ON T2.account_id = T4.account_id WHERE T4.date > T2.date",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(amount) FROM trans WHERE account_id IN (SELECT account_id FROM loan WHERE amount = (SELECT MAX(amount) FROM loan)) AND date > (SELECT date FROM account WHERE account_id IN (SELECT account_id FROM loan WHERE amount = (SELECT MAX(amount) FROM loan)))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "WITH HighestLoan AS (SELECT account_id FROM loan WHERE amount = (SELECT MAX(amount) FROM loan)), FirstTransaction AS (SELECT account_id, MIN(date) as first_date FROM trans GROUP BY account_id) SELECT amount FROM trans WHERE account_id IN (SELECT account_id FROM HighestLoan) AND date = (SELECT first_date FROM FirstTransaction WHERE account_id IN (SELECT account_id FROM HighestLoan))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [
+      "(1,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": [
+      "(1,)",
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(T4.amount) FROM loan T1 JOIN account T2 ON T1.account_id = T2.account_id JOIN trans T4 ON T2.account_id = T4.account_id WHERE T1.amount = (SELECT MAX(amount) FROM loan) AND T4.date > T2.date GROUP BY T4.account_id",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": []
+  },
+  {
+    "pred": "SELECT MIN(amount) FROM trans WHERE account_id = (SELECT account_id FROM loan WHERE amount = (SELECT MAX(amount) FROM loan)) AND date > (SELECT date FROM account WHERE account_id = (SELECT account_id FROM loan WHERE amount = (SELECT MAX(amount) FROM loan))) GROUP BY account_id",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": []
+  },
+  {
+    "pred": "WITH MaxLoan AS (SELECT account_id FROM loan WHERE amount = (SELECT MAX(amount) FROM loan)), AccountOpenDate AS (SELECT account_id, date FROM account WHERE account_id IN (SELECT account_id FROM MaxLoan)) SELECT MIN(amount) FROM trans, AccountOpenDate WHERE trans.account_id = AccountOpenDate.account_id AND trans.date > AccountOpenDate.date",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT MIN(amount) FROM trans WHERE account_id = (SELECT account_id FROM loan ORDER BY amount DESC LIMIT 1) AND date > (SELECT date FROM account WHERE account_id = (SELECT account_id FROM loan ORDER BY amount DESC LIMIT 1))",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce0.sqlite": [
+      "(None,)"
+    ],
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/108/ce1.sqlite": [
+      "(None,)"
+    ]
+  }
+]

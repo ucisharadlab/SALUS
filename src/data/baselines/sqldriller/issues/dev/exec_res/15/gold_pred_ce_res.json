@@ -1,0 +1,56 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/15/ce0.sqlite": [
+      "('Montebello Elementary',)"
+    ]
+  },
+  {
+    "gold": "SELECT T1.District FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Active' ORDER BY T2.AvgScrRead DESC LIMIT 1",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/15/ce0.sqlite": [
+      "('Montebello Elementary',)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.District FROM schools T1 JOIN satscores T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Active' AND T2.AvgScrRead IS NOT NULL GROUP BY T1.District ORDER BY AVG(T2.AvgScrRead) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/15/ce0.sqlite": [
+      "('Lowell Joint',)"
+    ]
+  },
+  {
+    "pred": "SELECT District FROM schools INNER JOIN satscores ON schools.CDSCode = satscores.cds WHERE StatusType = 'Active' AND AvgScrRead IS NOT NULL GROUP BY District ORDER BY AVG(AvgScrRead) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/15/ce0.sqlite": [
+      "('Lowell Joint',)"
+    ]
+  },
+  {
+    "pred": "SELECT District FROM (SELECT District, AVG(AvgScrRead) AS AverageReadingScore FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE StatusType = 'Active' AND AvgScrRead IS NOT NULL GROUP BY District) AS SubQuery ORDER BY AverageReadingScore DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/15/ce0.sqlite": [
+      "('Lowell Joint',)"
+    ]
+  },
+  {
+    "pred": "WITH DistrictScores AS (SELECT District, AVG(AvgScrRead) AS AvgReading FROM schools JOIN satscores ON schools.CDSCode = satscores.cds WHERE StatusType = 'Active' AND AvgScrRead IS NOT NULL GROUP BY District) SELECT District FROM DistrictScores ORDER BY AvgReading DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/15/ce0.sqlite": [
+      "('Lowell Joint',)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.District FROM schools AS T1 INNER JOIN satscores AS T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Active' AND T2.AvgScrRead > 0 GROUP BY T1.District ORDER BY AVG(T2.AvgScrRead) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/15/ce0.sqlite": [
+      "('Lowell Joint',)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.District FROM schools T1 JOIN satscores T2 ON T1.CDSCode = T2.cds WHERE T1.StatusType = 'Active' GROUP BY T1.District HAVING AVG(T2.AvgScrRead) IS NOT NULL ORDER BY AVG(T2.AvgScrRead) DESC LIMIT 1;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/15/ce0.sqlite": [
+      "('Lowell Joint',)"
+    ]
+  }
+]

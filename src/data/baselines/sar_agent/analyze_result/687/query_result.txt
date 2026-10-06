@@ -1,0 +1,36 @@
+Query: SELECT MAX(`Score`) as max_score FROM `posts`
+Explaination of the query: Get maximum post score
+Result: [(192,)]
+Query: SELECT MAX(`Score`) AS max_score FROM `posts`
+Explaination of the query: Find highest post score
+Result: [(192,)]
+Query: SELECT COUNT(*) FROM `posts`
+Explaination of the query: Check number of posts
+Result: [(91966,)]
+Query: SELECT `Id`, `Score` FROM `posts` ORDER BY `Score` DESC LIMIT 5
+Explaination of the query: top 5 posts by score
+Result: [(1595, 192), (2691, 184), (1632, 164), (423, 156), (6, 152)]
+Query: SELECT COUNT(T2.`Id`) as comment_count, T1.`Score`, T1.`Id` FROM `posts` T1 INNER JOIN `comments` T2 ON T1.`Id` = T2.`PostId` GROUP BY T1.`Id` ORDER BY T1.`Score` DESC LIMIT 5
+Explaination of the query: verify comment counts for top scoring posts
+Result: [(3, 192, 1595), (10, 184, 2691), (5, 164, 1632), (7, 156, 423), (5, 152, 6)]
+Query: SELECT COUNT(T2.`Id`) as comment_count, SUM(T1.`Score`) as sum_score, T1.`Score`, T1.`Id`
+FROM `posts` T1 INNER JOIN `comments` T2 ON T1.`Id` = T2.`PostId`
+GROUP BY T1.`Id`
+ORDER BY sum_score DESC LIMIT 5
+Explaination of the query: Order by SUM(T1.Score) as annotated
+Result: [(35, 3465, 99, 86015), (24, 2952, 123, 86017), (23, 2530, 110, 83136), (30, 2070, 69, 33781), (22, 1936, 88, 2498)]
+Query: WITH top_post AS (SELECT `Id`, `Score` FROM `posts` ORDER BY `Score` DESC LIMIT 1)
+SELECT (SELECT `Score` FROM top_post) as top_score,
+       COUNT(`comments`.`Id`) as comment_count
+FROM `comments`
+WHERE `PostId` = (SELECT `Id` FROM top_post);
+Explaination of the query: Number of comments for highest score post
+Result: [(192, 3)]
+Query: SELECT COUNT(T2.`Id`) as comment_count
+FROM `posts` AS T1
+INNER JOIN `comments` AS T2 ON T1.`Id` = T2.`PostId`
+GROUP BY T1.`Id`
+ORDER BY SUM(T1.`Score`) DESC
+LIMIT 5
+Explaination of the query: Annotated query variant to view top counts
+Result: [(35,), (24,), (23,), (30,), (22,)]

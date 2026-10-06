@@ -1,0 +1,22 @@
+Query: SELECT COUNT(*) FROM frpm LIMIT 5;
+Explaination of the query: quick test if frpm table accessible
+Result: [(9986,)]
+Query: SELECT DISTINCT `Charter Funding Type` FROM frpm LIMIT 5;
+Explaination of the query: Check distinct values of Charter Funding Type to confirm 'Directly funded' exists
+Result: [('Directly funded',), (None,), ('Locally funded',), ('Not in CS funding model',)]
+Query: SELECT T2.Phone, COUNT(*) as cnt
+FROM frpm T1 JOIN schools T2 ON T1.CDSCode=T2.CDSCode
+WHERE T1.`Charter Funding Type`='Directly funded' AND T1.`Charter School (Y/N)`=1 AND T2.OpenDate>'2000-01-01'
+GROUP BY T1.CDSCode, T2.Phone
+HAVING cnt>1
+LIMIT 5;
+Explaination of the query: Check if duplicates per school due to multiple frpm rows
+Result: []
+Query: SELECT T2.Phone, COUNT(*) as cnt
+FROM frpm T1 JOIN schools T2 ON T1.CDSCode=T2.CDSCode
+WHERE T1.`Charter Funding Type`='Directly funded' AND T1.`Charter School (Y/N)`=1 AND T2.OpenDate>'2000-01-01'
+GROUP BY T2.Phone
+ORDER BY cnt DESC
+LIMIT 5;
+Explaination of the query: Check duplicate phone counts by phone only
+Result: [(None, 57), ('(805) 581-0202', 12), ('(619) 243-5014', 9), ('(855) 937-4227', 5), ('(310) 725-5800', 4)]

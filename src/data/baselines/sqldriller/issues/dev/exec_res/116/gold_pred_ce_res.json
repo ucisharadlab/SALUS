@@ -1,0 +1,66 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": []
+  },
+  {
+    "gold": "SELECT CAST((SUM(IIF(T3.date = '1998-12-27', T3.balance, 0)) - SUM(IIF(T3.date = '1993-03-22', T3.balance, 0))) AS REAL) * 100 / SUM(IIF(T3.date = '1993-03-22', T3.balance, 0)) FROM loan AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T3.account_id = T2.account_id WHERE T1.date = '1993-07-05'",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT ((MAX(CASE WHEN T.date = '1998-12-27' THEN T.balance END) - MIN(CASE WHEN T.date = '1993-3-22' THEN T.balance END)) * 100.0 / MIN(CASE WHEN T.date = '1993-3-22' THEN T.balance END)) AS increase_rate FROM trans T JOIN (SELECT account_id FROM loan WHERE date = '1993-7-5') L ON T.account_id = L.account_id WHERE T.date IN ('1993-3-22', '1998-12-27');",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT ((T2.balance - T1.balance) * 100.0 / T1.balance) AS increase_rate FROM trans T1 JOIN trans T2 ON T1.account_id = T2.account_id AND T1.date = '1993-3-22' AND T2.date = '1998-12-27' JOIN loan L ON L.account_id = T1.account_id WHERE L.date = '1993-7-5';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT ((SELECT balance FROM trans WHERE date = '1998-12-27' AND account_id = (SELECT account_id FROM loan WHERE date = '1993-7-5')) - (SELECT balance FROM trans WHERE date = '1993-3-22' AND account_id = (SELECT account_id FROM loan WHERE date = '1993-7-5'))) * 100.0 / (SELECT balance FROM trans WHERE date = '1993-3-22' AND account_id = (SELECT account_id FROM loan WHERE date = '1993-7-5')) AS increase_rate;",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "WITH FirstLoan AS (SELECT account_id FROM loan WHERE date = '1993-7-5'), Balance1993 AS (SELECT balance FROM trans WHERE date = '1993-3-22' AND account_id IN (SELECT account_id FROM FirstLoan)), Balance1998 AS (SELECT balance FROM trans WHERE date = '1998-12-27' AND account_id IN (SELECT account_id FROM FirstLoan)) SELECT ((Balance1998.balance - Balance1993.balance) * 100.0 / Balance1993.balance) AS increase_rate FROM Balance1993, Balance1998;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT ((b2.balance - b1.balance) / b1.balance * 100.0) AS increase_rate FROM trans b1, trans b2, loan l WHERE b1.account_id = l.account_id AND b2.account_id = l.account_id AND l.date = '1993-7-5' AND b1.date = '1993-3-22' AND b2.date = '1998-12-27';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT ((latest.balance - earliest.balance) * 100.0 / earliest.balance) AS increase_rate FROM (SELECT balance, account_id FROM trans WHERE date = '1993-3-22') earliest JOIN (SELECT balance, account_id FROM trans WHERE date = '1998-12-27') latest ON earliest.account_id = latest.account_id JOIN loan ON loan.account_id = earliest.account_id WHERE loan.date = '1993-7-5';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT ((SELECT balance FROM trans WHERE date = '1998-12-27' AND account_id = L.account_id) - (SELECT balance FROM trans WHERE date = '1993-3-22' AND account_id = L.account_id)) * 100.0 / (SELECT balance FROM trans WHERE date = '1993-3-22' AND account_id = L.account_id) AS increase_rate FROM loan L WHERE L.date = '1993-7-5';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT ((end_balance.balance - start_balance.balance) / start_balance.balance * 100.0) AS increase_rate FROM (SELECT balance FROM trans WHERE date = '1993-3-22' AND account_id = (SELECT account_id FROM loan WHERE date = '1993-7-5')) start_balance, (SELECT balance FROM trans WHERE date = '1998-12-27' AND account_id = (SELECT account_id FROM loan WHERE date = '1993-7-5')) end_balance;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH StartBalance AS (SELECT balance FROM trans WHERE date = '1993-3-22' AND account_id = (SELECT account_id FROM loan WHERE date = '1993-7-5')), EndBalance AS (SELECT balance FROM trans WHERE date = '1998-12-27' AND account_id = (SELECT account_id FROM loan WHERE date = '1993-7-5')) SELECT ((EndBalance.balance - StartBalance.balance) * 100.0 / StartBalance.balance) AS increase_rate FROM StartBalance, EndBalance;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT ((final_balance - initial_balance) * 100.0 / initial_balance) AS increase_rate FROM (SELECT balance AS final_balance FROM trans WHERE date = '1998-12-27' AND account_id = (SELECT account_id FROM loan WHERE date = '1993-7-5')) fb JOIN (SELECT balance AS initial_balance FROM trans WHERE date = '1993-3-22' AND account_id = (SELECT account_id FROM loan WHERE date = '1993-7-5')) ib ON 1=1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/116/ce0.sqlite": []
+  }
+]

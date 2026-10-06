@@ -1,0 +1,30 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The question wants the identity of the player ("Who") – i.e., the tallest or the shortest player – that owns the higher average finishing score (averaged over all his Player_Attributes records).  
+
+The annotated query instead:
+1. Aggregates finishing across *all* players that happen to share the maximum (or minimum) height, not per individual player.
+2. Returns only the literal label 'Max' or 'Min', therefore it does not return a player name/id as required by "Who".
+3. If two different players have the same extreme height, the query collapses them together, so the comparison is not necessarily between a single tallest and a single shortest player.
+
+Hence it does not correctly answer the question.
+
+Ambiguity: The wording "highest football player" could be interpreted as tallest, best-rated, or highest overall rating; similarly "average finishing rate" could be per season or per attribute entry.  Also ties in height make the notion of "the" tallest/shortest player unclear.  Therefore the question itself is somewhat ambiguous.
+
+Revised:
+```
+SELECT p.player_name
+FROM (
+    SELECT p.player_api_id,
+           AVG(pa.finishing) AS avg_fin
+    FROM Player p
+    JOIN Player_Attributes pa ON pa.player_api_id = p.player_api_id
+    WHERE p.height IN ( (SELECT MAX(height) FROM Player),
+                        (SELECT MIN(height) FROM Player) )
+    GROUP BY p.player_api_id
+) sub
+JOIN Player p ON p.player_api_id = sub.player_api_id
+ORDER BY sub.avg_fin DESC
+LIMIT 1;
+```
+This computes the average finishing for each of the tallest and the shortest player(s) individually and returns the one with the higher value (ties broken arbitrarily).

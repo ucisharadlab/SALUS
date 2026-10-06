@@ -1,0 +1,19 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation:  
+1. The English requirement “not available outside of the United States” indicates a set that is sold only in the U.S.  In the schema we only have `isForeignOnly = 1` (sold *only* outside the U.S.).  There is no complementary flag that marks “U.S.–only”.  Using `isForeignOnly = 0` – as the annotated query does – merely removes the foreign-only sets but still includes any set sold world-wide, so the availability condition is not satisfied.  
+2. The question says the set “has foil cards”.  That just means foils exist in the set.  Requiring `isFoilOnly = 1` (set printed exclusively in foil) is much stricter and excludes most regular sets that also contain foil printings, thus mis-implementing the foil condition.  
+3. The query returns ten different sets, yet the question is phrased in the singular (“Which set …”), so even if the logic were correct it would not deliver a unique answer.  
+4. Minor: no DISTINCT/order, but main logic already fails.  
+Because both main filters are mistranslated from English to schema fields, the query is incorrect.  Furthermore, since the schema lacks an explicit “U.S-only” indicator, the question itself is ambiguous: multiple valid interpretations exist and a fully correct answer cannot be produced with the available data.  
+Revised:  
+A closest possible – but still imperfect – approximation would be:
+```
+SELECT DISTINCT s.name, s.id
+FROM   `sets` AS s
+JOIN   `set_translations` AS st ON s.code = st.setCode
+WHERE  st.language = 'Japanese'                 -- Japanese writing present
+  AND  s.isForeignOnly = 0                      -- at least available in the U.S.
+  AND  (s.isNonFoilOnly IS NULL OR s.isNonFoilOnly = 0); -- set contains foils
+```
+This still cannot guarantee “U.S.–only”, so the ambiguity remains.

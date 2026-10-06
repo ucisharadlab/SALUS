@@ -1,0 +1,37 @@
+Query: SELECT COUNT(*) FROM foreign_data LIMIT 5
+Explaination of the query: Get total rows; duplicates inter possibilities.
+Result: [(229186,)]
+Query: SELECT COUNT(*) FROM cards WHERE power IS NULL OR power='*' LIMIT 5
+Explaination of the query: Total powerless cards
+Result: [(31053,)]
+Query: SELECT COUNT(DISTINCT `uuid`) FROM `cards` WHERE `power` IS NULL OR `power`='*' LIMIT 5
+Explaination of the query: Count unique cards without power
+Result: [(31053,)]
+Query: SELECT COUNT(DISTINCT T1.id) FROM cards T1 LEFT JOIN foreign_data T2 ON T1.`uuid` = T2.`uuid` WHERE T1.power IS NULL OR T1.power='*' LIMIT 5
+Explaination of the query: Count powerless cards with at least some foreign_data
+Result: [(31053,)]
+Query: SELECT COUNT(*) FROM cards WHERE power IS NULL OR power='*' LIMIT 5
+Explaination of the query: Total powerless cards
+Result: [(31053,)]
+Query: SELECT COUNT(DISTINCT `uuid`) FROM `cards` WHERE `power` IS NULL OR `power`='*'
+Explaination of the query: distinct powerless cards
+Result: [(31053,)]
+Query: WITH powerless AS (
+  SELECT `uuid` FROM `cards` WHERE `power` IS NULL OR `power`='*'
+), french_powerless AS (
+  SELECT DISTINCT p.`uuid`
+  FROM powerless p JOIN `foreign_data` f ON f.`uuid` = p.`uuid`
+  WHERE f.`language`='French'
+)
+SELECT (SELECT COUNT(*) FROM french_powerless) AS french_cnt,
+       (SELECT COUNT(*) FROM powerless) AS total_cnt,
+       100.0* (SELECT COUNT(*) FROM french_powerless)/(SELECT COUNT(*) FROM powerless) AS pct
+LIMIT 5;
+Explaination of the query: Compute correct per-card percentage
+Result: [(14892, 31053, 47.95671915756932)]
+Query: SELECT CAST(SUM(CASE WHEN T2.`language` = 'French' THEN 1 ELSE 0 END) AS REAL) * 100.0 / COUNT(T1.id) FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.`uuid` = T2.`uuid` WHERE T1.`power` IS NULL OR T1.`power` = '*' LIMIT 5;
+Explaination of the query: Run annotator query to compare
+Result: [(12.975290140452374,)]
+Query: SELECT COUNT(*) FROM cards T1 JOIN foreign_data T2 ON T1.`uuid`=T2.`uuid` WHERE (T1.`power` IS NULL OR T1.`power`='*') LIMIT 5;
+Explaination of the query: Join row count
+Result: [(114772,)]

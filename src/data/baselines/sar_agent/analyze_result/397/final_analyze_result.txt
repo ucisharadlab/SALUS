@@ -1,0 +1,11 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The question asks for cards that are “available in paper and mtgo”, which means the availability field must include BOTH values, not necessarily ONLY those two. The annotated query restricts the column to the single exact string 'mtgo,paper'. Any card whose availability is, for example, 'arena,mtgo,paper' or 'mtgo,paper,dreamcast' (or any other ordering) satisfies the English request but would be excluded by the equality predicate. Therefore the SQL does not fully implement the logic required by the question. All other conditions (layout, frameVersion, borderColor) are applied correctly, but the availability filter is too narrow. The query also treats `frameVersion` as a number, while the schema declares it as TEXT, so it would be safer to quote it.
+Revised:
+SELECT `manaCost`
+FROM `cards`
+WHERE `layout` = 'normal'
+  AND `frameVersion` = '2003'
+  AND `borderColor` = 'black'
+  AND `availability` LIKE '%mtgo%'
+  AND `availability` LIKE '%paper%';

@@ -1,0 +1,48 @@
+Query: SELECT fastestLapTime FROM results WHERE fastestLapTime IS NOT NULL LIMIT 5;
+Explaination of the query: Check format of fastestLapTime
+Result: [('1:27.452',), ('1:27.739',), ('1:28.090',), ('1:28.603',), ('1:27.418',)]
+Query: SELECT AVG(CAST(SUBSTR(T2.fastestLapTime, 1, INSTR(T2.fastestLapTime, ':') - 1) AS INTEGER) * 60 + CAST(SUBSTR(T2.fastestLapTime, INSTR(T2.fastestLapTime, ':') + 1) AS REAL)) FROM drivers AS T1 INNER JOIN results AS T2 ON T1.driverId = T2.driverId WHERE T1.surname = 'Hamilton' AND T1.forename = 'Lewis' LIMIT 5;
+Explaination of the query: run annotated query (with limit) to compute avg fastest lap time
+Result: [(92.01671065989848,)]
+Query: SELECT COUNT(*) FROM drivers WHERE forename='Lewis' AND surname='Hamilton';
+Explaination of the query: check driver count
+Result: [(1,)]
+Query: SELECT AVG(CAST(SUBSTR(T2.fastestLapTime, 1, INSTR(T2.fastestLapTime, ':') - 1) AS INTEGER) * 60 + CAST(SUBSTR(T2.fastestLapTime, INSTR(T2.fastestLapTime, ':') + 1) AS REAL))
+FROM drivers AS T1
+JOIN results AS T2 ON T1.driverId = T2.driverId
+WHERE T1.surname = 'Hamilton' AND T1.forename = 'Lewis' AND T2.fastestLapTime NOT IN ('\\N','NA','')
+LIMIT 5;
+Explaination of the query: Compute average after excluding \N times
+Result: [(92.01671065989848,)]
+Query: SELECT COUNT(*) FROM results WHERE driverId = (SELECT driverId FROM drivers WHERE forename='Lewis' AND surname='Hamilton') AND fastestLapTime IS NOT NULL;
+Explaination of the query: Count of non-null fastestLapTime for Hamilton
+Result: [(197,)]
+Query: SELECT COUNT(*) FROM results WHERE driverId = (SELECT driverId FROM drivers WHERE forename='Lewis' AND surname='Hamilton');
+Explaination of the query: Total results rows for Hamilton
+Result: [(202,)]
+Query: SELECT DISTINCT `fastestLapTime` FROM `results` WHERE `driverId` = (SELECT `driverId` FROM `drivers` WHERE `forename`='Lewis' AND `surname`='Hamilton') LIMIT 20;
+Explaination of the query: Check unique fastestLapTime values for Hamilton
+Result: [('1:27.452',), ('1:35.462',), ('1:35.520',), ('1:22.017',), ('1:26.529',), ('1:18.510',), ('1:17.506',), ('1:17.453',), ('1:32.817',), ('1:16.039',), ('1:21.493',), ('1:38.884',), ('1:48.135',), ('1:29.721',), ('1:46.072',), ('1:19.560',), ('1:36.325',), ('1:14.159',), ('1:26.351',), ('1:36.701',)]
+Query: SELECT AVG(CAST(SUBSTR(`fastestLapTime`, 1, INSTR(`fastestLapTime`, ':') - 1) AS INTEGER) * 60 + CAST(SUBSTR(`fastestLapTime`, INSTR(`fastestLapTime`, ':') + 1) AS REAL)) AS avg_seconds
+FROM `results`
+WHERE `driverId` = (SELECT `driverId` FROM `drivers` WHERE `forename`='Lewis' AND `surname`='Hamilton');
+Explaination of the query: Compute average seconds for Hamilton (my own).
+Result: [(92.01671065989848,)]
+Query: SELECT COUNT(*) FROM `results` WHERE `driverId` = (SELECT `driverId` FROM `drivers` WHERE `forename`='Lewis' AND `surname`='Hamilton') AND `fastestLapTime`='\\N';
+Explaination of the query: Count rows with \N fastestLapTime for Hamilton
+Result: [(0,)]
+Query: SELECT COUNT(*) FROM `results` WHERE `driverId` = (SELECT `driverId` FROM `drivers` WHERE `forename`='Lewis' AND `surname`='Hamilton') AND (`fastestLapTime` = '' OR `fastestLapTime` IS NULL);
+Explaination of the query: Check for empty strings or null fastestLapTime for Hamilton
+Result: [(5,)]
+Query: SELECT AVG(CAST(SUBSTR(`fastestLapTime`, 1, INSTR(`fastestLapTime`, ':') - 1) AS INTEGER) * 60 + CAST(SUBSTR(`fastestLapTime`, INSTR(`fastestLapTime`, ':') + 1) AS REAL))
+FROM `results`
+WHERE `driverId` = (SELECT `driverId` FROM `drivers` WHERE `forename`='Lewis' AND `surname`='Hamilton')
+AND `fastestLapTime` != '' AND `fastestLapTime` IS NOT NULL;
+Explaination of the query: Compute avg excluding empty strings
+Result: [(92.01671065989848,)]
+Query: SELECT 'x', SUBSTR('', 1, INSTR('', ':') - 1) LIMIT 5;
+Explaination of the query: test substr with no colon
+Result: [('x', '')]
+Query: SELECT `resultId`, `fastestLapTime` FROM `results` WHERE `driverId` = (SELECT `driverId` FROM `drivers` WHERE `forename`='Lewis' AND `surname`='Hamilton') AND (`fastestLapTime` = '' OR `fastestLapTime` IS NULL) LIMIT 5;
+Explaination of the query: Show rows with empty fastestLapTime for Hamilton
+Result: [(7792, None), (20657, None), (20825, None), (21518, None), (23025, None)]

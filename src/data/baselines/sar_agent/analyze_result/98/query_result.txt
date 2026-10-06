@@ -1,0 +1,41 @@
+Query: SELECT date FROM loan LIMIT 5
+Explaination of the query: Check date format
+Result: [('1994-01-05',), ('1996-04-29',), ('1997-12-08',), ('1998-10-14',), ('1998-04-19',)]
+Query: SELECT MIN(`amount`) FROM `loan` WHERE STRFTIME('%Y', `date`)='1997' LIMIT 5
+Explaination of the query: Find global minimum loan amount in 1997
+Result: [(8616,)]
+Query: SELECT T2.account_id, T1.amount FROM loan AS T1 INNER JOIN account AS T2 ON T1.`account_id` = T2.`account_id` WHERE STRFTIME('%Y', T1.`date`) = '1997' AND T2.`frequency` = 'POPLATEK TYDNE' ORDER BY T1.amount LIMIT 5
+Explaination of the query: Fetch top 5 smallest amounts with weekly frequency
+Result: [(176, 27456), (11141, 44940), (11027, 48096), (2187, 53472), (3448, 68664)]
+Query: SELECT MIN(`T1`.`amount`) FROM `loan` AS T1 JOIN `account` AS T2 ON T1.`account_id`=T2.`account_id` WHERE STRFTIME('%Y', T1.`date`)= '1997' AND T2.`frequency`='POPLATEK TYDNE' LIMIT 5
+Explaination of the query: Get minimum amount among weekly freq loans approved 1997
+Result: [(27456,)]
+Query: SELECT T2.`account_id`, T1.amount FROM loan AS T1 JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T1.date) = '1997' AND T2.frequency = 'POPLATEK TYDNE' AND T1.amount = (SELECT MIN(tl.amount) FROM loan tl JOIN account ac ON tl.account_id=ac.account_id WHERE STRFTIME('%Y', tl.date)='1997' AND ac.frequency='POPLATEK TYDNE') LIMIT 5
+Explaination of the query: Find all accounts with min amount
+Result: [(176, 27456)]
+Query: SELECT DISTINCT `account_id` FROM `loan` WHERE STRFTIME('%Y', `date`)='1997' AND `amount`=(SELECT MIN(`amount`) FROM `loan` WHERE STRFTIME('%Y', `date`)='1997') LIMIT 5
+Explaination of the query: Find if multiple accounts with global min across 1997
+Result: [(8268,)]
+Query: SELECT T2.`account_id`, COUNT(*)
+FROM loan AS T1 
+JOIN account AS T2 ON T1.account_id = T2.account_id
+WHERE STRFTIME('%Y', T1.date)='1997' AND T2.frequency='POPLATEK TYDNE'
+GROUP BY T2.account_id
+HAVING T1.amount = (
+   SELECT MIN(tl.amount) FROM loan tl JOIN account ac ON tl.account_id=ac.account_id
+   WHERE STRFTIME('%Y', tl.date)='1997' AND ac.frequency='POPLATEK TYDNE')
+LIMIT 5
+Explaination of the query: Check if multiple accounts have same minimal amount
+Result: [(176, 1)]
+Query: SELECT T2.account_id, T1.amount FROM loan T1 JOIN account T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T1.date)='1997' AND T2.frequency='POPLATEK TYDNE' AND T1.amount=27456
+Explaination of the query: see all accounts with min weekly 1997 amount
+Result: [(176, 27456)]
+Query: SELECT COUNT(*) FROM (
+SELECT T2.account_id
+FROM loan AS T1 JOIN account AS T2 ON T1.account_id=T2.account_id
+WHERE STRFTIME('%Y', T1.date)='1997' AND T2.frequency='POPLATEK TYDNE'
+GROUP BY T2.account_id, T1.amount
+HAVING T1.amount=(SELECT MIN(l.amount) FROM loan l JOIN account a ON l.account_id=a.account_id WHERE STRFTIME('%Y', l.date)='1997' AND a.frequency='POPLATEK TYDNE')
+)
+Explaination of the query: Count number of accounts with minimum weekly 1997 loan amount
+Result: [(1,)]

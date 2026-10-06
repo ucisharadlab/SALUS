@@ -1,0 +1,8 @@
+Correctness: No – the original query constrains September-2013 only in table `yearmonth`, so it retrieves all transactions of customers who had any consumption that month, including transactions from other months/years. Therefore it does not answer the question.
+Is_ambiguous: No – the question clearly asks for products whose transactions occurred in September 2013.
+Explanation: The date of consumption is stored in `transactions_1k.Date` (format YYYY-MM-DD). The annotated query leaves this column unfiltered; instead it filters `yearmonth.Date='201309'` after joining only on `CustomerID`. Resulting set contains rows with dates such as 2012-08, proving the error (sample check returned 2012-08). In addition, duplicates may appear because the same description can be repeated; DISTINCT would be appropriate.
+Revised:
+SELECT DISTINCT p.`Description`
+FROM `transactions_1k` AS t
+JOIN `products` AS p ON t.`ProductID` = p.`ProductID`
+WHERE substr(t.`Date`,1,7) = '2013-09';

@@ -1,0 +1,20 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation: The table `Player_Attributes` contains many dated snapshots for every player. The annotated query lists a player if he has *any* record with `preferred_foot = 'left'`. However a noticeable set of players appear with **both** 'left' and 'right' in different snapshots. Thus the query returns players who are not strictly left-footed and whose latest value might be 'right'. Because the question does not specify whether to use the latest snapshot, only players that are always left-footed, or any historical record, the intent is ambiguous. Under the most natural "current preferred foot" interpretation, the SQL is incorrect since it ignores the dates.  
+Revised:  
+If the intention is to use the most recent attributes for each player:
+```
+SELECT p.id,
+       p.player_name
+FROM   Player AS p
+JOIN   ( SELECT pa.player_api_id,
+                pa.preferred_foot
+         FROM   Player_Attributes pa
+         JOIN   ( SELECT player_api_id, MAX(date) AS max_date
+                  FROM   Player_Attributes
+                  GROUP BY player_api_id ) latest
+           ON  pa.player_api_id = latest.player_api_id
+          AND pa.date = latest.max_date ) AS pa_latest
+      ON p.player_api_id = pa_latest.player_api_id
+WHERE  pa_latest.preferred_foot = 'left';
+```

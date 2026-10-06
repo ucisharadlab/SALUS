@@ -1,0 +1,12 @@
+Correctness: No – the denominator covers every post in the table (after the join), while the numerator is limited to 2011 posts. Hence it returns the share of 2011-and-high-rep posts out of ALL posts, not the percentage within 2011 posts.
+Is_ambiguous: Yes – “in 2011” could refer to the posts (most likely) or to the time when owners had >1000 reputation; both readings are plausible.
+Explanation: The query joins users→posts then:
+ • Numerator: SUM of rows where post year = 2011 and user reputation >1000.
+ • Denominator: COUNT(T1.Id). Because the join repeats each user per post, this counts every post (all years). Missing the same 2011 filter produces a biased result. Also COUNT on T1.Id after the join further inflates duplicates but still equals number of joined rows (posts with owners).
+Therefore the query does not meet the question.
+Ambiguity arises because the schema stores only the current reputation, so “owners had >1000 in 2011” is technically unanswerable; the more reasonable reading is posts created in 2011 by users whose (current) reputation exceeds 1000.
+Revised:
+SELECT 100.0 * SUM(CASE WHEN u.`Reputation` > 1000 THEN 1 ELSE 0 END) / COUNT(*) AS percentage
+FROM `posts`  p
+JOIN `users`  u ON u.`Id` = p.`OwnerUserId`
+WHERE STRFTIME('%Y', p.`CreaionDate`) = '2011';

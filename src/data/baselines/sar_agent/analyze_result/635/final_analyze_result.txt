@@ -1,0 +1,17 @@
+Correctness: No – the query joins through `postHistory`, groups by the vote id, and counts the wrong thing, so it can never produce the requested result.
+Is_ambiguous: No – the question is clear: count the posts authored by Matt Parker that have received more than four votes.
+Explanation: The author of a post is stored in `posts.OwnerUserId`, not in `postHistory`. Using `postHistory.UserId` only shows edits and may include posts not written by Matt Parker. Grouping by both `PostId` and the unique `Vote` id puts every vote in its own group, making `COUNT(T4.Id)` equal to 1 for every group; therefore the HAVING clause will never be satisfied. Even if that were fixed, `SELECT COUNT(T1.Id)` counts user rows instead of posts. Hence the annotated query is logically incorrect.
+Revised: 
+```
+-- Number of Matt Parker's posts that have received more than 4 votes
+SELECT COUNT(*)
+FROM (
+    SELECT p.Id
+    FROM `posts` AS p
+    JOIN `users` AS u ON u.Id = p.OwnerUserId
+    JOIN `votes` AS v ON v.PostId = p.Id
+    WHERE u.DisplayName = 'Matt Parker'
+    GROUP BY p.Id
+    HAVING COUNT(v.Id) > 4
+) AS sub;
+```

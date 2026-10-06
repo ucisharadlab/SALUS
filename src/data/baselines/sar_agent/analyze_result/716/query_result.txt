@@ -1,0 +1,21 @@
+Query: SELECT COUNT(*) AS total_rows, COUNT(DISTINCT `T1`.`Id`) AS distinct_users FROM `users` AS `T1` INNER JOIN `comments` AS `T2` ON `T1`.`Id` = `T2`.`UserId` WHERE `T2`.`Score` BETWEEN 5 AND 10 LIMIT 5
+Explaination of the query: Check whether duplicates arise in join; but we also want duplicates count relative. This query returns only first 5 rows due to LIMIT but we should compute counts maybe can't; We'll compute aggregated counts no limit? can't; aggregator returns single row - we still apply limit 5. acceptable.
+
+Result: [(1358, 308)]
+Query: WITH users_in_range AS (
+  SELECT DISTINCT `UserId`
+  FROM `comments`
+  WHERE `Score` BETWEEN 5 AND 10 and `UserId` IS NOT NULL
+)
+SELECT COUNT(*) as total_users, SUM(CASE WHEN `u`.`UpVotes` = 0 THEN 1 ELSE 0 END) as zero_up_users
+FROM users_in_range r
+JOIN `users` u ON u.`Id` = r.`UserId`
+LIMIT 5;
+Explaination of the query: Compute counts for users within score range
+Result: [(308, 15)]
+Query: SELECT CAST(SUM(IIF(`T1`.`UpVotes` = 0, 1, 0)) AS REAL) * 100.0 / COUNT(`T1`.`Id`) AS per FROM `users` AS `T1` INNER JOIN `comments` AS `T2` ON `T1`.`Id` = `T2`.`UserId` WHERE `T2`.`Score` BETWEEN 5 AND 10 LIMIT 5
+Explaination of the query: Execute annotated query to see result
+Result: [(1.3254786450662739,)]
+Query: SELECT COUNT(*) FROM `comments` WHERE `Score` BETWEEN 5 AND 10
+Explaination of the query: count comments with score inclusive 5 to 10
+Result: [(1390,)]

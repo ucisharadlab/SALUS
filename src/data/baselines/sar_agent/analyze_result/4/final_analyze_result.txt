@@ -1,0 +1,9 @@
+Correctness: No – the query duplicates schools because of multiple FRPM rows per school and can miss schools without FRPM data.
+Is_ambiguous: No – the question has one clear interpretation.
+Explanation: The question wants phone numbers of charter schools whose funding type is “Directly funded” and that opened after 2000-01-01. These attributes are all available in the schools table. The annotator’s query joins to frpm and filters there; since frpm has one record per school per academic year, the join multiplies rows, causing duplicates, and any directly-funded charter school lacking an frpm row is omitted. No DISTINCT or GROUP BY is used to remove the duplicates. Therefore the query is incorrect.
+Revised:
+SELECT DISTINCT `Phone`
+FROM `schools`
+WHERE `Charter` = 1
+  AND `FundingType` = 'Directly funded'
+  AND `OpenDate` > '2000-01-01';

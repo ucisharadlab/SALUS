@@ -1,0 +1,13 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The question asks for all account IDs that have the earliest trading date in 1995. The annotator’s query filters transactions to year 1995 then orders by date and takes only the first row (LIMIT 1). This returns a single account_id rather than every account that traded on that earliest day. Hence the query is incomplete/incorrect. The intent of the question is clear, so no ambiguity exists.  
+Revised:  
+```
+SELECT DISTINCT `account_id`
+FROM `trans`
+WHERE `date` = (
+      SELECT MIN(`date`)
+      FROM `trans`
+      WHERE STRFTIME('%Y', `date`) = '1995'
+);
+```

@@ -1,0 +1,21 @@
+Query: SELECT T1.Diagnosis, T1.ID FROM `Patient` AS T1 INNER JOIN `Examination` AS T2 ON T1.ID = T2.ID WHERE T1.ID = ( SELECT ID FROM `Examination` WHERE `Examination Date` = '1997-01-27' AND Diagnosis = 'SLE' ) AND T2.`Examination Date` = T1.`First Date` LIMIT 5;
+Explaination of the query: testing annotated query
+Result: [('SLE', 424396)]
+Query: SELECT * FROM `Patient` WHERE `ID` = 424396 LIMIT 5;
+Explaination of the query: Check patient record
+Result: [(424396, 'F', '1943-02-08', '1997-04-01', '1997-01-27', '-', 'SLE')]
+Query: SELECT DISTINCT `ID` FROM `Examination` WHERE `Examination Date` = '1997-01-27' AND `Diagnosis` = 'SLE' LIMIT 5;
+Explaination of the query: Check IDs with SLE exam on date
+Result: [(424396,)]
+Query: SELECT `Diagnosis`, `Examination Date` FROM `Examination` WHERE `ID` = 424396 ORDER BY `Examination Date` ASC LIMIT 5;
+Explaination of the query: list earliest examination for patient
+Result: [('SLE', '1997-01-27')]
+Query: SELECT MIN(`Examination Date`) FROM `Examination` WHERE `ID` = 424396;
+Explaination of the query: earliest exam date
+Result: [('1997-01-27',)]
+Query: SELECT `ID`,`Diagnosis`,`First Date` FROM `Patient` LIMIT 5;
+Explaination of the query: see sample patient diagnosis
+Result: [(2110, 'RA susp.', '1993-02-10'), (11408, 'PSS', '1973-01-01'), (12052, 'SLE', None), (14872, 'MCTD', None), (27654, 'RA, SLE susp', '1992-02-03')]
+Query: SELECT P.`ID`, P.`Diagnosis` AS patient_diag, P.`First Date`, E.`Diagnosis` as exam_diag, E.`Examination Date` FROM `Patient` P JOIN `Examination` E ON P.`ID`=E.`ID` AND E.`Examination Date`=P.`First Date` WHERE P.`Diagnosis` IS NOT NULL AND E.`Diagnosis` IS NOT NULL AND P.`Diagnosis` <> E.`Diagnosis` LIMIT 5;
+Explaination of the query: find mismatches between patient diagnosis and earliest exam diagnosis
+Result: [(298520, 'BEHCET, SJS', '1998-01-09', 'Behcet, SjS susp', '1998-01-09'), (1180510, 'Raynaud', '1996-06-10', 'SjS', '1996-06-10'), (2352510, 'SJS', '1995-08-01', 'SjS', '1995-08-01'), (3106600, 'AORTITIS', '1995-11-16', 'Aortitis', '1995-11-16'), (5400270, 'SJS, MCTD', '1995-10-26', 'SjS, MCTD', '1995-10-26')]

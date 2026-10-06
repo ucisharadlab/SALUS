@@ -1,0 +1,42 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/163/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "gold": "SELECT T1.A2 FROM District AS T1 INNER JOIN Account AS T2 ON T1.District_id = T2.District_id INNER JOIN Loan AS T3 ON T2.Account_id = T3.Account_id WHERE T3.status = 'A' GROUP BY T1.District_id ORDER BY COUNT(T2.Account_id) DESC LIMIT 1",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/163/ce0.sqlite": [
+      "('2147483648',)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM district T3 JOIN account T2 ON T3.district_id = T2.district_id JOIN loan T1 ON T2.account_id = T1.account_id WHERE T1.status = 'A' GROUP BY T3.district_id ORDER BY COUNT(T1.account_id) DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/163/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT district_id FROM district WHERE district_id IN (SELECT T2.district_id FROM account T2 INNER JOIN loan T1 ON T2.account_id = T1.account_id WHERE T1.status = 'A' GROUP BY T2.district_id ORDER BY COUNT(*) DESC LIMIT 1);",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/163/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM district T3, account T2, loan T1 WHERE T3.district_id = T2.district_id AND T2.account_id = T1.account_id AND T1.status = 'A' GROUP BY T3.district_id ORDER BY COUNT(T1.account_id) DESC LIMIT 1;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/163/ce0.sqlite": [
+      "(1,)"
+    ]
+  },
+  {
+    "pred": "SELECT T3.district_id FROM district T3 INNER JOIN account T2 ON T3.district_id = T2.district_id INNER JOIN loan T1 ON T2.account_id = T1.account_id WHERE T1.status = 'A' GROUP BY T3.district_id HAVING COUNT(T1.account_id) = (SELECT MAX(count) FROM (SELECT COUNT(T1.account_id) AS count FROM loan T1 JOIN account T2 ON T1.account_id = T2.account_id WHERE T1.status = 'A' GROUP BY T2.district_id));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/163/ce0.sqlite": [
+      "(1,)"
+    ]
+  }
+]

@@ -1,0 +1,46 @@
+Query: SELECT COUNT(*) FROM `molecule` LIMIT 5;
+Explaination of the query: check existence
+Result: [(343,)]
+Query: SELECT m.`molecule_id`
+FROM `molecule` AS m
+LEFT JOIN `bond` AS b
+  ON m.`molecule_id` = b.`molecule_id` AND b.`bond_type` = '='
+WHERE m.`label` = '+'
+GROUP BY m.`molecule_id`
+HAVING COUNT(b.`bond_id`) = 0
+LIMIT 5;
+Explaination of the query: Find carcinogenic molecules with zero double bonds
+Result: [('TR000',), ('TR028',), ('TR055',), ('TR058',), ('TR076',)]
+Query: SELECT m.`molecule_id`, COUNT(b.`bond_id`) AS dbl
+FROM `molecule` m
+LEFT JOIN `bond` b ON m.`molecule_id` = b.`molecule_id` AND b.`bond_type` = '='
+WHERE m.`label` = '+'
+GROUP BY m.`molecule_id`
+ORDER BY dbl DESC, m.`molecule_id`
+LIMIT 20;
+Explaination of the query: Count double bonds per carcinogenic molecule
+Result: [('TR397', 26), ('TR430', 26), ('TR405', 25), ('TR225', 22), ('TR457', 13), ('TR128', 10), ('TR285', 10), ('TR407', 10), ('TR463', 10), ('TR465', 10), ('TR029', 9), ('TR193', 9), ('TR226', 9), ('TR358', 9), ('TR020', 8), ('TR049', 8), ('TR111', 8), ('TR144', 8), ('TR196', 8), ('TR222', 8)]
+Query: SELECT T3.`molecule_id`, COUNT(*) AS cnt
+FROM `bond` T1
+JOIN `molecule` T3 ON T1.`molecule_id`=T3.`molecule_id`
+WHERE T3.`label`='+' AND T1.`bond_type`='='
+GROUP BY T3.`molecule_id`
+ORDER BY cnt DESC, T3.`molecule_id`
+LIMIT 5;
+Explaination of the query: Get top molecules via original query logic
+Result: [('TR397', 26), ('TR430', 26), ('TR405', 25), ('TR225', 22), ('TR457', 13)]
+Query: SELECT T3.`molecule_id` , COUNT(T1.`bond_type`) AS bond_count
+FROM `bond` AS T1 
+INNER JOIN `molecule` AS T3 ON T1.`molecule_id` = T3.`molecule_id`
+WHERE T3.`label` = '+' AND T1.`bond_type` = '='
+GROUP BY T3.`molecule_id`
+HAVING bond_count = (
+    SELECT MAX(bond_count) FROM (
+        SELECT T3.`molecule_id`, COUNT(T1.`bond_type`) AS bond_count
+        FROM `bond` AS T1 
+        INNER JOIN `molecule` AS T3 ON T1.`molecule_id` = T3.`molecule_id`
+        WHERE T3.`label` = '+' AND T1.`bond_type` = '='
+        GROUP BY T3.`molecule_id`) AS subquery)
+ORDER BY bond_count DESC LIMIT 5;
+Explaination of the query: run annotated query equivalent
+Result: [('TR430', 26), ('TR397', 26)]

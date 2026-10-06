@@ -1,0 +1,18 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The annotated query counts the number of superheroes published by Marvel Comics and by DC Comics and returns their difference (Marvel – DC).  It therefore produces only a single signed integer.  The question, however, asks for two separate pieces of information: (1) WHICH of the two publishers has the larger catalogue and (2) the numerical DIFFERENCE between their counts.  The annotated query supplies only the second part, forcing the reader to deduce part (1) from the sign of the number; hence it does not fully answer the question even though the arithmetic and joins themselves are correct.
+Revised:
+SELECT
+       CASE
+            WHEN marvel_cnt > dc_cnt THEN 'Marvel Comics'
+            WHEN dc_cnt > marvel_cnt THEN 'DC Comics'
+            ELSE 'Tie'
+       END  AS publisher_with_more_superheroes,
+       ABS(marvel_cnt - dc_cnt) AS difference_in_count
+FROM (
+        SELECT
+               SUM(CASE WHEN p.publisher_name = 'Marvel Comics' THEN 1 ELSE 0 END) AS marvel_cnt,
+               SUM(CASE WHEN p.publisher_name = 'DC Comics' THEN 1 ELSE 0 END)  AS dc_cnt
+        FROM `superhero`  s
+        JOIN `publisher` p ON s.`publisher_id` = p.`id`
+     );

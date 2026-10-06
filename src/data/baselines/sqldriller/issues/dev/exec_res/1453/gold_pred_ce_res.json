@@ -1,0 +1,62 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "gold": "SELECT T1.event_name FROM event AS T1 INNER JOIN budget AS T2 ON T1.event_id = T2.link_to_event INNER JOIN expense AS T3 ON T2.budget_id = T3.link_to_budget WHERE T2.category = 'Parking' AND T3.cost < (SELECT AVG(cost) FROM expense)",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": [
+      "('Officers meeting - November',)"
+    ]
+  },
+  {
+    "pred": "SELECT T1.event_name FROM event T1 JOIN budget T2 ON T1.event_id = T2.link_to_event JOIN expense T3 ON T2.budget_id = T3.link_to_budget WHERE T2.category = 'Parking' GROUP BY T1.event_id HAVING SUM(T3.cost) < (SELECT SUM(T3.cost) / COUNT(DISTINCT T1.event_id) FROM event T1 JOIN budget T2 ON T1.event_id = T2.link_to_event JOIN expense T3 ON T2.budget_id = T3.link_to_budget WHERE T2.category = 'Parking')",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH AverageCost AS (SELECT SUM(T3.cost) / COUNT(DISTINCT T1.event_id) AS AvgCost FROM event T1 JOIN budget T2 ON T1.event_id = T2.link_to_event JOIN expense T3 ON T2.budget_id = T3.link_to_budget WHERE T2.category = 'Parking') SELECT T1.event_name FROM event T1 JOIN budget T2 ON T1.event_id = T2.link_to_event JOIN expense T3 ON T2.budget_id = T3.link_to_budget, AverageCost WHERE T2.category = 'Parking' GROUP BY T1.event_id HAVING SUM(T3.cost) < AverageCost.AvgCost",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT event_name FROM event WHERE event_id IN (SELECT link_to_event FROM budget WHERE category = 'Parking' AND budget_id IN (SELECT link_to_budget FROM expense GROUP BY link_to_budget HAVING SUM(cost) < (SELECT SUM(cost) / COUNT(DISTINCT link_to_event) FROM budget JOIN expense ON budget_id = link_to_budget WHERE category = 'Parking')))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH ParkingCosts AS (SELECT T1.event_id, SUM(T3.cost) AS TotalCost FROM event T1 JOIN budget T2 ON T1.event_id = T2.link_to_event JOIN expense T3 ON T2.budget_id = T3.link_to_budget WHERE T2.category = 'Parking' GROUP BY T1.event_id), AverageCost AS (SELECT SUM(TotalCost) / COUNT(*) AS AvgCost FROM ParkingCosts) SELECT T1.event_name FROM event T1 JOIN ParkingCosts T2 ON T1.event_id = T2.event_id, AverageCost WHERE T2.TotalCost < AverageCost.AvgCost",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT event_name FROM event WHERE event_id IN (SELECT link_to_event FROM budget WHERE category = 'Parking' GROUP BY link_to_event HAVING SUM((SELECT cost FROM expense WHERE link_to_budget = budget_id)) < (SELECT SUM(cost) / COUNT(DISTINCT link_to_event) FROM budget JOIN expense ON budget_id = link_to_budget WHERE category = 'Parking'))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T1.event_name FROM event T1 WHERE EXISTS (SELECT 1 FROM budget T2 JOIN expense T3 ON T2.budget_id = T3.link_to_budget WHERE T2.link_to_event = T1.event_id AND T2.category = 'Parking' GROUP BY T2.link_to_event HAVING SUM(T3.cost) < (SELECT SUM(T3.cost) / COUNT(DISTINCT T1.event_id) FROM event T1 JOIN budget T2 ON T1.event_id = T2.link_to_event JOIN expense T3 ON T2.budget_id = T3.link_to_budget WHERE T2.category = 'Parking'))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH TotalCosts AS (SELECT link_to_event, SUM(cost) AS TotalCost FROM budget JOIN expense ON budget_id = link_to_budget WHERE category = 'Parking' GROUP BY link_to_event), AvgCost AS (SELECT SUM(TotalCost) / COUNT(*) AS AvgCost FROM TotalCosts) SELECT event_name FROM event JOIN TotalCosts ON event_id = link_to_event WHERE TotalCost < (SELECT AvgCost FROM AvgCost)",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T1.event_name FROM event T1 INNER JOIN (SELECT link_to_event, SUM(cost) AS TotalCost FROM budget INNER JOIN expense ON budget_id = link_to_budget WHERE category = 'Parking' GROUP BY link_to_event) T2 ON T1.event_id = T2.link_to_event WHERE TotalCost < (SELECT SUM(cost) / COUNT(DISTINCT link_to_event) FROM budget JOIN expense ON budget_id = link_to_budget WHERE category = 'Parking')",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "pred": "SELECT T1.event_name FROM event T1 JOIN (SELECT link_to_event, SUM(cost) AS TotalCost FROM budget JOIN expense ON budget_id = link_to_budget WHERE category = 'Parking' GROUP BY link_to_event) T2 ON T1.event_id = T2.link_to_event WHERE T2.TotalCost < (SELECT SUM(cost) / COUNT(DISTINCT link_to_event) FROM budget JOIN expense ON budget_id = link_to_budget WHERE category = 'Parking')",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  },
+  {
+    "pred": "WITH EventCosts AS (SELECT link_to_event, SUM(cost) AS TotalCost FROM budget JOIN expense ON budget_id = link_to_budget WHERE category = 'Parking' GROUP BY link_to_event), AvgCost AS (SELECT SUM(TotalCost) / COUNT(*) AS Avg FROM EventCosts) SELECT event_name FROM event WHERE event_id IN (SELECT link_to_event FROM EventCosts WHERE TotalCost < (SELECT Avg FROM AvgCost))",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/1453/ce0.sqlite": []
+  }
+]

@@ -1,0 +1,12 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The annotated query joins event-budget-expense correctly and applies the proper filters (pizza expenses with cost > 50 and < 100).  However, if an event has two or more qualifying pizza expenses it will appear multiple times, while the question asks for the name and date of each event—implying one row per event.  Therefore the query should remove duplicates with DISTINCT (or GROUP BY).  
+Revised:  
+SELECT DISTINCT `e`.`event_name`,
+                `e`.`event_date`
+FROM `event`   AS `e`
+JOIN `budget`  AS `b` ON `e`.`event_id` = `b`.`link_to_event`
+JOIN `expense` AS `x` ON `b`.`budget_id` = `x`.`link_to_budget`
+WHERE LOWER(`x`.`expense_description`) = 'pizza'
+  AND `x`.`cost` > 50
+  AND `x`.`cost` < 100;

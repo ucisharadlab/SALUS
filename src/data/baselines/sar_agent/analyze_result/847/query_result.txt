@@ -1,0 +1,55 @@
+Query: SELECT T2.surname FROM qualifying AS T1 INNER JOIN drivers AS T2 ON T2.driverId = T1.driverId WHERE T1.raceId = 19 AND T1.q2 IS NOT NULL AND T1.q2 = (SELECT MIN(q2) FROM qualifying WHERE raceId = 19 AND q2 IS NOT NULL) LIMIT 5;
+Explaination of the query: Check result
+Result: [('Räikkönen',)]
+Query: SELECT q2 FROM qualifying WHERE raceId = 19 AND q2 IS NOT NULL LIMIT 5;
+Explaination of the query: Inspect q2 sample for race 19
+Result: [('1:34.412',), ('1:34.188',), ('1:34.759',), ('1:34.627',), ('1:34.960',)]
+Query: SELECT q2 FROM qualifying WHERE raceId = 19 AND q2 IS NOT NULL ORDER BY q2 ASC LIMIT 20;
+Explaination of the query: Sort q2 strings lex order to inspect min
+Result: [('1:34.188',), ('1:34.412',), ('1:34.627',), ('1:34.648',), ('1:34.759',), ('1:34.811',), ('1:34.960',), ('1:34.967',), ('1:35.000',), ('1:35.140',), ('1:35.208',), ('1:35.408',), ('1:35.562',), ('1:35.622',), ('1:35.648',), ('1:35.670',)]
+Query: SELECT q2 FROM qualifying WHERE raceId = 19 AND q2 IS NOT NULL AND q2 LIKE '1:%' ORDER BY q2 ASC LIMIT 20;
+Explaination of the query: Inspect all q2 for race 19 sorted ascending to ensure seconds always two digits
+Result: [('1:34.188',), ('1:34.412',), ('1:34.627',), ('1:34.648',), ('1:34.759',), ('1:34.811',), ('1:34.960',), ('1:34.967',), ('1:35.000',), ('1:35.140',), ('1:35.208',), ('1:35.408',), ('1:35.562',), ('1:35.622',), ('1:35.648',), ('1:35.670',)]
+Query: SELECT T2.surname, T1.q2 FROM qualifying T1 JOIN drivers T2 ON T1.driverId = T2.driverId WHERE T1.raceId = 19 AND T1.q2 IS NOT NULL ORDER BY T1.q2 LIMIT 5;
+Explaination of the query: list top times to see best
+Result: [('Räikkönen', '1:34.188'), ('Massa', '1:34.412'), ('Hamilton', '1:34.627'), ('Heidfeld', '1:34.648'), ('Kovalainen', '1:34.759')]
+Query: SELECT T2.surname, MIN((CAST(substr(T1.q2,1,instr(T1.q2,':')-1) AS REAL)*60) + CAST(replace(substr(T1.q2,instr(T1.q2,':')+1),'.','') AS REAL)/1000.0) ) as min_secs
+FROM qualifying T1 JOIN drivers T2 ON T1.driverId = T2.driverId
+WHERE T1.raceId=19 AND T1.q2 IS NOT NULL;
+Explaination of the query: Compute numeric min q2 by converting to seconds to verify driver
+Error: near ")": syntax error
+Query: SELECT T2.surname, T1.q2,
+       ((CAST(substr(T1.q2,1,instr(T1.q2,':')-1) AS INTEGER)*60*1000) + CAST(replace(substr(T1.q2,instr(T1.q2,':')+1),'\.','') AS INTEGER)) AS ms
+FROM qualifying T1 JOIN drivers T2 ON T1.driverId = T2.driverId
+WHERE T1.raceId = 19 AND T1.q2 IS NOT NULL
+ORDER BY ms ASC
+LIMIT 5;
+Explaination of the query: Compute milliseconds properly and order to see fastest driver numeric
+Result: [('Massa', '1:34.412', 60034), ('Räikkönen', '1:34.188', 60034), ('Kovalainen', '1:34.759', 60034), ('Hamilton', '1:34.627', 60034), ('Trulli', '1:34.960', 60034)]
+Query: SELECT T2.surname, T1.q2,
+       (CAST(substr(T1.q2,1,instr(T1.q2,':')-1) AS INTEGER)*60000 +
+        CAST(substr(T1.q2, instr(T1.q2, ':')+1, 2) AS INTEGER)*1000 +
+        CAST(substr(T1.q2, instr(T1.q2, '.')+1) AS INTEGER)) AS ms
+FROM qualifying T1
+JOIN drivers T2 ON T2.driverId = T1.driverId
+WHERE T1.raceId = 19 AND T1.q2 IS NOT NULL
+ORDER BY ms ASC
+LIMIT 10;
+Explaination of the query: compute milliseconds more carefully
+Result: [('Räikkönen', '1:34.188', 94188), ('Massa', '1:34.412', 94412), ('Hamilton', '1:34.627', 94627), ('Heidfeld', '1:34.648', 94648), ('Kovalainen', '1:34.759', 94759), ('Kubica', '1:34.811', 94811), ('Trulli', '1:34.960', 94960), ('Webber', '1:34.967', 94967), ('Glock', '1:35.000', 95000), ('Alonso', '1:35.140', 95140)]
+Query: WITH q AS (select driverId, q2 from qualifying where raceId=19 and q2 is not null)
+SELECT driverId, q2,
+       (CAST(substr(q2,1,instr(q2,':')-1) AS INTEGER)*60000 +
+        CAST(substr(q2, instr(q2, ':')+1, 2) AS INTEGER)*1000 +
+        CAST(substr(q2, instr(q2, '.')+1) AS INTEGER)) AS ms
+FROM q
+ORDER BY ms ASC
+LIMIT 5;
+Explaination of the query: Compute numeric ordering for race 19 q2 to compare
+Result: [(8, '1:34.188', 94188), (13, '1:34.412', 94412), (1, '1:34.627', 94627), (2, '1:34.648', 94648), (5, '1:34.759', 94759)]
+Query: SELECT `raceId`, `year`, `round`, `name` FROM `races` WHERE `raceId` = 19 LIMIT 5;
+Explaination of the query: See details of raceId 19
+Result: [(19, 2008, 2, 'Malaysian Grand Prix')]
+Query: SELECT COUNT(*) FROM qualifying WHERE raceId = 19 AND q2 = (SELECT MIN(q2) FROM qualifying WHERE raceId = 19 AND q2 IS NOT NULL);
+Explaination of the query: count number of drivers having same minimal q2 string
+Result: [(1,)]

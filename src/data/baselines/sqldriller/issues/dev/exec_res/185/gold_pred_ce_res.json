@@ -1,0 +1,77 @@
+[
+  {
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  },
+  {
+    "gold": "SELECT CAST(SUM(T2.gender = 'F') AS REAL) / COUNT(T2.client_id) * 100 FROM district AS T1 INNER JOIN client AS T2 ON T1.district_id = T2.district_id WHERE T1.A3 = 'Prague'",
+    "score": 0,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(None,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(DISTINCT CASE WHEN T3.gender = 'F' THEN T3.client_id END) * 100.0 / COUNT(DISTINCT T3.client_id)) AS percentage_female FROM district T1 JOIN account T2 ON T1.district_id = T2.district_id JOIN disp T4 ON T2.account_id = T4.account_id JOIN client T3 ON T4.client_id = T3.client_id WHERE T1.A3 = 'Prague';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (SUM(CASE WHEN T3.gender = 'F' THEN 1 ELSE 0 END) * 100.0 / COUNT(*)) AS percentage_female FROM district T1 INNER JOIN account T2 ON T1.district_id = T2.district_id INNER JOIN disp T4 ON T2.account_id = T4.account_id INNER JOIN client T3 ON T4.client_id = T3.client_id WHERE T1.A3 = 'Prague';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(DISTINCT T3.client_id) FILTER (WHERE T3.gender = 'F') * 100.0 / COUNT(DISTINCT T3.client_id)) AS percentage_female FROM district T1, account T2, disp T4, client T3 WHERE T1.district_id = T2.district_id AND T2.account_id = T4.account_id AND T4.client_id = T3.client_id AND T1.A3 = 'Prague';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(DISTINCT T3.client_id) * 100.0 / (SELECT COUNT(DISTINCT client_id) FROM client WHERE client_id IN (SELECT client_id FROM disp WHERE account_id IN (SELECT account_id FROM account WHERE district_id = (SELECT district_id FROM district WHERE A3 = 'Prague'))))) AS percentage_female FROM client T3 WHERE T3.gender = 'F' AND T3.client_id IN (SELECT client_id FROM disp WHERE account_id IN (SELECT account_id FROM account WHERE district_id = (SELECT district_id FROM district WHERE A3 = 'Prague')));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  },
+  {
+    "pred": "WITH PragueAccounts AS (SELECT T2.account_id FROM district T1 JOIN account T2 ON T1.district_id = T2.district_id WHERE T1.A3 = 'Prague'), PragueClients AS (SELECT T3.client_id, T3.gender FROM client T3 JOIN disp T4 ON T3.client_id = T4.client_id WHERE T4.account_id IN (SELECT account_id FROM PragueAccounts)) SELECT (COUNT(DISTINCT CASE WHEN gender = 'F' THEN client_id END) * 100.0 / COUNT(DISTINCT client_id)) AS percentage_female FROM PragueClients;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(DISTINCT T3.client_id) * 100.0 / (SELECT COUNT(DISTINCT client_id) FROM disp WHERE account_id IN (SELECT account_id FROM account WHERE district_id = (SELECT district_id FROM district WHERE A3 = 'Prague')))) AS percentage_female FROM client T3 JOIN disp T4 ON T3.client_id = T4.client_id WHERE T3.gender = 'F' AND T4.account_id IN (SELECT account_id FROM account WHERE district_id = (SELECT district_id FROM district WHERE A3 = 'Prague'));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(DISTINCT T3.client_id) * 100.0 / (SELECT COUNT(DISTINCT client_id) FROM disp JOIN account ON disp.account_id = account.account_id JOIN district ON account.district_id = district.district_id WHERE district.A3 = 'Prague')) AS percentage_female FROM client T3 JOIN disp T4 ON T3.client_id = T4.client_id JOIN account T2 ON T4.account_id = T2.account_id JOIN district T1 ON T2.district_id = T1.district_id WHERE T1.A3 = 'Prague' AND T3.gender = 'F';",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  },
+  {
+    "pred": "SELECT (COUNT(DISTINCT T3.client_id) * 100.0 / (SELECT COUNT(DISTINCT client_id) FROM client WHERE client_id IN (SELECT client_id FROM disp WHERE account_id IN (SELECT account_id FROM account JOIN district ON account.district_id = district.district_id WHERE district.A3 = 'Prague')))) AS percentage_female FROM client T3 WHERE T3.gender = 'F' AND T3.client_id IN (SELECT client_id FROM disp WHERE account_id IN (SELECT account_id FROM account JOIN district ON account.district_id = district.district_id WHERE district.A3 = 'Prague'));",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  },
+  {
+    "pred": "WITH PragueClients AS (SELECT T3.client_id, T3.gender FROM client T3 JOIN disp T4 ON T3.client_id = T4.client_id JOIN account T2 ON T4.account_id = T2.account_id JOIN district T1 ON T2.district_id = T1.district_id WHERE T1.A3 = 'Prague') SELECT (COUNT(DISTINCT CASE WHEN gender = 'F' THEN client_id END) * 100.0 / COUNT(DISTINCT client_id)) AS percentage_female FROM PragueClients;",
+    "score": 1,
+    "third_party/test_suite_sql_eval/database/bird/dev_ce_nlq_checked/run_run_bird_dev/185/ce0.sqlite": [
+      "(100.0,)"
+    ]
+  }
+]

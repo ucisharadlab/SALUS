@@ -1,0 +1,15 @@
+Query: SELECT `time` FROM lapTimes LIMIT 5
+Explaination of the query: Check sample format of time column
+Result: [('1:49.088',), ('1:33.740',), ('1:31.600',), ('1:31.067',), ('1:32.129',)]
+Query: SELECT MIN(`milliseconds`) FROM `lapTimes`
+Explaination of the query: check minimum milliseconds
+Result: [(67411,)]
+Query: SELECT `time` FROM lapTimes ORDER BY (CASE WHEN INSTR(time, ':') <> INSTR(SUBSTR(time, INSTR(time, ':') + 1), ':') + INSTR(time, ':') THEN CAST(SUBSTR(time, 1, INSTR(time, ':') - 1) AS REAL) * 3600 ELSE 0 END) + (CAST(SUBSTR(time, INSTR(time, ':') - 2 * (INSTR(time, ':') = INSTR(SUBSTR(time, INSTR(time, ':') + 1), ':') + INSTR(time, ':')), INSTR(time, ':') - 1) AS REAL) * 60) + (CAST(SUBSTR(time, INSTR(time, ':') + 1, INSTR(time, '.') - INSTR(time, ':') - 1) AS REAL)) + (CAST(SUBSTR(time, INSTR(time, '.') + 1) AS REAL) / 1000) ASC LIMIT 5
+Explaination of the query: Run annotated query to see output
+Result: [('2:00.000',), ('2:00.000',), ('2:00.000',), ('2:00.000',), ('2:00.000',)]
+Query: SELECT `time` FROM `lapTimes` WHERE `milliseconds` = 67411 LIMIT 5
+Explaination of the query: Get time string for min milliseconds
+Result: [('1:07.411',)]
+Query: SELECT `time` FROM `lapTimes` WHERE `milliseconds` = (SELECT MIN(`milliseconds`) FROM `lapTimes`) LIMIT 5
+Explaination of the query: Confirm time strings for fastest lap
+Result: [('1:07.411',)]

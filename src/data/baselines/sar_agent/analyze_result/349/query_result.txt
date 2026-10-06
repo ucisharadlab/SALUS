@@ -1,0 +1,45 @@
+Query: SELECT c.uuid, c.name, COUNT(r.id) AS num_rulings FROM cards c LEFT JOIN rulings r ON c.uuid = r.uuid GROUP BY c.uuid ORDER BY num_rulings DESC LIMIT 5;
+Explaination of the query: Find cards with most rulings
+Result: [('23a64ed6-aeda-5607-8cc9-35ae7ac6a0ce', "Teferi's Protection", 27), ('8ae00a8c-0670-5a96-9cf4-49f375a903c2', "Teferi's Protection", 27), ('a9290322-839e-5942-a907-bbe6349cb22c', "Teferi's Protection", 27), ('f2ef8f0a-ea29-5750-9f86-f4ee22b1af7e', "Teferi's Protection", 27), ('396c85de-22c4-5fd2-81df-6c3b97ea0cc8', 'Rowan Kenrith', 25)]
+Query: SELECT c.name, c.artist, c.isPromo, COUNT(r.id) AS num_rulings FROM cards c LEFT JOIN rulings r ON c.uuid = r.uuid GROUP BY c.uuid ORDER BY num_rulings DESC LIMIT 10;
+Explaination of the query: Get top cards by ruling count
+Result: [("Teferi's Protection", 'Chase Stone', 0, 27), ("Teferi's Protection", 'Chase Stone', 0, 27), ("Teferi's Protection", 'Chase Stone', 0, 27), ("Teferi's Protection", 'Chase Stone', 1, 27), ('Rowan Kenrith', 'Anna Steinbauer', 0, 25), ('Rowan Kenrith', 'Anna Steinbauer', 1, 25), ('Jeskai Infiltrator', 'Cynthia Sheppard', 0, 25), ('Jeskai Infiltrator', 'Cynthia Sheppard', 1, 25), ('Jeskai Infiltrator', 'Cynthia Sheppard', 0, 25), ('Will Kenrith', 'Anna Steinbauer', 0, 25)]
+Query: SELECT T1.name, T1.artist, T1.isPromo
+FROM cards AS T1
+INNER JOIN rulings AS T2 ON T1.uuid = T2.uuid
+WHERE T1.isPromo = 1
+AND T1.artist = (
+   SELECT artist
+   FROM cards
+   WHERE isPromo = 1
+   GROUP BY artist
+   HAVING COUNT(DISTINCT uuid) = (
+        SELECT MAX(count_uuid)
+        FROM (
+           SELECT COUNT(DISTINCT uuid) AS count_uuid
+           FROM cards
+           WHERE isPromo = 1
+           GROUP BY artist
+        )
+    )
+)
+LIMIT 5;
+Explaination of the query: Run annotated query sample
+Result: [('Serrated Arrows', 'John Avon', 1), ('Cultivate', 'John Avon', 1), ('Castle Vantress', 'John Avon', 1), ('Castle Vantress', 'John Avon', 1), ('Castle Vantress', 'John Avon', 1)]
+Query: WITH ruling_counts AS (SELECT c.uuid, c.name, c.artist, c.isPromo, COUNT(r.id) AS num_rulings FROM cards c LEFT JOIN rulings r ON c.uuid = r.uuid GROUP BY c.uuid), max_count AS (SELECT MAX(num_rulings) AS max_rulings FROM ruling_counts) SELECT rc.name, rc.artist, rc.isPromo, rc.num_rulings FROM ruling_counts rc, max_count WHERE rc.num_rulings = max_count.max_rulings LIMIT 5;
+Explaination of the query: Find cards with the maximum number of rulings and list their name, artist, promotional flag
+Result: [("Teferi's Protection", 'Chase Stone', 0, 27), ("Teferi's Protection", 'Chase Stone', 0, 27), ("Teferi's Protection", 'Chase Stone', 0, 27), ("Teferi's Protection", 'Chase Stone', 1, 27)]
+Query: SELECT c.uuid, c.name, c.artist, c.isPromo, COUNT(r.id) AS num_rulings
+FROM cards c LEFT JOIN rulings r ON c.uuid = r.uuid
+GROUP BY c.uuid
+ORDER BY num_rulings DESC, c.uuid
+LIMIT 10;
+Explaination of the query: Check top 10 cards by ruling count
+Result: [('23a64ed6-aeda-5607-8cc9-35ae7ac6a0ce', "Teferi's Protection", 'Chase Stone', 0, 27), ('8ae00a8c-0670-5a96-9cf4-49f375a903c2', "Teferi's Protection", 'Chase Stone', 0, 27), ('a9290322-839e-5942-a907-bbe6349cb22c', "Teferi's Protection", 'Chase Stone', 0, 27), ('f2ef8f0a-ea29-5750-9f86-f4ee22b1af7e', "Teferi's Protection", 'Chase Stone', 1, 27), ('396c85de-22c4-5fd2-81df-6c3b97ea0cc8', 'Rowan Kenrith', 'Anna Steinbauer', 0, 25), ('665a13b2-4e44-5a61-94df-95cd808597a3', 'Rowan Kenrith', 'Anna Steinbauer', 1, 25), ('85e6e583-9e48-5c0c-a593-2d023eafa82c', 'Jeskai Infiltrator', 'Cynthia Sheppard', 0, 25), ('8b7ef568-f1f0-560c-a8a8-03099f8768ff', 'Jeskai Infiltrator', 'Cynthia Sheppard', 1, 25), ('ae460aa6-efa3-598e-8323-aff881dc1632', 'Jeskai Infiltrator', 'Cynthia Sheppard', 0, 25), ('d9f7d211-82a0-5088-95f2-ec4fdb8b8462', 'Will Kenrith', 'Anna Steinbauer', 0, 25)]
+Query: WITH ruling_counts AS (
+ SELECT c.uuid, c.name, c.artist, c.isPromo, COUNT(r.id) AS num_rulings
+ FROM cards c LEFT JOIN rulings r ON c.uuid = r.uuid
+ GROUP BY c.uuid
+) SELECT * FROM ruling_counts ORDER BY num_rulings DESC, uuid LIMIT 5;
+Explaination of the query: Identify top 5 cards by number of rulings
+Result: [('23a64ed6-aeda-5607-8cc9-35ae7ac6a0ce', "Teferi's Protection", 'Chase Stone', 0, 27), ('8ae00a8c-0670-5a96-9cf4-49f375a903c2', "Teferi's Protection", 'Chase Stone', 0, 27), ('a9290322-839e-5942-a907-bbe6349cb22c', "Teferi's Protection", 'Chase Stone', 0, 27), ('f2ef8f0a-ea29-5750-9f86-f4ee22b1af7e', "Teferi's Protection", 'Chase Stone', 1, 27), ('396c85de-22c4-5fd2-81df-6c3b97ea0cc8', 'Rowan Kenrith', 'Anna Steinbauer', 0, 25)]

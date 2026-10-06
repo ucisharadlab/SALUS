@@ -1,0 +1,14 @@
+Correctness: Yes  
+Is_ambiguous: No  
+Explanation:  
+The Player table contains one row per player, and `height` has no NULL values (verified counts).  
+The requirement is the average height of players whose birth year is between 1990 and 1995.  
+The query filters players with SUBSTR(`birthday`,1,4) BETWEEN '1990' AND '1995', which keeps years 1990-1995 inclusive, matching the usual interpretation of “between 1990 and 1995.”  
+SUM(height)/COUNT(id) therefore computes exactly the arithmetic mean of height for the selected players, and because there are no NULL heights the denominator matches the numerator’s rows.  
+All columns/tables exist and no joins are needed, so the query returns the requested single scalar.  
+Although using AVG(height) or explicit date bounds would be cleaner, the annotated query is logically correct and delivers the right result.  
+Revised:  
+(If one preferred a clearer version)  
+SELECT AVG(`height`)  
+FROM `Player`  
+WHERE `birthday` >= '1990-01-01' AND `birthday` < '1996-01-01';

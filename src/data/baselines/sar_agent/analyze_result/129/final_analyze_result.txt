@@ -1,0 +1,20 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The query only selects distinct district names for any withdrawal in January-1996, ordered alphabetically.  It does not
+1) exclude credit-card withdrawals (operation = 'VYBER KARTOU'),
+2) rank by withdrawal amount to get the “top ten”,
+3) return ten rows based on size (it may return fewer or arbitrary districts),
+4) include the withdrawal amount so “top” cannot be determined.
+Hence it does not answer the question.
+
+Revised:
+SELECT d.`A2`   AS district_name,
+       t.`amount`
+FROM   `trans`    t
+JOIN   `account`  a ON a.`account_id` = t.`account_id`
+JOIN   `district` d ON d.`district_id` = a.`district_id`
+WHERE  t.`type` = 'VYDAJ'                       -- withdrawals
+  AND (t.`operation` IS NULL OR t.`operation` <> 'VYBER KARTOU')  -- non-credit card
+  AND t.`date` LIKE '1996-01%'
+ORDER BY t.`amount` DESC
+LIMIT 10;

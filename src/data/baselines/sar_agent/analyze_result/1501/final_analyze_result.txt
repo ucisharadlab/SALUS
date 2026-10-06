@@ -1,0 +1,10 @@
+Correctness: No  
+Is_ambiguous: No  
+Explanation: The query filters on the `Date` column of the `yearmonth` table instead of the `transactions_1k` table.  This means it keeps every transaction made by any customer who happens to have a `yearmonth` record for 201306, regardless of when the individual transaction actually occurred.  Consequently transactions outside June-2013 are included, so the returned list of countries is wrong.  The join to `yearmonth` is unnecessary; only `transactions_1k` and `gasstations` are needed.  
+Revised:  
+```
+SELECT DISTINCT g.`Country`
+FROM `transactions_1k`  AS t
+JOIN  `gasstations`    AS g ON t.`GasStationID` = g.`GasStationID`
+WHERE substr(t.`Date`,1,7) = '2013-06';
+```

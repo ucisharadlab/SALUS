@@ -1,0 +1,28 @@
+Query: SELECT COUNT(*) FROM Laboratory LIMIT 5;
+Explaination of the query: sample rows
+Result: [(13908,)]
+Query: SELECT COUNT(*) FROM Patient LIMIT 5
+Explaination of the query: count of patients
+Result: [(1238,)]
+Query: SELECT COUNT(T1.ID) as c1, COUNT(DISTINCT T1.ID) as c2 FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.IGA BETWEEN 80 AND 500 AND  strftime('%Y',  T1.`First Date`) > '1990' LIMIT 5;
+Explaination of the query: compare counts distinct vs total
+Result: [(1590, 133)]
+Query: SELECT MIN(`First Date`), MAX(`First Date`) FROM `Patient` WHERE `First Date` >= '1990-01-01' LIMIT 5;
+Explaination of the query: Range of dates
+Result: [('1990-01-26', '1998-08-28')]
+Query: SELECT COUNT(DISTINCT p.`ID`) AS patient_count
+FROM `Patient` p
+JOIN `Laboratory` l ON p.`ID` = l.`ID`
+WHERE l.`IGA` > 80 AND l.`IGA` < 500
+  AND p.`First Date` > '1990-01-01';
+Explaination of the query: count distinct patients using exclusive range and proper date comparison
+Result: [(140,)]
+Query: SELECT COUNT(DISTINCT p.`ID`) FROM Patient p JOIN Laboratory l ON p.`ID`=l.`ID` WHERE l.`IGA` BETWEEN 80 AND 500 AND p.`First Date`>'1990-01-01' LIMIT 5;
+Explaination of the query: distinct patients inclusive bounds for IGA; date > 1990-01-01
+Result: [(140,)]
+Query: SELECT COUNT(DISTINCT p.`ID`) FROM Patient p JOIN Laboratory l ON p.`ID`=l.`ID` WHERE l.`IGA` BETWEEN 80 AND 500 AND p.`First Date` >= '1990-01-01' LIMIT 5;
+Explaination of the query: inclusive
+Result: [(140,)]
+Query: SELECT COUNT(DISTINCT p.`ID`) FROM Patient p JOIN Laboratory l ON p.`ID`=l.`ID` WHERE l.`IGA` BETWEEN 80 AND 500 AND CAST(strftime('%Y', p.`First Date`) AS INTEGER) > 1990 LIMIT 5;
+Explaination of the query: distinct patient count for year > 1990
+Result: [(133,)]

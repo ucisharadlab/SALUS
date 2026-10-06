@@ -1,0 +1,21 @@
+Query: SELECT MIN(`birthday`) FROM `Player`
+Explaination of the query: Get earliest birthday
+Result: [('1967-01-23 00:00:00',)]
+Query: SELECT COUNT(*) FROM `Player`
+Explaination of the query: Number of players
+Result: [(11060,)]
+Query: SELECT COUNT(*) FROM (SELECT T2.long_passing FROM Player AS T1 INNER JOIN Player_Attributes AS T2 ON T1.player_api_id = T2.player_api_id WHERE T1.birthday = (SELECT MIN(birthday) FROM Player))
+Explaination of the query: Count rows returned by annotated query
+Result: [(4,)]
+Query: SELECT T2.id, T2.date, T2.long_passing FROM Player AS T1 INNER JOIN Player_Attributes AS T2 ON T1.player_api_id = T2.player_api_id WHERE T1.birthday = (SELECT MIN(birthday) FROM Player) LIMIT 5
+Explaination of the query: See long_passing values for oldest player
+Result: [(4840, '2009-02-22 00:00:00', 75), (4841, '2008-08-30 00:00:00', 75), (4842, '2007-08-30 00:00:00', 72), (4843, '2007-02-22 00:00:00', 72)]
+Query: SELECT `player_api_id`,`player_name`, `birthday` FROM `Player` WHERE `birthday` = (SELECT MIN(`birthday`) FROM `Player`)
+Explaination of the query: Get oldest player info
+Result: [(39425, 'Alberto Fontana', '1967-01-23 00:00:00')]
+Query: SELECT `date`, `long_passing` FROM `Player_Attributes` WHERE `player_api_id` = 39425 ORDER BY `date` DESC LIMIT 5
+Explaination of the query: Find all dates for oldest player's attributes
+Result: [('2009-02-22 00:00:00', 75), ('2008-08-30 00:00:00', 75), ('2007-08-30 00:00:00', 72), ('2007-02-22 00:00:00', 72)]
+Query: SELECT `long_passing` FROM `Player_Attributes` WHERE `player_api_id` = (SELECT `player_api_id` FROM `Player` ORDER BY `birthday` ASC LIMIT 1) ORDER BY `date` DESC LIMIT 1
+Explaination of the query: Most recent long_passing for oldest player
+Result: [(75,)]

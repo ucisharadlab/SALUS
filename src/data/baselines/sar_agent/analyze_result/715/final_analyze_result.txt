@@ -1,0 +1,9 @@
+Correctness: No – the query returns one row per qualifying comment, so users who wrote several comments appear more than once.
+Is_ambiguous: No – the question clearly asks for the list of users that meet the stated conditions.
+Explanation: The JOIN and filter conditions (comments.Score BETWEEN 1 AND 5 and users.DownVotes = 0) are correct, but the query does not eliminate duplicates. Because the result should be a list of users, each display name must appear only once; therefore DISTINCT (or GROUP BY) is required. Test aggregation showed many duplicate names, proving the flaw.
+Revised:
+SELECT DISTINCT u.`DisplayName`
+FROM `users` AS u
+JOIN `comments` AS c ON c.`UserId` = u.`Id`
+WHERE c.`Score` BETWEEN 1 AND 5
+  AND u.`DownVotes` = 0;

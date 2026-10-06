@@ -1,0 +1,14 @@
+Correctness: Yes  
+Is_ambiguous: Yes  
+Explanation: The query matches the logic of the question: it joins `posts` → `votes` → `users`, filters for `BountyAmount = 50`, and restricts the post title with the substring "variance".  All columns exist in the given schema and the joins/filters are appropriate.  Executing the query returns the users who placed such a bounty, thereby answering the question.  The only minor technical point is that the query outputs the post title as well; this does not hurt correctness.  If only user names were desired, a DISTINCT on `DisplayName` could be added, but it is not required for correctness.  
+The question, however, says "Which user …", suggesting a single user, while the database (and the query) legitimately return two different users.  Hence the question is ambiguous with respect to cardinality.  
+Revised:  
+(If desired to list users only, with no duplicates)  
+```
+SELECT DISTINCT T3.DisplayName
+FROM posts AS T1
+JOIN votes AS T2 ON T1.Id = T2.PostId
+JOIN users AS T3 ON T3.Id = T2.UserId
+WHERE T2.BountyAmount = 50
+  AND T1.Title LIKE '%variance%';
+```

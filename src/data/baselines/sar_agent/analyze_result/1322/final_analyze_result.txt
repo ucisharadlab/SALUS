@@ -1,0 +1,15 @@
+Correctness: No – the query returns the names of non-meeting events that have >10 attendance records, and it fails to provide the required count of meeting events.  
+Is_ambiguous: No – the question clearly asks for the number of meeting-type events attended by more than 10 members.  
+Explanation: The requirement is: (1) filter events whose `type = 'Meeting'`; (2) for each such event count distinct members in `attendance`; (3) keep those with count > 10; (4) return the total number of such events.  The annotated query instead (a) joins event & attendance, groups by event, keeps those with >10 attendance rows, (b) removes meetings using EXCEPT, thus selecting non-meeting events; (c) returns `event_name` rows, not a numeric count; (d) counts raw attendance rows, not distinct members, so duplicates inflate the threshold.  Hence it does not answer the question.  
+Revised:
+```
+SELECT COUNT(*) AS num_meetings
+FROM (
+    SELECT e.`event_id`
+    FROM `event` e
+    JOIN `attendance` a ON e.`event_id` = a.`link_to_event`
+    WHERE e.`type` = 'Meeting'
+    GROUP BY e.`event_id`
+    HAVING COUNT(DISTINCT a.`link_to_member`) > 10
+) sub;
+```

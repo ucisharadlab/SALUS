@@ -1,0 +1,50 @@
+----------CURRENT_PROMPT----------
+Table event(event_id, event_name, event_date, type, notes, location, status), 3 records:
+- {'event_id': 'recoVo6dFSzG1ypX7', 'event_name': 'September Meeting', 'event_date': '2019-09-10T09:30:00', 'type': 'Meeting', 'notes': 'Volunteer opportunity to sort donations for distribution.', 'location': '900 E. Washington St.', 'status': 'Closed'}, 
+- {'event_id': 'recs4x1BYWAsU2SKg', 'event_name': 'Officers meeting - February', 'event_date': '2019-09-03T12:00:00', 'type': 'Community Service', 'notes': 'Semester social event. Optional attendance.', 'location': '100 W. Main Street', 'status': 'Closed'}, 
+- {'event_id': 'recLKj8BbTNqxFbTb', 'event_name': 'Food Bank', 'event_date': '2020-03-12T06:00:00', 'type': 'Game', 'notes': 'Volunteer opportunity to sort donations for distribution.', 'location': '900 E. Washington St.', 'status': 'Planning'}
+Table budget(budget_id, category, spent, remaining, amount, event_status, link_to_event), 3 records:
+- {'budget_id': 'recXaqLgIlsJ4eppc', 'category': 'Advertisement', 'spent': 74.59, 'remaining': 20.0, 'amount': 300, 'event_status': 'Planning', 'link_to_event': 'recLKj8BbTNqxFbTb'}, 
+- {'budget_id': 'recJOc7f9KgpgJm5q', 'category': 'Food', 'spent': 20.2, 'remaining': -23.06, 'amount': 10, 'event_status': 'Open', 'link_to_event': 'recoVo6dFSzG1ypX7'}, 
+- {'budget_id': 'rec5V70sIuIgpOzDT', 'category': 'Speaker Gifts', 'spent': 295.12, 'remaining': -0.199999999999999, 'amount': 75, 'event_status': 'Open', 'link_to_event': 'recs4x1BYWAsU2SKg'}
+
+Note that:
+- event.event_id is a primary key uniquely identifying each record of event.
+- budget.budget_id is a primary key uniquely identifying each record of budget.
+- budget.link_to_event is a foreign key referencing event.event_id.
+Only the primary key can be used to uniquely identify each record of table (i.e., each instance of entity), Other columns are non-unique attributes and cannot be used to uniquely identify each record. (e.g., counting number of singer should count by singer ids but not different singer names despite namesake)
+
+Indicate the name of the closed event whose cost has exceeded the budget the most.
+
+closed events refers to event_name where status = 'Closed'; exceed the budget the most refers to MIN(remaining) where remaining < 0
+----------REPLY 0----------
+To determine the name of the closed event whose cost has exceeded the budget the most, we need to follow these steps:
+
+1. Identify closed events.
+2. Check which of these events have budgets where they exceeded what was planned (`remaining < 0`).
+3. Find the event whose budget is exceeded the most, indicated by the minimum value of the `remaining` attribute within `budget` table that is less than zero.
+
+Following the data given:
+
+### Table: event
+- {'event_id': 'recoVo6dFSzG1ypX7', 'event_name': 'September Meeting', 'event_date': '2019-09-10T09:30:00', 'type': 'Meeting', 'notes': 'Volunteer opportunity to sort donations for distribution.', 'location': '900 E. Washington St.', 'status': 'Closed'}, 
+- {'event_id': 'recs4x1BYWAsU2SKg', 'event_name': 'Officers meeting - February', 'event_date': '2019-09-03T12:00:00', 'type': 'Community Service', 'notes': 'Semester social event. Optional attendance.', 'location': '100 W. Main Street', 'status': 'Closed'}
+- (We ignore the 'Food Bank' event as its status is 'Planning')
+
+### Table: budget
+- {'budget_id': 'recJOc7f9KgpgJm5q', 'category': 'Food', 'spent': 20.2, 'remaining': -23.06, 'amount': 10, 'event_status': 'Open', 'link_to_event': 'recoVo6dFSzG1ypX7'}, 
+- {'budget_id': 'rec5V70sIuIgpOzDT', 'category': 'Speaker Gifts', 'spent': 295.12, 'remaining': -0.199999999999999, 'amount': 75, 'event_status': 'Open', 'link_to_event': 'recs4x1BYWAsU2SKg'}
+
+Considering only the closed events:
+- For 'September Meeting', it has not exceeded its budget linked directly as the `remaining` is not below zero for anything linked to 'recoVo6dFSzG1ypX7'.
+- For 'Officers meeting - February', linked via 'recs4x1BYWAsU2SKg', there’s an overspent budget in 'Speaker Gifts' with a remaining of -0.2.
+
+Among the overspends:
+- 'Officers meeting - February' has the least `remaining` value that is negative (-0.2).
+
+Thus, the answer to the query will be the event with event_name corresponding to this minimal negative `remaining`.
+
+```
+#result: [('Officers meeting - February',)]
+```
+----------END----------

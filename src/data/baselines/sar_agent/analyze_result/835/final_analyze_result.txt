@@ -1,0 +1,17 @@
+Correctness: No  
+Is_ambiguous: Yes  
+Explanation:  
+• The intent is to look at *all* superheroes that are published by Marvel Comics and compute what fraction of them are aligned as “Good”.  
+• In the data there are 387 Marvel heroes (verified).  Three of them have a NULL `alignment_id` (verified).  Those heroes are still Marvel heroes and, because their align-ment is not ‘Good’, they should be included in the denominator but not in the numerator.  
+• The annotated query performs an INNER JOIN to the `alignment` table.  That join removes every hero whose `alignment_id` is NULL, reducing the denominator from 387 to 384.  Consequently the reported percentage (≈ 66.67 %) is slightly higher than the correct value (≈ 65.89 %).  
+• All other parts of the query (join to publisher, counting ‘Good’, casting to REAL) are fine, but the incorrect join changes the final answer.  
+• Because the question does not state how to treat heroes with unknown alignment, one can argue that excluding them is also a reasonable interpretation; therefore a small ambiguity exists.  
+Revised:  
+```
+SELECT
+  CAST(SUM(CASE WHEN a.`alignment` = 'Good' THEN 1 ELSE 0 END) AS REAL) * 100.0 / COUNT(*) AS pct_good
+FROM `superhero`  s
+JOIN `publisher`   p ON s.`publisher_id` = p.`id`
+LEFT JOIN `alignment` a ON s.`alignment_id` = a.`id`
+WHERE p.`publisher_name` = 'Marvel Comics';
+```

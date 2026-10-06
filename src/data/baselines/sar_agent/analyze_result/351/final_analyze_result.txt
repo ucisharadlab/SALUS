@@ -1,0 +1,8 @@
+Correctness: No – because the query can output the same card name many times when that card has more than one Japanese‐language printing; the result therefore does not satisfy the “all the cards” wording, which implies a unique list.
+Is_ambiguous: No – the intent (return every card that possesses a Japanese alternative language version) is clear.
+Explanation: The join between `cards` and `foreign_data` filtered by `foreign_data.language = 'Japanese'` is logically correct to locate qualifying cards, but multiple rows in `foreign_data` for the same card uuid (different sets, promos, etc.) generate duplicate rows.  A DISTINCT, GROUP BY, or EXISTS is required to de-duplicate.  Test query with GROUP BY showed large duplicate counts (e.g., “Evolving Wilds” appeared 22 times), confirming the issue.
+Revised:
+SELECT DISTINCT `cards`.`name`
+FROM `cards`
+JOIN `foreign_data` ON `cards`.`uuid` = `foreign_data`.`uuid`
+WHERE `foreign_data`.`language` = 'Japanese';

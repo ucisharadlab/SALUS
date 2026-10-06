@@ -1,0 +1,11 @@
+Correctness: Yes  
+Is_ambiguous: No  
+Explanation:  
+The question asks for the single highest (maximum) lap-speed recorded in the 2009 Spanish Grand Prix.  
+The annotated query:  
+1. Uniquely selects that race with `year = 2009 AND name = 'Spanish Grand Prix'`.  
+2. Joins to `results` on `raceId`, bringing in every driver’s record for that event.  
+3. Removes NULL speeds, orders `fastestLapSpeed` descending, and limits to one row; this returns the greatest value.  
+4. A verification with `MAX(CAST(fastestLapSpeed AS REAL))` returns the same speed (202.484 km/h); hence the query’s output is correct.  
+The only minor caveat is that `fastestLapSpeed` is stored as TEXT and the query relies on lexicographic ordering. For the data in this race the lexicographic and numeric orders coincide, so the answer is still accurate. Casting to REAL would be a safer practice, but omission does not change the correct result here.  
+Revised: —

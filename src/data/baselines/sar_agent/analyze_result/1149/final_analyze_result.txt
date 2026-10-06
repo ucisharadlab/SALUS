@@ -1,0 +1,15 @@
+Correctness: No
+Is_ambiguous: Yes
+Explanation: The query counts male in-patients and male out-patients but only returns the percentage ratio  (male-in ÷ male-out × 100).  It does not explicitly state which group is larger, and its single number is not an unambiguous “deviation”; several different percentage-deviation formulas are plausible.  Therefore it fulfils at best half of the information requested.  Moreover, the phrase “deviation in percentage” can mean a ratio, a percent difference, or a share of the total, so the task itself is open to multiple interpretations.
+Revised: WITH c AS (
+  SELECT
+    SUM(CASE WHEN `Admission`='+' AND `SEX`='M' THEN 1 END) AS male_in,
+    SUM(CASE WHEN `Admission`='-' AND `SEX`='M' THEN 1 END) AS male_out
+  FROM `Patient`
+)
+SELECT
+  CASE WHEN male_in > male_out THEN 'In-patient'
+       WHEN male_out > male_in THEN 'Out-patient'
+       ELSE 'Equal' END AS larger_group,
+  ABS(male_in - male_out) * 100.0 / (male_in + male_out) AS deviation_percentage
+FROM c;

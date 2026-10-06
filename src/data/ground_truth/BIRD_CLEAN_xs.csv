@@ -1,0 +1,568 @@
+query_id,db_id,difficulty,label,error_type,correction
+4,california_schools,moderate,0,Data Inconsistency,
+6,california_schools,simple,1,,
+15,california_schools,simple,0,Query Ambiguity,
+18,california_schools,simple,1,,
+30,california_schools,simple,1,,
+39,california_schools,simple,1,,
+49,california_schools,moderate,0,Query Ambiguity,
+50,california_schools,simple,1,,
+52,california_schools,simple,1,,
+53,california_schools,simple,0,Incorrect SQL,SELECT SUM(T1.NumTstTakr) FROM satscores AS T1 INNER JOIN schools AS T2 ON T1.cds = T2.CDSCode WHERE T2.MailCity = 'Fresno'
+64,california_schools,simple,1,,
+67,california_schools,simple,0,Query Ambiguity,
+76,california_schools,moderate,1,,
+80,california_schools,simple,0,Incorrect SQL,"SELECT T1.`School Type`, T1.`School Name`, T2.Latitude FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode ORDER BY T2.Latitude DESC, T1.CDSCode ASC LIMIT 1"
+81,california_schools,moderate,0,Incorrect SQL,"SELECT T2.City, T1.`Low Grade`, T1.`School Name` FROM frpm AS T1 INNER JOIN schools AS T2 ON T1.CDSCode = T2.CDSCode WHERE T2.State = 'CA' ORDER BY T2.Latitude ASC LIMIT 1"
+82,california_schools,simple,0,Incorrect SQL,SELECT GSoffered FROM schools ORDER BY ABS(longitude) DESC LIMIT 1
+87,california_schools,challenging,1,,
+93,financial,moderate,1,,
+94,financial,challenging,0,Incorrect SQL,"SELECT T1.account_id , ( SELECT MAX(A11) - MIN(A11) FROM district ) FROM account AS T1 INNER JOIN district AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T1.account_id = T3.account_id INNER JOIN client AS T4 ON T3.client_id = T4.client_id WHERE T2.district_id = ( SELECT district_id FROM client WHERE gender = 'F' ORDER BY birth_date ASC LIMIT 1 ) ORDER BY T2.A11 DESC;"
+98,financial,moderate,1,,
+99,financial,moderate,1,,
+101,financial,simple,0,Incorrect SQL,"SELECT DISTINCT account_id
+FROM trans
+WHERE STRFTIME('%Y', date) = '1995'
+  AND date = (SELECT MIN(date) FROM trans WHERE STRFTIME('%Y', date) = '1995')
+ORDER BY account_id ASC;"
+109,financial,simple,0,Incorrect SQL,"SELECT COUNT(DISTINCT client.client_id)
+FROM client
+INNER JOIN disp ON client.client_id = disp.client_id
+INNER JOIN account ON disp.account_id = account.account_id
+INNER JOIN district ON account.district_id = district.district_id
+WHERE client.gender = 'F' AND district.A2 = 'Jesenik' AND disp.type = 'OWNER'"
+110,financial,simple,0,Incorrect SQL,SELECT T1.disp_id FROM disp AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id INNER JOIN trans AS T3 ON T2.account_id = T3.account_id WHERE T3.date='1998-09-02' AND T3.amount = 5100
+128,financial,moderate,0,Query Ambiguity,
+129,financial,moderate,0,Incorrect SQL,"SELECT 
+    T1.A2 AS district_name,  
+    SUM(T3.amount) AS total_non_credit_withdrawals  
+FROM district AS T1
+INNER JOIN account AS T2 ON T1.district_id = T2.district_id
+INNER JOIN trans AS T3 ON T2.account_id = T3.account_id
+WHERE 
+    T3.type = 'VYDAJ' 
+    AND T3.date LIKE '1996-01%'  
+GROUP BY T1.A2 
+ORDER BY total_non_credit_withdrawals DESC 
+LIMIT 10;"
+131,financial,moderate,0,Query Ambiguity,
+134,financial,simple,1,,
+145,financial,moderate,0,Incorrect SQL,"SELECT DISTINCT T1.account_id FROM trans AS T1 INNER JOIN account AS T2 ON T1.account_id = T2.account_id WHERE STRFTIME('%Y', T1.date) = '1998' AND T1.operation = 'VYBER KARTOU' AND T1.amount < (SELECT AVG(amount) FROM trans WHERE STRFTIME('%Y', date) = '1998')"
+147,financial,simple,1,,
+149,financial,challenging,0,Incorrect SQL,SELECT DISTINCT T3.type FROM district AS T1 INNER JOIN account AS T2 ON T1.district_id = T2.district_id INNER JOIN disp AS T3 ON T2.account_id = T3.account_id WHERE T3.type != 'OWNER' AND T1.A11 BETWEEN 8000 AND 9000
+154,financial,simple,1,,
+160,financial,simple,1,,
+171,financial,moderate,0,Incorrect SQL,"SELECT SUM(IIF(A3 = 'north Bohemia', A16, 0)) - SUM(IIF(A3 = 'east Bohemia', A16, 0)) FROM district"
+177,financial,simple,1,,
+185,financial,moderate,0,Incorrect SQL,"SELECT CAST(SUM(CASE WHEN c.gender = 'F' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(*) AS percentage_female\nFROM client c\nJOIN disp d ON c.client_id = d.client_id\nJOIN account a ON d.account_id = a.account_id\nJOIN district dist ON a.district_id = dist.district_id\nWHERE dist.A3 = 'Prague';"
+187,financial,simple,1,,
+189,financial,moderate,0,Incorrect SQL,"SELECT T3.account_id
+FROM client AS T1
+INNER JOIN district AS T2 ON T1.district_id = T2.district_id
+INNER JOIN account AS T3 ON T2.district_id = T3.district_id
+INNER JOIN disp AS T4 ON T1.client_id = T4.client_id AND T4.account_id = T3.account_id
+WHERE T1.gender = 'F'
+ORDER BY T1.birth_date ASC, T2.A11 ASC
+LIMIT 1;"
+199,toxicology,simple,1,,
+213,toxicology,moderate,0,Incorrect Assumption,
+227,toxicology,simple,1,,
+228,toxicology,moderate,1,,
+233,toxicology,simple,1,,
+238,toxicology,simple,1,,
+239,toxicology,simple,0,Incorrect SQL,SELECT COUNT(DISTINCT bond_id) FROM connected WHERE atom_id LIKE 'TR%_19' OR atom_id2 LIKE 'TR%_19';
+250,toxicology,moderate,0,Incorrect SQL,"SELECT T.molecule_id FROM ( SELECT T3.molecule_id, COUNT(T1.bond_type) FROM bond AS T1 INNER JOIN molecule AS T3 ON T1.molecule_id = T3.molecule_id WHERE T3.label = '+' AND T1.bond_type = '=' GROUP BY T3.molecule_id ORDER BY COUNT(T1.bond_type) DESC, T3.molecule_id DESC LIMIT 1 ) AS T"
+251,toxicology,moderate,0,Incorrect SQL,"SELECT T2.element
+FROM molecule AS T1 
+INNER JOIN atom AS T2 ON T1.molecule_id = T2.molecule_id 
+WHERE T1.label = '+' 
+GROUP BY T2.element 
+HAVING COUNT(DISTINCT T2.molecule_id) = (
+    SELECT COUNT(DISTINCT T2_inner.molecule_id)
+    FROM molecule AS T1_inner 
+    INNER JOIN atom AS T2_inner ON T1_inner.molecule_id = T2_inner.molecule_id 
+    WHERE T1_inner.label = '+' 
+    GROUP BY T2_inner.element 
+    ORDER BY COUNT(DISTINCT T2_inner.molecule_id) 
+    LIMIT 1
+)"
+255,toxicology,moderate,1,,
+267,toxicology,moderate,0,Data Inconsistency,
+272,toxicology,moderate,1,,
+274,toxicology,simple,1,,
+281,toxicology,challenging,0,Incorrect SQL,"SELECT DISTINCT T1.element 
+FROM atom AS T1 
+INNER JOIN molecule AS T2 ON T1.molecule_id = T2.molecule_id 
+WHERE T2.label = '+' 
+AND SUBSTR(T1.atom_id, 7, 1) = '4'"
+283,toxicology,moderate,0,Query Ambiguity,
+286,toxicology,simple,0,Incorrect SQL,SELECT CAST(COUNT(DISTINCT CASE WHEN bond_type = '#' THEN molecule_id ELSE NULL END) AS REAL) * 100 / COUNT(DISTINCT molecule_id) FROM bond
+290,toxicology,challenging,0,Incorrect Assumption,
+295,toxicology,simple,1,,
+309,toxicology,simple,0,Incorrect SQL,"SELECT T1.atom_id, COUNT(DISTINCT T2.bond_type) FROM atom AS T1 INNER JOIN bond AS T2 ON T1.molecule_id = T2.molecule_id WHERE T1.molecule_id = 'TR346' GROUP BY T1.atom_id"
+310,toxicology,moderate,0,Incorrect SQL,"SELECT
+  COUNT(DISTINCT T2.molecule_id) AS mol_with_double_bond,
+  COUNT(DISTINCT CASE WHEN T2.label = '+' THEN T2.molecule_id END) AS carcinogenic_with_double_bond
+FROM bond AS T1
+JOIN molecule AS T2 ON T2.molecule_id = T1.molecule_id
+WHERE T1.bond_type = '=';"
+311,toxicology,simple,0,Incorrect SQL,"SELECT COUNT(*) 
+FROM molecule M
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM atom A 
+    WHERE A.molecule_id = M.molecule_id 
+    AND A.element = 's'
+)
+AND NOT EXISTS (
+    SELECT 1 
+    FROM bond B 
+    WHERE B.molecule_id = M.molecule_id 
+    AND B.bond_type = '='
+)"
+317,toxicology,moderate,0,Incorrect SQL,"SELECT 
+    (COUNT(CASE WHEN m.label = '+' AND EXISTS (SELECT 1 FROM atom a WHERE a.molecule_id = m.molecule_id AND a.element = 'cl') THEN 1 END) * 100.0) 
+    / COUNT(*) AS percentage
+FROM molecule m"
+324,toxicology,simple,0,Incorrect SQL,SELECT AVG(CASE WHEN EXISTS ( SELECT 1 FROM connected c JOIN bond b ON b.bond_id = c.bond_id WHERE b.bond_type = '-' AND (c.atom_id = a.atom_id OR c.atom_id2 = a.atom_id) ) THEN 1.0 ELSE 0.0 END) AS percentage FROM atom a;
+336,toxicology,simple,1,,
+341,card_games,simple,0,Incorrect SQL,SELECT id FROM cards WHERE borderColor = 'borderless' AND (cardKingdomFoilId IS NULL OR cardKingdomId IS NULL)
+349,card_games,moderate,0,Incorrect SQL,"SELECT
+  T1.name,
+  T1.artist,
+  CASE WHEN T1.isPromo = 1 THEN 'yes' ELSE 'no' END AS isPromo
+FROM cards AS T1
+JOIN rulings AS T2 ON T2.uuid = T1.uuid
+GROUP BY T1.uuid, T1.name, T1.artist, T1.isPromo
+ORDER BY COUNT(T2.uuid) DESC, T1.uuid ASC
+LIMIT 1;"
+351,card_games,simple,0,Incorrect SQL,SELECT DISTINCT T1.name FROM cards AS T1 INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid WHERE T2.language = 'Japanese'
+353,card_games,simple,1,,
+357,card_games,simple,0,Incorrect SQL,"SELECT DISTINCT promoTypes 
+FROM cards 
+WHERE name = 'Duress' AND promoTypes IS NOT NULL"
+362,card_games,simple,1,,
+365,card_games,simple,0,Incorrect SQL,"SELECT type 
+FROM cards 
+WHERE name = 'Benalish Knight';"
+368,card_games,simple,1,,
+376,card_games,simple,0,Incorrect SQL,SELECT DISTINCT layout FROM cards WHERE keywords LIKE '%Flying%'
+377,card_games,simple,1,,
+387,card_games,simple,0,Incorrect SQL,"SELECT id, colors FROM cards WHERE setCode = 'OGW'"
+388,card_games,simple,0,Incorrect SQL,"SELECT c.id, c.name, f.language
+FROM cards c
+JOIN foreign_data f ON c.uuid = f.uuid
+WHERE c.setCode = '10E' AND c.convertedManaCost = 5
+ORDER BY c.name, f.language;"
+395,card_games,simple,1,,
+396,card_games,simple,1,,
+397,card_games,moderate,1,,
+403,card_games,simple,0,Query Ambiguity,
+416,card_games,challenging,0,Incorrect SQL,"SELECT 
+    (COUNT(DISTINCT CASE WHEN f.language = 'French' THEN c.id END) * 100.0 
+    / NULLIF(COUNT(DISTINCT c.id), 0)) AS french_percentage
+FROM 
+    cards c
+LEFT JOIN 
+    foreign_data f ON c.uuid = f.uuid
+WHERE 
+    c.power IS NULL OR c.power = '*';"
+419,card_games,simple,1,,
+421,card_games,simple,1,,
+424,card_games,simple,0,Query Ambiguity,
+431,card_games,challenging,0,Incorrect SQL,SELECT T1.id FROM sets AS T1 INNER JOIN set_translations AS T2 ON T1.code = T2.setCode WHERE T2.language = 'Japanese' AND T1.isFoilOnly = 1 AND T1.isForeignOnly = 0;
+435,card_games,simple,1,,
+437,card_games,simple,0,Query Ambiguity,
+442,card_games,simple,0,Incorrect SQL,"SELECT baseSetSize, code FROM sets WHERE block IN ('Masques', 'Mirage')"
+444,card_games,simple,0,Incorrect SQL,"SELECT DISTINCT T2.name AS foreign_card_name, T1.type AS card_type
+FROM cards AS T1
+INNER JOIN foreign_data AS T2 ON T1.uuid = T2.uuid
+WHERE T1.watermark = 'boros';"
+445,card_games,simple,0,Incorrect SQL,"SELECT DISTINCT T2.language, T2.flavorText, T1.type
+FROM cards AS T1
+INNER JOIN foreign_data AS T2 ON T2.uuid = T1.uuid
+WHERE T1.watermark = 'colorpie'"
+454,card_games,simple,0,Incorrect SQL,SELECT SUM(CASE WHEN power = '*' OR power IS NULL THEN 1 ELSE 0 END) FROM cards WHERE borderColor = 'white'
+457,card_games,simple,1,,
+462,card_games,moderate,0,Incorrect SQL,"SELECT translation 
+FROM set_translations 
+WHERE setCode IN (SELECT setCode FROM cards WHERE name = 'Ancestor''s Chosen') 
+  AND language = 'Italian'
+LIMIT 1;"
+469,card_games,moderate,1,,
+476,card_games,simple,0,Incorrect SQL,"SELECT T1.name 
+FROM cards AS T1 
+INNER JOIN sets AS T2 ON T2.code = T1.setCode 
+WHERE T2.name = 'Coldsnap' 
+AND T1.convertedManaCost = (
+    SELECT MAX(convertedManaCost) 
+    FROM cards T3 
+    INNER JOIN sets T4 ON T4.code = T3.setCode 
+    WHERE T4.name = 'Coldsnap'
+)
+ORDER BY T1.name ASC;"
+484,card_games,moderate,0,Incorrect SQL,SELECT T2.name FROM foreign_data AS T1 INNER JOIN cards AS T2 ON T2.uuid = T1.uuid INNER JOIN sets AS T3 ON T3.code = T2.setCode WHERE T3.name = 'Coldsnap' AND T1.language = 'Italian' ORDER BY T2.convertedManaCost DESC
+508,card_games,moderate,1,,
+509,card_games,simple,1,,
+510,card_games,simple,1,,
+514,card_games,simple,0,Incorrect SQL,SELECT name FROM cards JOIN legalities ON cards.uuid = legalities.uuid WHERE legalities.format = 'duel' ORDER BY convertedManaCost DESC LIMIT 10;
+528,card_games,challenging,1,,
+529,card_games,moderate,0,Incorrect SQL,SELECT setCode FROM set_translations WHERE language = 'Japanese';
+530,card_games,moderate,0,Incorrect SQL,"SELECT 
+    T1.frameVersion, 
+    T1.name,
+    CASE 
+        WHEN EXISTS (SELECT 1 FROM legalities AS T2 WHERE T2.uuid = T1.uuid AND T2.status = 'Banned') 
+        THEN 'Banned' 
+        ELSE 'Not Banned' 
+    END AS banned_status
+FROM cards AS T1
+WHERE T1.artist = 'Allen Williams'
+ORDER BY T1.frameVersion ASC, T1.name ASC;"
+540,codebase_community,simple,0,Data Inconsistency,
+544,codebase_community,moderate,1,,
+546,codebase_community,simple,0,Incorrect SQL,SELECT DISTINCT T2.DisplayName FROM posts AS T1 INNER JOIN users AS T2 ON T1.OwnerUserId = T2.Id WHERE T1.ClosedDate IS NOT NULL
+548,codebase_community,simple,1,,
+555,codebase_community,simple,0,Data Inconsistency,
+561,codebase_community,simple,1,,
+562,codebase_community,simple,1,,
+571,codebase_community,moderate,0,Incorrect SQL,"SELECT 
+    (SELECT CAST(COUNT(*) AS REAL) FROM posts WHERE OwnerUserId = 24) /
+    (SELECT CAST(COUNT(*) AS REAL) FROM votes WHERE UserId = 24)"
+584,codebase_community,moderate,0,Incorrect SQL,"SELECT c.Text
+FROM comments c
+JOIN posts p ON p.Id = c.PostId
+WHERE p.Title = 'Why square the difference instead of taking the absolute value in standard deviation?'
+  AND EXISTS (
+    SELECT 1
+    FROM postHistory ph
+    WHERE ph.PostId = p.Id
+      AND ph.UserId = c.UserId
+  )
+ORDER BY c.CreationDate;"
+586,codebase_community,challenging,0,Incorrect SQL,SELECT T3.DisplayName FROM posts AS T1 INNER JOIN votes AS T2 ON T1.Id = T2.PostId INNER JOIN users AS T3 ON T3.Id = T2.UserId WHERE T2.BountyAmount = 50 AND T1.Title LIKE '%variance%';
+592,codebase_community,simple,1,,
+593,codebase_community,simple,0,Incorrect SQL,"SELECT COUNT(*)
+FROM users AS U
+WHERE U.Location = 'New York'
+  AND EXISTS (
+    SELECT 1 FROM badges AS B1 
+    WHERE B1.UserId = U.Id AND B1.Name = 'Supporter'
+  )
+  AND EXISTS (
+    SELECT 1 FROM badges AS B2 
+    WHERE B2.UserId = U.Id AND B2.Name = 'Teacher'
+  )"
+600,codebase_community,simple,0,Incorrect SQL,"SELECT DISTINCT p.Id, p.Title, p.ViewCount
+FROM postLinks AS pl
+INNER JOIN posts AS p ON p.Id = pl.RelatedPostId
+WHERE pl.PostId = 61217;"
+603,codebase_community,simple,0,Incorrect SQL,"SELECT SUM(FavoriteCount) \nFROM posts \nWHERE OwnerUserId = 686 AND strftime('%Y', CreaionDate) = '2011';"
+604,codebase_community,moderate,1,,
+606,codebase_community,simple,0,Incorrect SQL,SELECT DISTINCT Name FROM badges WHERE Date = '2010-07-19 19:39:08.0'
+610,codebase_community,simple,0,Incorrect SQL,SELECT DISTINCT T2.name FROM users AS T1 INNER JOIN badges AS T2 ON T1.Id = T2.UserId WHERE T1.Reputation = (SELECT MAX(Reputation) FROM users);
+614,codebase_community,simple,1,,
+622,codebase_community,simple,0,Incorrect SQL,SELECT DISTINCT T2.Name FROM users AS T1 INNER JOIN badges AS T2 ON T1.Id = T2.UserId WHERE T1.DisplayName = 'Sharpie'
+626,codebase_community,simple,1,,
+631,codebase_community,simple,0,Incorrect SQL,SELECT COUNT(T2.Id) FROM users AS T1 INNER JOIN posts AS T2 ON T1.Id = T2.OwnerUserId WHERE T1.DisplayName = 'Daniel Vassallo'
+633,codebase_community,moderate,0,Data Inconsistency,
+635,codebase_community,moderate,0,Incorrect SQL,SELECT COUNT(*) FROM ( SELECT T2.Id FROM users AS T1 INNER JOIN posts AS T2 ON T1.Id = T2.OwnerUserId INNER JOIN votes AS T3 ON T3.PostId = T2.Id WHERE T1.DisplayName = 'Matt Parker' GROUP BY T2.Id HAVING COUNT(T3.Id) > 4);
+637,codebase_community,moderate,0,Incorrect SQL,SELECT DISTINCT T3.Tags FROM users AS T1 INNER JOIN postHistory AS T2 ON T1.Id = T2.UserId INNER JOIN posts AS T3 ON T3.Id = T2.PostId WHERE T1.DisplayName = 'Mark Meckes' AND T3.CommentCount = 0 AND T3.Tags IS NOT NULL
+642,codebase_community,simple,0,Data Inconsistency,
+643,codebase_community,simple,1,,
+646,codebase_community,simple,0,Incorrect SQL,"SELECT DISTINCT T1.Title, T2.UserDisplayName
+FROM posts AS T1
+INNER JOIN comments AS T2 ON T1.Id = T2.PostId
+WHERE T2.Score > 60 AND T1.Title IS NOT NULL AND T2.UserDisplayName IS NOT NULL;"
+648,codebase_community,simple,1,,
+649,codebase_community,simple,0,Incorrect SQL,"SELECT COUNT(T1.Id), T2.LastEditDate FROM postHistory AS T1 INNER JOIN posts AS T2 ON T1.PostId = T2.Id WHERE T2.Title = 'What is the best introductory Bayesian statistics textbook?'"
+654,codebase_community,moderate,1,,
+656,codebase_community,simple,0,Incorrect SQL,SELECT DisplayName FROM posts AS T1 JOIN posts AS T2 ON T2.ID = T1.ParentId LEFT JOIN users AS T3 ON T3.Id = T2.OwnerUserId WHERE T1.ParentId IS NOT NULL ORDER BY T1.Score DESC LIMIT 1
+657,codebase_community,moderate,1,,
+659,codebase_community,simple,1,,
+673,codebase_community,simple,0,Incorrect Evidence,
+679,codebase_community,simple,0,Incorrect SQL,"SELECT Id, Title FROM posts ORDER BY Score DESC LIMIT 1;"
+683,codebase_community,moderate,0,Incorrect SQL,"SELECT 
+    (SUM(IIF(STRFTIME('%Y', T2.CreaionDate) = '2011' AND T1.Reputation > 1000, 1, 0)) * 100.0) 
+    / COUNT(IIF(STRFTIME('%Y', T2.CreaionDate) = '2011', 1, NULL))
+FROM users AS T1 
+INNER JOIN posts AS T2 ON T1.Id = T2.OwnerUserId"
+686,codebase_community,simple,0,Incorrect SQL,"SELECT COUNT(*) 
+FROM posts 
+WHERE ViewCount > (SELECT AVG(ViewCount) FROM posts)"
+687,codebase_community,simple,0,Incorrect SQL,"SELECT T1.CommentCount
+FROM posts T1
+WHERE T1.Score = (SELECT MAX(Score) FROM posts);"
+693,codebase_community,simple,0,Incorrect SQL,"SELECT COUNT(DISTINCT T2.Id), COUNT(DISTINCT T3.Id) FROM users AS T1 LEFT JOIN posts AS T2 ON T2.OwnerUserId = T1.Id LEFT JOIN comments AS T3 ON T3.UserID = T1.Id ORDER BY T1.CreationDate DESC LIMIT 1"
+694,codebase_community,moderate,0,Incorrect SQL,"SELECT T3.Text, T1.DisplayName FROM posts AS T2 INNER JOIN comments AS T3 ON T3.PostID = T2.Id LEFT JOIN users AS T1 ON T1.Id = T3.UserId WHERE T2.Title = 'Analysing wind data with R' ORDER BY T3.CreationDate DESC LIMIT 10"
+696,codebase_community,simple,0,Incorrect SQL,SELECT Count FROM tags WHERE TagName = 'careers';
+703,codebase_community,simple,1,,
+707,codebase_community,moderate,1,,
+709,codebase_community,simple,0,Incorrect SQL,SELECT COUNT(DISTINCT T2.Id) FROM comments AS T1 INNER JOIN posts AS T2 ON T1.PostId = T2.Id WHERE T2.ViewCount < 5 AND T1.Score = 0
+710,codebase_community,simple,0,Incorrect SQL,"SELECT COUNT(T1.id)
+FROM comments AS T1
+INNER JOIN posts AS T2 ON T1.PostId = T2.Id
+WHERE T2.CommentCount = 1 AND T1.Score = 0;"
+715,codebase_community,simple,0,Incorrect SQL,SELECT DISTINCT T2.DisplayName FROM comments AS T1 INNER JOIN users AS T2 ON T1.UserId = T2.Id WHERE T1.Score BETWEEN 1 AND 5 AND T2.DownVotes = 0
+716,codebase_community,moderate,0,Incorrect SQL,SELECT CAST(COUNT(DISTINCT CASE WHEN T1.UpVotes = 0 THEN T1.Id END) AS REAL) * 100/ COUNT(DISTINCT T1.Id) AS per FROM users AS T1 INNER JOIN comments AS T2 ON T1.Id = T2.UserId WHERE T2.Score BETWEEN 5 AND 10
+719,superhero,moderate,1,,
+721,superhero,simple,1,,
+724,superhero,challenging,1,,
+728,superhero,moderate,0,Incorrect SQL,"SELECT colour.colour AS EyeColor, COUNT(superhero.id) AS Count, RANK() OVER (ORDER BY COUNT(superhero.id) DESC) AS PopularityRank FROM superhero INNER JOIN colour ON superhero.eye_colour_id = colour.id INNER JOIN publisher ON superhero.publisher_id = publisher.id WHERE publisher.publisher_name = 'Marvel Comics' GROUP BY colour.colour ORDER BY PopularityRank ASC;"
+730,superhero,challenging,1,,
+732,superhero,moderate,1,,
+739,superhero,moderate,1,,
+740,superhero,moderate,1,,
+743,superhero,challenging,0,Query Ambiguity,
+744,superhero,challenging,0,Incorrect SQL,"SELECT T2.publisher_name, ABS((SELECT COUNT(S1.id) FROM superhero AS S1 INNER JOIN publisher AS P1 ON S1.publisher_id = P1.id WHERE P1.publisher_name = 'Marvel Comics') - (SELECT COUNT(S2.id) FROM superhero AS S2 INNER JOIN publisher AS P2 ON S2.publisher_id = P2.id WHERE P2.publisher_name = 'DC Comics')) AS Difference FROM superhero AS T1 INNER JOIN publisher AS T2 ON T1.publisher_id = T2.id WHERE T2.publisher_name IN ('Marvel Comics', 'DC Comics') GROUP BY T2.publisher_name ORDER BY COUNT(T1.id) DESC LIMIT 1;"
+745,superhero,simple,1,,
+753,superhero,moderate,1,,
+754,superhero,simple,1,,
+758,superhero,moderate,0,Incorrect Assumption,
+760,superhero,challenging,1,,
+763,superhero,simple,0,Incorrect SQL,"SELECT a.attribute_name AS hero_attribute_name, ha.attribute_value AS hero_attribute_value FROM superhero s INNER JOIN hero_attribute ha ON s.id = ha.hero_id INNER JOIN attribute a ON ha.attribute_id = a.id WHERE s.superhero_name = 'Abomination';"
+766,superhero,moderate,0,Incorrect Assumption,
+782,superhero,moderate,1,,
+786,superhero,moderate,1,,
+787,superhero,simple,1,,
+802,superhero,simple,0,Incorrect SQL,SELECT superhero_name FROM superhero ORDER BY height_cm DESC LIMIT 1
+835,superhero,challenging,0,Incorrect SQL,SELECT CAST(COUNT(CASE WHEN T3.alignment = 'Good' THEN T1.id ELSE NULL END) AS REAL) * 100 / COUNT(T1.id) FROM superhero AS T1 INNER JOIN publisher AS T2 ON T1.publisher_id = T2.id LEFT JOIN alignment AS T3 ON T1.alignment_id = T3.id WHERE T2.publisher_name = 'Marvel Comics'
+846,formula_1,moderate,1,,
+847,formula_1,simple,0,Incorrect SQL,"SELECT T2.surname
+FROM qualifying AS T1
+INNER JOIN drivers AS T2 ON T2.driverId = T1.driverId
+WHERE T1.raceId = 19
+ORDER BY T1.q2 ASC
+LIMIT 1;"
+858,formula_1,simple,1,,
+866,formula_1,moderate,0,Incorrect Assumption,
+877,formula_1,moderate,1,,
+879,formula_1,moderate,0,Incorrect SQL,SELECT T1.nationality FROM drivers AS T1 JOIN results AS T2 ON T2.driverId = T1.driverId WHERE T2.fastestLapSpeed IS NOT NULL AND T2.fastestLapSpeed != '' ORDER BY CAST(T2.fastestLapSpeed AS REAL) DESC LIMIT 1;
+881,formula_1,moderate,1,,
+882,formula_1,simple,1,,
+884,formula_1,moderate,1,,
+889,formula_1,simple,0,Incorrect SQL,SELECT MAX(year) FROM races r JOIN circuits c ON r.circuitId = c.circuitId WHERE c.name = 'Brands Hatch' AND r.name = 'British Grand Prix';
+896,formula_1,challenging,0,Data Inconsistency,
+899,formula_1,moderate,1,,
+904,formula_1,moderate,0,Incorrect Evidence,
+906,formula_1,moderate,0,Incorrect Evidence,
+908,formula_1,simple,0,Incorrect SQL,"SELECT T2.name, T2.year, T1.location, MAX(T3.lap) AS max_laps
+FROM circuits AS T1 
+INNER JOIN races AS T2 ON T1.circuitId = T2.circuitId 
+INNER JOIN lapTimes AS T3 ON T3.raceId = T2.raceId 
+GROUP BY T2.raceId, T2.name, T2.year, T1.location
+ORDER BY max_laps DESC, T2.raceId ASC
+LIMIT 1;"
+928,formula_1,moderate,0,Incorrect SQL,SELECT T3.driverRef FROM races AS T1 INNER JOIN results AS T2 ON T2.raceId = T1.raceId INNER JOIN drivers AS T3 ON T3.driverId = T2.driverId WHERE T1.name = 'Canadian Grand Prix' AND T2.position = 1 AND T1.year = 2007
+931,formula_1,moderate,1,,
+933,formula_1,moderate,1,,
+934,formula_1,moderate,1,,
+937,formula_1,simple,0,Incorrect SQL,"SELECT r.time
+FROM results r
+JOIN races ra ON r.raceId = ra.raceId
+WHERE ra.name = 'Chinese Grand Prix'
+  AND ra.year = 2008
+  AND r.position = 2;"
+938,formula_1,moderate,1,,
+942,formula_1,moderate,1,,
+957,formula_1,simple,0,Incorrect SQL,SELECT COUNT(DISTINCT T1.driverId) FROM results AS T1 INNER JOIN drivers AS T2 on T1.driverId = T2.driverId WHERE T2.nationality = 'Italian' AND T1.time IS NULL
+963,formula_1,moderate,0,Incorrect SQL,"SELECT COUNT(DISTINCT T1.driverId)
+FROM drivers AS T1
+INNER JOIN lapTimes AS T2 ON T1.driverId = T2.driverId
+WHERE T1.nationality = 'French'
+  AND (CAST(SUBSTR(T2.time, 1, 2) AS INTEGER) * 60 + CAST(SUBSTR(T2.time, 4, 2) AS INTEGER) + CAST(SUBSTR(T2.time, 7, 2) AS REAL) / 1000) < 120;"
+979,formula_1,simple,0,Incorrect SQL,"SELECT raceId 
+FROM results 
+GROUP BY raceId 
+ORDER BY COUNT(time) DESC 
+LIMIT 1"
+1006,formula_1,challenging,0,Incorrect SQL,"SELECT lt.time AS fastest_lap_time
+FROM lapTimes lt
+JOIN races r ON lt.raceId = r.raceId
+JOIN circuits c ON r.circuitId = c.circuitId
+ORDER BY lt.milliseconds ASC, 
+         lt.raceId ASC, 
+         lt.driverId ASC, 
+         lt.lap ASC
+LIMIT 1"
+1009,formula_1,simple,0,Incorrect SQL,"SELECT T3.forename,T3.surname,T1.Duration FROM pitStops AS T1 INNER JOIN races AS T2 on T1.raceId = T2.raceId INNER JOIN drivers as T3 on T1.driverId=T3.driverId WHERE T2.year = 2011 AND T2.name = 'Australian Grand Prix'"
+1013,formula_1,simple,1,,
+1018,formula_1,simple,1,,
+1020,european_football_2,simple,0,Incorrect SQL,SELECT player_api_id FROM Player_Attributes ORDER BY overall_rating DESC LIMIT 1
+1022,european_football_2,simple,0,Incorrect SQL,SELECT preferred_foot FROM Player_Attributes WHERE potential IS NOT NULL ORDER BY potential ASC LIMIT 1
+1024,european_football_2,simple,0,Incorrect SQL,SELECT player_api_id FROM Player_Attributes GROUP BY player_api_id ORDER BY MAX(crossing) DESC LIMIT 5
+1030,european_football_2,moderate,1,,
+1032,european_football_2,moderate,0,Incorrect Assumption,
+1033,european_football_2,simple,1,,
+1034,european_football_2,simple,0,Incorrect SQL,"SELECT player_api_id FROM Player_Attributes WHERE SUBSTR(`date`, 1, 4) = '2010' ORDER BY overall_rating DESC LIMIT 1"
+1037,european_football_2,challenging,0,Incorrect SQL,"SELECT 
+    CAST(COUNT(DISTINCT CASE WHEN t2.preferred_foot = 'left' THEN t1.player_api_id ELSE NULL END) AS REAL) * 100 
+    / COUNT(DISTINCT t1.player_api_id) AS percent
+FROM Player AS t1
+INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id
+WHERE SUBSTR(t1.birthday, 1, 4) BETWEEN '1987' AND '1992'"
+1040,european_football_2,moderate,1,,
+1041,european_football_2,challenging,0,Incorrect SQL,"SELECT t3.team_long_name FROM Team AS t3 INNER JOIN Team_Attributes AS t4 ON t3.team_api_id = t4.team_api_id WHERE t4.buildUpPlayDribblingClass = 'Normal' AND SUBSTR(t4.date, 1, 4) = '2014' AND t4.chanceCreationPassing < (SELECT CAST(SUM(t2.chanceCreationPassing) AS REAL) / COUNT(t1.id) FROM Team AS t1 INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id WHERE t2.buildUpPlayDribblingClass = 'Normal' AND SUBSTR(t2.`date`, 1, 4) = '2014') ORDER BY t4.chanceCreationPassing DESC"
+1042,european_football_2,challenging,1,,
+1046,european_football_2,moderate,1,,
+1052,european_football_2,moderate,1,,
+1057,european_football_2,moderate,1,,
+1058,european_football_2,challenging,0,Query Ambiguity,
+1064,european_football_2,simple,0,Query Ambiguity,
+1067,european_football_2,moderate,1,,
+1071,european_football_2,challenging,1,,
+1073,european_football_2,moderate,1,,
+1074,european_football_2,simple,1,,
+1077,european_football_2,simple,1,,
+1079,european_football_2,simple,1,,
+1090,european_football_2,simple,0,Incorrect SQL,SELECT t2.long_passing FROM Player AS t1 INNER JOIN Player_Attributes AS t2 ON t1.player_api_id = t2.player_api_id ORDER BY t1.birthday ASC LIMIT 1
+1113,european_football_2,moderate,0,Incorrect SQL,"SELECT t2.defenceAggressionClass 
+FROM Team AS t1 
+INNER JOIN Team_Attributes AS t2 ON t1.team_api_id = t2.team_api_id 
+WHERE t1.team_long_name = 'Hannover 96' 
+AND t2.`date` LIKE '2015-09-10%'"
+1135,european_football_2,moderate,0,Incorrect SQL,SELECT id FROM Player_Attributes WHERE preferred_foot = 'right' ORDER BY potential LIMIT 5
+1149,thrombosis_prediction,moderate,0,Query Ambiguity,
+1157,thrombosis_prediction,simple,1,,
+1172,thrombosis_prediction,simple,1,,
+1180,thrombosis_prediction,moderate,1,,
+1183,thrombosis_prediction,challenging,1,,
+1199,thrombosis_prediction,simple,0,Incorrect SQL,"SELECT COUNT(DISTINCT ID) AS abnormal_protein_patient_count
+FROM Laboratory
+WHERE 
+  (TP <= 6.0 OR TP >= 8.5) 
+  AND STRFTIME('%Y', Date) = '1997';"
+1203,thrombosis_prediction,simple,0,Incorrect SQL,SELECT COUNT(DISTINCT p.ID) FROM Patient p JOIN Laboratory l ON p.ID = l.ID WHERE p.SEX = 'F' AND l.WBC < 3.5;
+1208,thrombosis_prediction,moderate,1,,
+1213,thrombosis_prediction,moderate,0,Incorrect Assumption,
+1222,thrombosis_prediction,simple,0,Incorrect SQL,SELECT COUNT(DISTINCT T1.ID) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.CRE >= 1.5 AND T1.SEX = 'M'
+1224,thrombosis_prediction,simple,1,,
+1226,thrombosis_prediction,simple,1,,
+1228,thrombosis_prediction,simple,0,Incorrect SQL,"SELECT DISTINCT T1.ID, T1.Diagnosis FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.TG > 300"
+1242,thrombosis_prediction,challenging,0,Incorrect SQL,"SELECT DISTINCT T1.ID FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.PLT BETWEEN 100 AND 400 AND STRFTIME('%Y', CURRENT_TIMESTAMP) - STRFTIME('%Y', T1.Birthday) < 50 AND STRFTIME('%Y', T2.Date) = '1984'"
+1243,thrombosis_prediction,challenging,0,Incorrect SQL,"SELECT 
+    CAST(COUNT(DISTINCT CASE WHEN T2.PT >= 14 AND T1.SEX = 'F' THEN T1.ID END) AS REAL)
+    / COUNT(DISTINCT CASE WHEN T2.PT >= 14 THEN T1.ID END)
+    * 100 AS abnormal_pt_female_percentage
+FROM Patient AS T1
+INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID
+WHERE STRFTIME('%Y', CURRENT_TIMESTAMP) - STRFTIME('%Y', T1.Birthday) > 55;"
+1247,thrombosis_prediction,challenging,0,Incorrect SQL,"SELECT COUNT(DISTINCT p.ID) AS male_count
+FROM Patient AS p
+JOIN Laboratory AS l ON l.ID = p.ID
+WHERE p.SEX = 'M'
+  AND (l.FG <= 150 OR l.FG >= 450)
+  AND l.WBC > 3.5 AND l.WBC < 9.0;"
+1251,thrombosis_prediction,simple,0,Incorrect SQL,SELECT COUNT(DISTINCT T1.ID) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.IGG >= 2000
+1254,thrombosis_prediction,moderate,0,Incorrect SQL,"SELECT COUNT(DISTINCT T1.ID) AS normal_iga_patient_count FROM Patient AS T1
+INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.IGA > 80 AND T2.IGA < 500 AND strftime('%Y', T1.`First Date`) >= '1990';"
+1256,thrombosis_prediction,moderate,0,Incorrect SQL,"SELECT COUNT(DISTINCT T1.ID) 
+FROM Patient AS T1 
+INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID 
+WHERE T2.CRP = '+' AND T1.Description IS NULL;"
+1259,thrombosis_prediction,moderate,0,Incorrect SQL,SELECT DISTINCT T1.Diagnosis FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE (T2.RA = '-' OR T2.RA = '+-') AND T1.Birthday > '1985-01-01'
+1261,thrombosis_prediction,simple,0,Incorrect SQL,"SELECT COUNT(DISTINCT T1.ID) FROM Examination AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.RF IS NOT NULL AND T2.RF != 'NONE' AND CAST(REPLACE(T2.RF, '<', '') AS REAL) < 20 AND T1.Thrombosis = 0;"
+1269,thrombosis_prediction,moderate,0,Incorrect SQL,"SELECT T1.ID FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.SC170 IN ('negative','0') AND T2.Date > '1997-01-01'"
+1273,thrombosis_prediction,moderate,0,Incorrect SQL,SELECT COUNT(DISTINCT T1.ID) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.SSB = 'negative' OR T2.SSB = '0' AND T1.Diagnosis = 'SLE'
+1279,thrombosis_prediction,moderate,0,Incorrect SQL,SELECT SUM(CASE WHEN T1.Diagnosis LIKE '%SLE%' THEN 1 ELSE 0 END) * 100.0 / COUNT(T1.ID) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.`GOT` >= 60
+1283,thrombosis_prediction,simple,0,Incorrect SQL,SELECT COUNT(DISTINCT T1.ID) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.GOT < 60 AND T1.SEX = 'M'
+1284,thrombosis_prediction,moderate,0,Incorrect SQL,SELECT T1.`First Date` FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T2.LDH < 500 ORDER BY T2.LDH DESC LIMIT 1
+1286,thrombosis_prediction,simple,0,Incorrect SQL,"SELECT COUNT(DISTINCT T1.ID)
+FROM Patient AS T1
+INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID
+WHERE T2.ALP >= 300 AND T1.Admission = '+';"
+1287,thrombosis_prediction,moderate,0,Incorrect SQL,"SELECT COUNT(DISTINCT T1.ID) 
+FROM Patient AS T1 
+INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID 
+WHERE T2.ALP < 300 
+AND T1.Admission = '-'"
+1289,thrombosis_prediction,moderate,0,Incorrect SQL,SELECT COUNT(DISTINCT T1.ID) FROM Patient AS T1 INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID WHERE T1.Diagnosis = 'SJS' AND T2.TP > 6.0 AND T2.TP < 8.5
+1290,thrombosis_prediction,simple,0,Incorrect SQL,SELECT Date FROM Laboratory WHERE ALB > 3.5 AND ALB < 5.5 ORDER BY ALB DESC LIMIT 1
+1298,thrombosis_prediction,moderate,0,Incorrect SQL,"SELECT COUNT(DISTINCT T1.ID) AS qualified_patient_count
+FROM Patient AS T1
+INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID  
+INNER JOIN Examination AS T3 ON T1.ID = T3.ID 
+WHERE 
+    T2.`T-CHO` < 250  
+    AND T3.`ANA Pattern` = 'P';"
+1299,thrombosis_prediction,simple,0,Incorrect SQL,"SELECT COUNT(DISTINCT T1.ID) 
+FROM Examination AS T1 
+INNER JOIN Laboratory AS T2 ON T1.ID = T2.ID 
+WHERE T2.TG < 200 
+AND T1.Symptoms IS NOT NULL"
+1310,thrombosis_prediction,simple,1,,
+1314,student_club,simple,1,,
+1316,student_club,moderate,1,,
+1320,student_club,simple,1,,
+1322,student_club,moderate,0,Incorrect SQL,"SELECT COUNT(*) AS meeting_events_over_10
+FROM event AS e
+WHERE e.type = 'Meeting'
+  AND (SELECT COUNT(*) 
+       FROM attendance AS a 
+       WHERE a.link_to_event = e.event_id) > 10;"
+1343,student_club,simple,1,,
+1358,student_club,simple,1,,
+1361,student_club,simple,1,,
+1363,student_club,simple,0,Incorrect SQL,SELECT DISTINCT department FROM major WHERE college = 'College of Humanities and Social Sciences'
+1365,student_club,simple,0,Incorrect SQL,SELECT T2.expense_description FROM budget AS T1 INNER JOIN expense AS T2 ON T1.budget_id = T2.link_to_budget ORDER BY T1.remaining LIMIT 1
+1374,student_club,simple,1,,
+1384,student_club,simple,1,,
+1385,student_club,simple,1,,
+1388,student_club,moderate,1,,
+1389,student_club,simple,0,Incorrect SQL,SELECT T1.event_name FROM event AS T1 INNER JOIN budget AS T2 ON T1.event_id = T2.link_to_event INNER JOIN expense AS T3 ON T2.budget_id = T3.link_to_budget ORDER BY T3.cost LIMIT 1
+1392,student_club,simple,1,,
+1397,student_club,simple,1,,
+1404,student_club,moderate,0,Incorrect SQL,"SELECT T3.expense_description, SUM(T3.cost) 
+FROM event AS T1 
+INNER JOIN budget AS T2 ON T1.event_id = T2.link_to_event 
+INNER JOIN expense AS T3 ON T2.budget_id = T3.link_to_budget 
+WHERE T1.event_name = 'October Meeting' AND T3.approved = 'true'
+GROUP BY T3.expense_description"
+1411,student_club,simple,0,Incorrect SQL,SELECT DISTINCT e.expense_description FROM expense e JOIN member m ON e.link_to_member = m.member_id WHERE m.first_name = 'Sacha' AND m.last_name = 'Harrison'
+1412,student_club,simple,0,Incorrect SQL,"SELECT DISTINCT e.expense_description
+FROM expense e
+JOIN member m ON m.member_id = e.link_to_member
+WHERE m.t_shirt_size = 'X-Large';"
+1423,student_club,simple,1,,
+1430,student_club,moderate,1,,
+1431,student_club,moderate,1,,
+1439,student_club,moderate,1,,
+1446,student_club,simple,1,,
+1448,student_club,challenging,1,,
+1449,student_club,moderate,1,,
+1450,student_club,simple,0,Incorrect Assumption,
+1464,student_club,challenging,1,,
+1483,debit_card_specializing,simple,1,,
+1484,debit_card_specializing,simple,1,,
+1485,debit_card_specializing,simple,1,,
+1496,debit_card_specializing,simple,0,Incorrect SQL,SELECT T1.Segment FROM customers AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID WHERE T2.Date = '201309' GROUP BY T1.Segment ORDER BY SUM(T2.Consumption) ASC LIMIT 1
+1499,debit_card_specializing,simple,1,,
+1500,debit_card_specializing,simple,0,Incorrect SQL,SELECT DISTINCT T3.Description FROM transactions_1k AS T1 INNER JOIN yearmonth AS T2 ON T1.CustomerID = T2.CustomerID INNER JOIN products AS T3 ON T1.ProductID = T3.ProductID WHERE T2.Date = '201309'
+1501,debit_card_specializing,moderate,0,Incorrect SQL,"SELECT DISTINCT T2.Country FROM transactions_1k AS T1 INNER JOIN gasstations AS T2 ON T1.GasStationID = T2.GasStationID WHERE SUBSTR(T1.Date, 1, 7) = '2013-06';"
+1503,debit_card_specializing,simple,0,Incorrect SQL,"SELECT DISTINCT T3.Description
+FROM transactions_1k AS T1 
+INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID 
+INNER JOIN products AS T3 ON T1.ProductID = T3.ProductID 
+WHERE T2.Currency = 'EUR'"
+1511,debit_card_specializing,simple,0,Query Ambiguity,
+1512,debit_card_specializing,simple,0,Incorrect SQL,SELECT CustomerID FROM transactions_1k WHERE Date = '2012-08-25' GROUP BY CustomerID ORDER BY SUM(Price*Amount) DESC LIMIT 1
+1517,debit_card_specializing,simple,0,Incorrect SQL,SELECT T2.Segment FROM transactions_1k AS T1 INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID ORDER BY Date ASC LIMIT 1
+1525,debit_card_specializing,simple,0,Incorrect SQL,"SELECT CAST(COUNT(DISTINCT CASE WHEN T2.Currency = 'EUR' THEN T1.CustomerID END) AS FLOAT) * 100.0
+       / COUNT(DISTINCT T1.CustomerID) AS pct_eur_customers
+FROM transactions_1k AS T1
+INNER JOIN customers AS T2 ON T1.CustomerID = T2.CustomerID
+WHERE T1.Date = '2012-08-25';"
+1531,debit_card_specializing,moderate,0,Incorrect SQL,"SELECT 
+    t.CustomerID,
+    SUM(t.Price) / SUM(t.Amount) AS avg_price_per_item,
+    c.Currency
+FROM transactions_1k t
+JOIN customers c ON t.CustomerID = c.CustomerID
+WHERE t.CustomerID = (
+    SELECT CustomerID
+    FROM transactions_1k
+    GROUP BY CustomerID
+    ORDER BY SUM(Price) DESC
+    LIMIT 1
+)
+GROUP BY t.CustomerID, c.Currency"

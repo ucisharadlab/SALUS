@@ -1,0 +1,14 @@
+Correctness: No
+Is_ambiguous: No
+Explanation: The question asks for the number of weekly-issuance accounts (frequency = 'POPLATEK TYDNE') that possess a loan whose amount is below 200 000. That implies counting accounts, not individual loan rows.  
+The annotator’s query
+SELECT COUNT(T1.account_id) …
+returns the number of loan records that satisfy the conditions. If an account could have more than one qualifying loan, the same account would be counted multiple times, giving an inflated answer. The schema does not guarantee one-to-one between account and loan, so the logic is unsafe even though the current data happen to contain only one loan per account (result 58).
+Hence the query is not logically correct.
+
+Revised:
+SELECT COUNT(DISTINCT l.`account_id`)
+FROM `loan` AS l
+JOIN `account` AS a ON l.`account_id` = a.`account_id`
+WHERE a.`frequency` = 'POPLATEK TYDNE'
+  AND l.`amount` < 200000;

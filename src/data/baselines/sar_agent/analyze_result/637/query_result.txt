@@ -1,0 +1,30 @@
+Query: SELECT COUNT(1) FROM users WHERE `DisplayName` = 'Mark Meckes';
+Explaination of the query: Check if user exists
+Result: [(1,)]
+Query: SELECT `Id` FROM `users` WHERE `DisplayName` = 'Mark Meckes' LIMIT 5;
+Explaination of the query: Get user id
+Result: [(89,)]
+Query: SELECT T3.Id, T3.Tags FROM `users` AS T1 INNER JOIN `postHistory` AS T2 ON T1.Id = T2.UserId INNER JOIN `posts` AS T3 ON T3.Id = T2.PostId WHERE T1.DisplayName = 'Mark Meckes' AND T3.CommentCount = 0 LIMIT 5;
+Explaination of the query: Preview tags returned by annotated query
+Result: [(414, '<books>'), (414, '<books>'), (414, '<books>'), (414, '<books>'), (43169, None)]
+Query: SELECT `Id`, `Tags` FROM `posts` WHERE `OwnerUserId` = 89 AND `CommentCount` = 0 LIMIT 5;
+Explaination of the query: Posts authored by Mark Meckes with no comments
+Result: [(414, '<books>'), (43169, None)]
+Query: SELECT COUNT(1) FROM `posts` WHERE `OwnerUserId` = 89 AND `CommentCount` = 0;
+Explaination of the query: Count Mark Meckes own posts with no comments
+Result: [(2,)]
+Query: SELECT T3.Id, T3.Tags FROM `users` AS T1 INNER JOIN `postHistory` AS T2 ON T1.Id = T2.UserId INNER JOIN `posts` AS T3 ON T3.Id = T2.PostId WHERE T1.DisplayName = 'Mark Meckes' AND T3.CommentCount = 0;
+Explaination of the query: all rows returned by annotated query
+Result: [(414, '<books>'), (414, '<books>'), (414, '<books>'), (414, '<books>'), (43169, None)]
+Query: SELECT DISTINCT T3.Id, T3.OwnerUserId FROM `users` U JOIN `postHistory` PH ON U.Id = PH.UserId JOIN `posts` P ON P.Id = PH.PostId WHERE U.DisplayName = 'Mark Meckes' AND P.OwnerUserId <> U.Id LIMIT 5;
+Explaination of the query: Check if there are posts where Mark edited but is not owner
+Error: no such column: T3.Id
+Query: SELECT DISTINCT P.Id, P.OwnerUserId FROM users U JOIN postHistory PH ON U.Id = PH.UserId JOIN posts P ON P.Id = PH.PostId WHERE U.DisplayName = 'Mark Meckes' AND P.OwnerUserId <> U.Id LIMIT 5;
+Explaination of the query: Find posts where Mark Meckes edited but is not the owner
+Result: []
+Query: SELECT DISTINCT `Tags` FROM `posts` WHERE `OwnerUserId` = 89 AND `CommentCount` = 0 LIMIT 5;
+Explaination of the query: Get distinct tags used by Mark Meckes in his posts with no comments
+Result: [('<books>',), (None,)]
+Query: SELECT DISTINCT `Tags` FROM `posts` p JOIN `users` u ON u.Id = p.OwnerUserId WHERE u.DisplayName = 'Mark Meckes' AND p.CommentCount = 0 AND p.Tags IS NOT NULL LIMIT 5;
+Explaination of the query: Distinct tags for Mark Meckes authored posts with no comments
+Result: [('<books>',)]

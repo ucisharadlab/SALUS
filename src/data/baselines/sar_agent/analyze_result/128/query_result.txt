@@ -1,0 +1,38 @@
+Query: SELECT COUNT(*) FROM client LIMIT 5;
+Explaination of the query: Test schema accessible.
+Result: [(5369,)]
+Query: SELECT COUNT(*) FROM client WHERE client_id NOT IN (SELECT client_id FROM disp)
+Explaination of the query: Check if there are clients without an account disposition
+Result: [(0,)]
+Query: SELECT COUNT(*) FROM client WHERE gender='F' LIMIT 5
+Explaination of the query: Total number of female clients.
+Result: [(2645,)]
+Query: SELECT COUNT(DISTINCT `client`.`client_id`) FROM `disp` INNER JOIN `client` USING(`client_id`) WHERE `client`.`gender`='F' AND `disp`.`type`='USER' LIMIT 5
+Explaination of the query: Count female clients that are only USER dispositions maybe present
+Result: [(0,)]
+Query: SELECT T2.A2, COUNT(T1.client_id) as cnt
+FROM client AS T1 
+INNER JOIN district AS T2 ON T1.district_id = T2.district_id 
+WHERE T1.gender = 'F' 
+GROUP BY T2.district_id, T2.A2 
+ORDER BY cnt DESC 
+LIMIT 5;
+Explaination of the query: Run annotated query partially to see results.
+Result: [('Hl.m. Praha', 324), ('Karvina', 88), ('Ostrava - mesto', 84), ('Brno - mesto', 75), ('Zlin', 57)]
+Query: SELECT `type`, COUNT(*) FROM `disp` GROUP BY `type` LIMIT 5;
+Explaination of the query: Check disposition types
+Result: [('DISPONENT', 869), ('OWNER', 4500)]
+Query: SELECT COUNT(*) FROM account LIMIT 5;
+Explaination of the query: number of accounts
+Result: [(4500,)]
+Query: SELECT d2.A2, COUNT(DISTINCT disp.client_id) as cnt
+FROM disp
+JOIN client ON client.client_id = disp.client_id
+JOIN account ON account.account_id = disp.account_id
+JOIN district d2 ON account.district_id = d2.district_id
+WHERE client.gender='F' AND disp.type='OWNER'
+GROUP BY account.district_id, d2.A2
+ORDER BY cnt DESC
+LIMIT 5;
+Explaination of the query: Count female clients who are owners of accounts, grouped by account's district, top 5
+Result: [('Hl.m. Praha', 276), ('Karvina', 79), ('Ostrava - mesto', 62), ('Brno - mesto', 58), ('Zlin', 49)]
