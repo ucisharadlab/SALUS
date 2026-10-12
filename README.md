@@ -1,6 +1,6 @@
 # SALUS: Automated Benchmark Auditing
 
-🎉 **Accepted at SIGMOD 2027!**
+🎉 **Accepted at SIGMOD 2027!** You can find our arxiv extended version at: https://arxiv.org/pdf/2610.05540
 
 SALUS automatically detects annotation errors in text-to-SQL benchmarks. It combines execution, SQL-structure, and question-alignment signals from multiple language-model agents into weak labels, then learns which agents are reliable for different SQL queries. No manually labeled examples are used for training.
 
