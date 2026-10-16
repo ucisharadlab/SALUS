@@ -85,5 +85,14 @@ Runs write `reports/pipeline_report.json`, a readable `reports/pipeline_report.m
 If you use SALUS or BIRD-Clean-xs, please cite our paper. The BibTeX entry will be added here.
 
 ```bibtex
-% SALUS paper citation to be added.
+@misc{zhou2026salus,
+      title={SALUS: Automated Auditing of NL-to-SQL Benchmarks through Weak Supervision of Multi-Agent Output}, 
+      author={Shiyuan Zhou and Ashwin Gerard Colaco and Sainyam Galhotra and Sharad Mehrotra},
+      year={2026},
+      eprint={2610.05540},
+      archivePrefix={arXiv},
+      primaryClass={cs.DB},
+      doi={https://doi.org/10.1145/3856369},
+      url={https://arxiv.org/abs/2610.05540}, 
+}
 ```
